@@ -971,15 +971,15 @@ textarea:focus-visible {
 
 @media (max-width: 768px) {
     .site-header .container {
-        width: min(100% - 24px, 1120px);
+        width: min(100% - 16px, 1120px);
     }
 
     .navbar {
-        align-items: flex-start;
+        align-items: center;
         grid-template-columns: 1fr;
-        gap: 14px;
+        gap: 12px;
         justify-items: center;
-        padding: 16px 0;
+        padding: 12px 0;
     }
 
     .logo img {
@@ -987,13 +987,23 @@ textarea:focus-visible {
     }
 
     .nav-menu {
-        justify-content: center;
+        width: 100%;
+        justify-content: flex-start;
         justify-self: center;
+        gap: 8px;
         margin-left: 0;
+        overflow-x: auto;
+        padding: 4px 2px 8px;
+        scrollbar-width: none;
+        white-space: nowrap;
+    }
+
+    .nav-menu::-webkit-scrollbar {
+        display: none;
     }
 
     .hero {
-        padding: 52px 0;
+        padding: 44px 0;
     }
 
     .header-sharingan {
@@ -1033,11 +1043,11 @@ textarea:focus-visible {
     }
 
     .hero-title {
-        font-size: 2.55rem;
+        font-size: clamp(2.4rem, 10vw, 3.35rem);
     }
 
     .section-title {
-        font-size: 2rem;
+        font-size: clamp(1.85rem, 7vw, 2.25rem);
     }
 
     .hero-image,
@@ -1057,12 +1067,12 @@ textarea:focus-visible {
     .table-section,
     .media-section,
     .contact-section {
-        padding: 54px 0;
+        padding: 48px 0;
     }
 
     .product-card,
     .deal-card {
-        flex-basis: 100%;
+        flex: 1 1 calc(50% - 12px);
     }
 
     .deal-card:nth-child(2),
@@ -1073,7 +1083,12 @@ textarea:focus-visible {
 
 @media (max-width: 520px) {
     .container {
-        width: min(100% - 24px, 1120px);
+        width: min(100% - 12px, 1120px);
+    }
+
+    .site-header .container,
+    .site-footer .container {
+        width: min(100% - 12px, 1120px);
     }
 
     .nav-menu {
@@ -1090,7 +1105,7 @@ textarea:focus-visible {
     }
 
     .hero-title {
-        font-size: 2.25rem;
+        font-size: clamp(2.2rem, 12vw, 2.75rem);
     }
 
     .header-sharingan {
@@ -1142,9 +1157,77 @@ textarea:focus-visible {
         height: 220px;
     }
 
+    .products-section,
+    .deals-section,
+    .table-section,
+    .media-section,
+    .contact-section {
+        padding: 42px 0;
+    }
+
+    .section-header {
+        margin-bottom: 24px;
+    }
+
+    .product-grid,
+    .deal-list {
+        gap: 14px;
+    }
+
+    .product-card,
+    .deal-card {
+        flex-basis: 100%;
+    }
+
+    .product-info,
+    .deal-card,
     .contact-card,
     .register-form {
-        padding: 22px;
+        padding: 18px;
+    }
+
+    .table-wrapper,
+    .iframe-wrapper,
+    .product-card,
+    .deal-card,
+    .contact-card,
+    .register-form {
+        border-radius: 12px;
+    }
+}
+
+@media (max-width: 390px) {
+    .container,
+    .site-header .container,
+    .site-footer .container {
+        width: min(100% - 8px, 1120px);
+    }
+
+    .nav-menu a {
+        padding: 7px 8px;
+    }
+
+    .hero {
+        padding: 36px 0;
+    }
+
+    .hero-title {
+        font-size: 2.05rem;
+    }
+
+    .hero-description,
+    .section-description {
+        font-size: 0.95rem;
+    }
+
+    .hero-image img,
+    .product-image {
+        height: 200px;
+    }
+
+    .product-table th,
+    .product-table td {
+        padding: 12px 14px;
     }
 }
 
