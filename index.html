@@ -17,6 +17,7 @@
                 <img src="images/techstore-logo.png" alt="TechStore logo">
             </a>
 
+            <!-- Header decoration; the nav stays separate so alignment is easier to tune. -->
             <div class="header-sharingan" aria-hidden="true">
                 <div class="sharingan-shell sharingan-shell-left">
                     <div class="sharingan-eye">
@@ -126,6 +127,7 @@
                         </div>
                     </article>
 
+                    <!-- These extra cards open when the product button is clicked. -->
                     <article class="product-card is-hidden" data-product-set="more">
                         <span class="product-badge">Pro gear</span>
                         <img src="images/gaming-mouse.jpg" alt="RGB gaming mouse on a desk" class="product-image" loading="lazy">
@@ -389,6 +391,7 @@
     </footer>
 
     <script>
+        // Small product toggle for keeping the first view focused.
         const productToggle = document.querySelector("#product-toggle");
         const productCards = document.querySelectorAll("[data-product-set]");
         let showingAllProducts = false;
