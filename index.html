@@ -161,7 +161,7 @@
                 </div>
 
                 <div class="product-actions">
-                    <button type="button" class="btn product-toggle" id="product-toggle">Show More Products</button>
+                    <button type="button" class="btn product-toggle" id="product-toggle">Show All Products</button>
                 </div>
             </div>
         </section>
@@ -391,17 +391,17 @@
     <script>
         const productToggle = document.querySelector("#product-toggle");
         const productCards = document.querySelectorAll("[data-product-set]");
-        let showingMoreProducts = false;
+        let showingAllProducts = false;
 
         productToggle.addEventListener("click", () => {
-            showingMoreProducts = !showingMoreProducts;
-            const activeSet = showingMoreProducts ? "more" : "featured";
+            showingAllProducts = !showingAllProducts;
 
             productCards.forEach((card) => {
-                card.classList.toggle("is-hidden", card.dataset.productSet !== activeSet);
+                const isAlternateProduct = card.dataset.productSet === "more";
+                card.classList.toggle("is-hidden", !showingAllProducts && isAlternateProduct);
             });
 
-            productToggle.textContent = showingMoreProducts ? "Show Featured Products" : "Show More Products";
+            productToggle.textContent = showingAllProducts ? "Show Featured Products" : "Show All Products";
         });
     </script>
 </body>
