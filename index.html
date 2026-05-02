@@ -13,7 +13,31 @@
 <body>
     <header class="site-header">
         <div class="container navbar">
-            <a href="#home" class="logo">TechStore</a>
+            <a href="#home" class="logo" aria-label="TechStore home">
+                <img src="images/techstore-logo.png" alt="TechStore logo">
+            </a>
+
+            <div class="header-sharingan" aria-hidden="true">
+                <div class="sharingan-shell sharingan-shell-left">
+                    <div class="sharingan-eye">
+                        <span class="sharingan-ring"></span>
+                        <span class="sharingan-pupil"></span>
+                        <span class="tomoe tomoe-one"></span>
+                        <span class="tomoe tomoe-two"></span>
+                        <span class="tomoe tomoe-three"></span>
+                    </div>
+                </div>
+
+                <div class="sharingan-shell">
+                    <div class="sharingan-eye">
+                        <span class="sharingan-ring"></span>
+                        <span class="sharingan-pupil"></span>
+                        <span class="tomoe tomoe-one"></span>
+                        <span class="tomoe tomoe-two"></span>
+                        <span class="tomoe tomoe-three"></span>
+                    </div>
+                </div>
+            </div>
 
             <nav class="nav-menu" aria-label="Main navigation">
                 <a href="#home">Home</a>
@@ -35,6 +59,21 @@
                         Discover laptops, smartphones, accessories, and smart devices in one modern online store.
                     </p>
                     <a href="#products" class="btn">Explore Products</a>
+
+                    <div class="hero-stats" aria-label="TechStore highlights">
+                        <div>
+                            <strong>24h</strong>
+                            <span>Fast pickup</span>
+                        </div>
+                        <div>
+                            <strong>4.9</strong>
+                            <span>Customer rating</span>
+                        </div>
+                        <div>
+                            <strong>120+</strong>
+                            <span>Devices</span>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="hero-image">
@@ -55,6 +94,7 @@
 
                 <div class="product-grid">
                     <article class="product-card">
+                        <span class="product-badge">Best value</span>
                         <img src="images/laptop.jpg" alt="Gaming laptop on a work desk" class="product-image" loading="lazy">
 
                         <div class="product-info">
@@ -65,6 +105,7 @@
                     </article>
 
                     <article class="product-card">
+                        <span class="product-badge">New arrival</span>
                         <img src="images/smartphone.jpg" alt="Modern smartphone with a bright display" class="product-image" loading="lazy">
 
                         <div class="product-info">
@@ -75,6 +116,7 @@
                     </article>
 
                     <article class="product-card">
+                        <span class="product-badge">Top rated</span>
                         <img src="images/headphones.jpg" alt="Wireless headphones on a clean background" class="product-image" loading="lazy">
 
                         <div class="product-info">
@@ -174,17 +216,18 @@
         <section class="media-section">
             <div class="container">
                 <div class="section-header">
-                    <p class="eyebrow">Innovation</p>
-                    <h2 class="section-title">Explore the Future of Technology</h2>
+                    <p class="eyebrow">Amazon inspiration</p>
+                    <h2 class="section-title">See Smart Shopping in Action</h2>
                     <p class="section-description">
-                        Watch a short video about modern technology and innovation.
+                        Watch Amazon introduce its Go store concept and the technology behind a faster shopping experience.
                     </p>
                 </div>
 
                 <div class="iframe-wrapper">
                     <iframe
-                        src="https://www.youtube.com/embed/5MgBikgcWnY"
-                        title="Technology video"
+                        src="https://www.youtube.com/embed/NrmMk1Myrxc"
+                        title="Introducing Amazon Go and the world's most advanced shopping technology"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
                 </div>
