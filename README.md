@@ -4,7 +4,8 @@ TechStore is a responsive HTML and CSS landing page for a modern technology stor
 
 ## Live Preview
 
-- Browser preview: https://raw.githack.com/giorgimskh/TechStore/main/index.html?v=20260502-2
+- Latest browser preview: https://raw.githack.com/giorgimskh/TechStore/668046c/index.html
+- Main browser preview: https://raw.githack.com/giorgimskh/TechStore/main/index.html?v=20260502-2
 - GitHub repository: https://github.com/giorgimskh/TechStore
 
 ## Features
@@ -13,6 +14,7 @@ TechStore is a responsive HTML and CSS landing page for a modern technology stor
 - Dark purple and green tech-inspired color palette
 - Animated CSS Sharingan-style header decoration
 - Product cards with hover effects and badges
+- Product toggle that expands from featured products to all products
 - Sponsor company links in the footer
 - Registration form with text inputs, email, select, radio buttons, checkboxes, textarea, and submit button
 - Embedded YouTube iframe
@@ -22,15 +24,18 @@ TechStore is a responsive HTML and CSS landing page for a modern technology stor
 
 ```text
 TechStore/
-├── index.html
-├── css/
-│   └── style.css
-└── images/
-    ├── hero-tech.jpg
-    ├── laptop.jpg
-    ├── smartphone.jpg
-    ├── headphones.jpg
-    └── techstore-logo.png
+|-- index.html
+|-- css/
+|   `-- style.css
+`-- images/
+    |-- hero-tech.jpg
+    |-- laptop.jpg
+    |-- smartphone.jpg
+    |-- headphones.jpg
+    |-- gaming-mouse.jpg
+    |-- ram.jpg
+    |-- smartwatch.jpg
+    `-- techstore-logo.png
 ```
 
 ## How to Open Locally
