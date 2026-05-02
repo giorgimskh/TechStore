@@ -345,6 +345,7 @@ textarea {
 }
 
 .btn:focus-visible,
+.product-filter:focus-visible ~ .product-actions .product-toggle,
 .nav-menu a:focus-visible,
 .site-footer a:focus-visible,
 input:focus-visible,
@@ -486,7 +487,14 @@ textarea:focus-visible {
 }
 
 /* Hidden until the visitor asks to see the full product list. */
-.product-card.is-hidden {
+.product-filter {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+}
+
+.product-filter:not(:checked) ~ .product-grid [data-product-set="more"] {
     display: none;
 }
 
@@ -549,6 +557,15 @@ textarea:focus-visible {
 
 .product-toggle {
     min-width: 230px;
+}
+
+.toggle-hide,
+.product-filter:checked ~ .product-actions .toggle-show {
+    display: none;
+}
+
+.product-filter:checked ~ .product-actions .toggle-hide {
+    display: inline;
 }
 
 .product-info,

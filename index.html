@@ -93,6 +93,8 @@
                     </p>
                 </div>
 
+                <input type="checkbox" id="product-toggle" class="product-filter" aria-label="Show all products">
+
                 <div class="product-grid" id="product-grid">
                     <article class="product-card" data-product-set="featured">
                         <span class="product-badge">Best value</span>
@@ -128,7 +130,7 @@
                     </article>
 
                     <!-- These extra cards open when the product button is clicked. -->
-                    <article class="product-card is-hidden" data-product-set="more">
+                    <article class="product-card" data-product-set="more">
                         <span class="product-badge">Pro gear</span>
                         <img src="images/gaming-mouse.jpg" alt="RGB gaming mouse on a desk" class="product-image" loading="lazy">
 
@@ -139,7 +141,7 @@
                         </div>
                     </article>
 
-                    <article class="product-card is-hidden" data-product-set="more">
+                    <article class="product-card" data-product-set="more">
                         <span class="product-badge">Performance</span>
                         <img src="images/ram.jpg" alt="Computer RAM memory modules" class="product-image" loading="lazy">
 
@@ -150,7 +152,7 @@
                         </div>
                     </article>
 
-                    <article class="product-card is-hidden" data-product-set="more">
+                    <article class="product-card" data-product-set="more">
                         <span class="product-badge">Wearable</span>
                         <img src="images/smartwatch.jpg" alt="Smartwatch with modern display" class="product-image" loading="lazy">
 
@@ -163,7 +165,10 @@
                 </div>
 
                 <div class="product-actions">
-                    <button type="button" class="btn product-toggle" id="product-toggle">Show All Products</button>
+                    <label for="product-toggle" class="btn product-toggle">
+                        <span class="toggle-show">Show All Products</span>
+                        <span class="toggle-hide">Show Featured Products</span>
+                    </label>
                 </div>
             </div>
         </section>
@@ -389,23 +394,5 @@
             </div>
         </div>
     </footer>
-
-    <script>
-        // Small product toggle for keeping the first view focused.
-        const productToggle = document.querySelector("#product-toggle");
-        const productCards = document.querySelectorAll("[data-product-set]");
-        let showingAllProducts = false;
-
-        productToggle.addEventListener("click", () => {
-            showingAllProducts = !showingAllProducts;
-
-            productCards.forEach((card) => {
-                const isAlternateProduct = card.dataset.productSet === "more";
-                card.classList.toggle("is-hidden", !showingAllProducts && isAlternateProduct);
-            });
-
-            productToggle.textContent = showingAllProducts ? "Show Featured Products" : "Show All Products";
-        });
-    </script>
 </body>
 </html>
