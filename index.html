@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TechStore | Home</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
@@ -13,14 +15,13 @@
         <div class="container navbar">
             <a href="#home" class="logo">TechStore</a>
 
-            <nav class="nav-menu">
+            <nav class="nav-menu" aria-label="Main navigation">
                 <a href="#home">Home</a>
                 <a href="#products">Products</a>
                 <a href="#deals">Deals</a>
                 <a href="#contact">Contact</a>
                 <a href="#register">Register</a>
             </nav>
-
         </div>
     </header>
 
@@ -28,6 +29,7 @@
         <section id="home" class="hero">
             <div class="container hero-content">
                 <div class="hero-text">
+                    <p class="eyebrow">Modern devices. Smart prices.</p>
                     <h1 class="hero-title">Upgrade Your Tech Life</h1>
                     <p class="hero-description">
                         Discover laptops, smartphones, accessories, and smart devices in one modern online store.
@@ -36,7 +38,7 @@
                 </div>
 
                 <div class="hero-image">
-                    <img src="images/hero-tech.jpg" alt="Modern technology devices">
+                    <img src="images/hero-tech.jpg" alt="Modern technology devices arranged on a desk">
                 </div>
             </div>
         </section>
@@ -44,7 +46,8 @@
         <section id="products" class="products-section">
             <div class="container">
                 <div class="section-header">
-                    <h2 class="section-title">Featured Products</h2>
+                    <p class="eyebrow">Featured products</p>
+                    <h2 class="section-title">Popular Tech Picks</h2>
                     <p class="section-description">
                         Explore our most popular tech products selected for students, professionals, and gamers.
                     </p>
@@ -52,7 +55,7 @@
 
                 <div class="product-grid">
                     <article class="product-card">
-                        <img src="images/laptop.jpg" alt="Gaming laptop" class="product-image">
+                        <img src="images/laptop.jpg" alt="Gaming laptop on a work desk" class="product-image" loading="lazy">
 
                         <div class="product-info">
                             <h3 class="product-title">Gaming Laptop</h3>
@@ -62,7 +65,7 @@
                     </article>
 
                     <article class="product-card">
-                        <img src="images/smartphone.jpg" alt="Smartphone" class="product-image">
+                        <img src="images/smartphone.jpg" alt="Modern smartphone with a bright display" class="product-image" loading="lazy">
 
                         <div class="product-info">
                             <h3 class="product-title">Smartphone Pro</h3>
@@ -72,7 +75,7 @@
                     </article>
 
                     <article class="product-card">
-                        <img src="images/headphones.jpg" alt="Wireless headphones" class="product-image">
+                        <img src="images/headphones.jpg" alt="Wireless headphones on a clean background" class="product-image" loading="lazy">
 
                         <div class="product-info">
                             <h3 class="product-title">Wireless Headphones</h3>
@@ -84,9 +87,42 @@
             </div>
         </section>
 
+        <section id="deals" class="deals-section">
+            <div class="container">
+                <div class="section-header">
+                    <p class="eyebrow">Student deals</p>
+                    <h2 class="section-title">Bundles Built for Everyday Work</h2>
+                    <p class="section-description">
+                        Save on reliable tech combinations for learning, remote work, content creation, and gaming.
+                    </p>
+                </div>
+
+                <div class="deal-list">
+                    <article class="deal-card">
+                        <h3>Study Starter</h3>
+                        <p>Laptop, wireless mouse, and protective backpack for classes and projects.</p>
+                        <span>Save 12%</span>
+                    </article>
+
+                    <article class="deal-card">
+                        <h3>Creator Kit</h3>
+                        <p>Fast laptop, headphones, and accessories for editing, streaming, and design work.</p>
+                        <span>Save 15%</span>
+                    </article>
+
+                    <article class="deal-card">
+                        <h3>Mobile Pro</h3>
+                        <p>Smartphone, smartwatch, case, and charger for a complete connected setup.</p>
+                        <span>Save 10%</span>
+                    </article>
+                </div>
+            </div>
+        </section>
+
         <section class="table-section">
             <div class="container">
                 <div class="section-header">
+                    <p class="eyebrow">Inventory</p>
                     <h2 class="section-title">Product Availability</h2>
                     <p class="section-description">
                         Check the current availability of our most requested products.
@@ -97,10 +133,10 @@
                     <table class="product-table">
                         <thead>
                             <tr>
-                                <th>Product</th>
-                                <th>Category</th>
-                                <th>Price</th>
-                                <th>Availability</th>
+                                <th scope="col">Product</th>
+                                <th scope="col">Category</th>
+                                <th scope="col">Price</th>
+                                <th scope="col">Availability</th>
                             </tr>
                         </thead>
 
@@ -111,21 +147,18 @@
                                 <td>$999</td>
                                 <td>In Stock</td>
                             </tr>
-
                             <tr>
                                 <td>Smartphone Pro</td>
                                 <td>Smartphones</td>
                                 <td>$699</td>
                                 <td>In Stock</td>
                             </tr>
-
                             <tr>
                                 <td>Wireless Headphones</td>
                                 <td>Accessories</td>
                                 <td>$149</td>
                                 <td>Limited</td>
                             </tr>
-
                             <tr>
                                 <td>Smartwatch</td>
                                 <td>Wearables</td>
@@ -141,6 +174,7 @@
         <section class="media-section">
             <div class="container">
                 <div class="section-header">
+                    <p class="eyebrow">Innovation</p>
                     <h2 class="section-title">Explore the Future of Technology</h2>
                     <p class="section-description">
                         Watch a short video about modern technology and innovation.
@@ -148,20 +182,106 @@
                 </div>
 
                 <div class="iframe-wrapper">
-                    <iframe src="https://www.youtube.com/embed/5MgBikgcWnY" title="Technology video" allowfullscreen>
+                    <iframe
+                        src="https://www.youtube.com/embed/5MgBikgcWnY"
+                        title="Technology video"
+                        allowfullscreen>
                     </iframe>
                 </div>
             </div>
         </section>
+
+        <section id="contact" class="contact-section">
+            <div class="container contact-layout">
+                <article class="contact-card">
+                    <p class="eyebrow">Need advice?</p>
+                    <h2 class="section-title">Talk to a TechStore Specialist</h2>
+                    <p>
+                        Tell us what kind of device you need and our team will recommend the best option for your study,
+                        work, or gaming setup.
+                    </p>
+                    <ul class="contact-list">
+                        <li>Email: support@techstore.example</li>
+                        <li>Phone: +995 555 010 202</li>
+                        <li>Hours: Monday - Saturday, 10:00 - 19:00</li>
+                    </ul>
+                </article>
+
+                <form id="register" class="register-form" action="#" method="post">
+                    <h2>Register Your Interest</h2>
+
+                    <div class="form-row">
+                        <label for="first-name">
+                            First Name
+                            <input type="text" id="first-name" name="first-name" placeholder="Giorgi" required>
+                        </label>
+
+                        <label for="last-name">
+                            Last Name
+                            <input type="text" id="last-name" name="last-name" placeholder="Beridze" required>
+                        </label>
+                    </div>
+
+                    <label for="email">
+                        Email Address
+                        <input type="email" id="email" name="email" placeholder="you@example.com" required>
+                    </label>
+
+                    <label for="interest">
+                        Product Interest
+                        <select id="interest" name="interest" required>
+                            <option value="">Choose a category</option>
+                            <option value="laptops">Laptops</option>
+                            <option value="smartphones">Smartphones</option>
+                            <option value="accessories">Accessories</option>
+                            <option value="wearables">Wearables</option>
+                        </select>
+                    </label>
+
+                    <fieldset>
+                        <legend>Shopping Goal</legend>
+                        <label>
+                            <input type="radio" name="goal" value="study" required>
+                            Study
+                        </label>
+                        <label>
+                            <input type="radio" name="goal" value="work">
+                            Work
+                        </label>
+                        <label>
+                            <input type="radio" name="goal" value="gaming">
+                            Gaming
+                        </label>
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>Extras</legend>
+                        <label>
+                            <input type="checkbox" name="extras" value="delivery">
+                            Delivery support
+                        </label>
+                        <label>
+                            <input type="checkbox" name="extras" value="setup">
+                            Device setup help
+                        </label>
+                    </fieldset>
+
+                    <label for="message">
+                        Motivation Letter or Special Requests
+                        <textarea id="message" name="message" rows="5" placeholder="Tell us what you need from your next device."></textarea>
+                    </label>
+
+                    <button type="submit" class="btn form-btn">Submit Request</button>
+                </form>
+            </div>
+        </section>
     </main>
 
-
     <footer class="site-footer">
-        <div class="container">
+        <div class="container footer-content">
             <p>TechStore 2026: All rights reserved</p>
+            <a href="#home">Back to top</a>
         </div>
     </footer>
-
 </body>
-
 </html>
