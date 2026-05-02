@@ -67,6 +67,10 @@ textarea {
     width: min(1440px, calc(100% - 28px));
 }
 
+.site-footer .container {
+    width: min(1440px, calc(100% - 28px));
+}
+
 .site-header {
     position: sticky;
     top: 0;
@@ -759,8 +763,14 @@ textarea:focus-visible {
 
 .footer-content {
     display: grid;
-    grid-template-columns: minmax(260px, 1.4fr) repeat(2, minmax(180px, 1fr));
-    gap: 32px;
+    grid-template-columns: minmax(260px, 1fr) minmax(280px, 340px) minmax(260px, 1fr);
+    align-items: start;
+    gap: 42px;
+}
+
+.footer-brand {
+    justify-self: start;
+    max-width: 420px;
 }
 
 .footer-brand h2,
@@ -784,6 +794,9 @@ textarea:focus-visible {
     display: grid;
     align-content: start;
     gap: 14px;
+    justify-self: center;
+    width: 100%;
+    max-width: 340px;
 }
 
 .sponsor-grid {
@@ -807,21 +820,25 @@ textarea:focus-visible {
     letter-spacing: 0;
 }
 
-.amazon-logo {
+.site-footer .sponsor-logo:hover {
+    color: var(--night);
+}
+
+.site-footer .amazon-logo {
     color: #ffb84d;
     font-size: 1.08rem;
 }
 
-.samsung-logo {
+.site-footer .samsung-logo {
     color: #8bd3ff;
     font-size: 0.92rem;
 }
 
-.apple-logo {
+.site-footer .apple-logo {
     color: #f8fafc;
 }
 
-.sony-logo {
+.site-footer .sony-logo {
     color: #d8ff88;
     font-size: 1.04rem;
 }
@@ -830,6 +847,8 @@ textarea:focus-visible {
     display: grid;
     align-content: start;
     gap: 8px;
+    justify-self: end;
+    min-width: 260px;
 }
 
 .site-footer a {
@@ -969,10 +988,18 @@ textarea:focus-visible {
 
     .footer-content {
         grid-template-columns: 1fr;
+        gap: 28px;
     }
 
     .sponsor-grid {
         grid-template-columns: repeat(2, minmax(140px, 1fr));
+    }
+
+    .footer-brand,
+    .footer-sponsors,
+    .footer-links {
+        justify-self: stretch;
+        max-width: none;
     }
 
     .footer-bottom {
