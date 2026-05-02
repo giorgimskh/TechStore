@@ -4,7 +4,7 @@ TechStore is a responsive HTML and CSS landing page for a modern technology stor
 
 ## Live Preview
 
-- Browser preview: https://raw.githack.com/giorgimskh/TechStore/main/index.html
+- Browser preview: https://raw.githack.com/giorgimskh/TechStore/main/index.html?v=20260502-2
 - GitHub repository: https://github.com/giorgimskh/TechStore
 
 ## Features
