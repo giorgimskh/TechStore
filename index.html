@@ -14,7 +14,8 @@
     <header class="site-header">
         <div class="container navbar">
             <a href="#home" class="logo" aria-label="TechStore home">
-                <img src="images/techstore-logo.png" alt="TechStore logo">
+                <svg class="logo-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                <span class="logo-text">TechStore</span>
             </a>
 
             <!-- Header decoration; the nav stays separate so alignment is easier to tune. -->
@@ -46,6 +47,15 @@
                 <a href="#deals">Deals</a>
                 <a href="#contact">Contact</a>
                 <a href="#register">Register</a>
+                <div class="nav-actions">
+                    <button id="profile-toggle-btn" class="profile-btn" aria-label="Open profile settings" title="User Profile & Settings">
+                        <span class="profile-icon">👤</span>
+                    </button>
+                    <button id="cart-toggle-btn" class="cart-btn" aria-label="Open shopping cart">
+                        <span class="cart-icon">🛒</span>
+                        <span class="cart-badge" id="cart-badge-count">0</span>
+                    </button>
+                </div>
             </nav>
         </div>
     </header>
@@ -93,82 +103,28 @@
                     </p>
                 </div>
 
-                <input type="checkbox" id="product-toggle" class="product-filter" aria-label="Show all products">
+                <!-- Search and Filter Controls -->
+                <div class="catalog-controls">
+                    <div class="search-box-wrapper">
+                        <input type="text" id="product-search" placeholder="Search products by title or description..." aria-label="Search products">
+                        <span class="search-icon">🔍</span>
+                    </div>
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-category="all">All Tech</button>
+                        <button class="filter-tab" data-category="laptops">Laptops</button>
+                        <button class="filter-tab" data-category="smartphones">Smartphones</button>
+                        <button class="filter-tab" data-category="accessories">Accessories</button>
+                        <button class="filter-tab" data-category="wearables">Wearables</button>
+                    </div>
+                </div>
 
                 <div class="product-grid" id="product-grid">
-                    <article class="product-card" data-product-set="featured">
-                        <span class="product-badge">Best value</span>
-                        <img src="images/laptop.jpg" alt="Gaming laptop on a work desk" class="product-image" loading="lazy">
-
-                        <div class="product-info">
-                            <h3 class="product-title">Gaming Laptop</h3>
-                            <p class="product-text">Powerful performance for studying, gaming, and creative work.</p>
-                            <p class="product-price">$999</p>
-                        </div>
-                    </article>
-
-                    <article class="product-card" data-product-set="featured">
-                        <span class="product-badge">New arrival</span>
-                        <img src="images/smartphone.jpg" alt="Modern smartphone with a bright display" class="product-image" loading="lazy">
-
-                        <div class="product-info">
-                            <h3 class="product-title">Smartphone Pro</h3>
-                            <p class="product-text">A modern smartphone with a sharp display and fast performance.</p>
-                            <p class="product-price">$699</p>
-                        </div>
-                    </article>
-
-                    <article class="product-card" data-product-set="featured">
-                        <span class="product-badge">Top rated</span>
-                        <img src="images/headphones.jpg" alt="Wireless headphones on a clean background" class="product-image" loading="lazy">
-
-                        <div class="product-info">
-                            <h3 class="product-title">Wireless Headphones</h3>
-                            <p class="product-text">Noise-cancelling sound for music, calls, and online classes.</p>
-                            <p class="product-price">$149</p>
-                        </div>
-                    </article>
-
-                    <!-- These extra cards open when the product button is clicked. -->
-                    <article class="product-card" data-product-set="more">
-                        <span class="product-badge">Pro gear</span>
-                        <img src="images/gaming-mouse.jpg" alt="RGB gaming mouse on a desk" class="product-image" loading="lazy">
-
-                        <div class="product-info">
-                            <h3 class="product-title">Gaming Mouse</h3>
-                            <p class="product-text">Fast response, precise control, and RGB lighting for competitive gaming.</p>
-                            <p class="product-price">$79</p>
-                        </div>
-                    </article>
-
-                    <article class="product-card" data-product-set="more">
-                        <span class="product-badge">Performance</span>
-                        <img src="images/ram.jpg" alt="Computer RAM memory modules" class="product-image" loading="lazy">
-
-                        <div class="product-info">
-                            <h3 class="product-title">RGB RAM Kit</h3>
-                            <p class="product-text">High-speed memory for smoother multitasking, gaming, and creative apps.</p>
-                            <p class="product-price">$129</p>
-                        </div>
-                    </article>
-
-                    <article class="product-card" data-product-set="more">
-                        <span class="product-badge">Wearable</span>
-                        <img src="images/smartwatch.jpg" alt="Smartwatch with modern display" class="product-image" loading="lazy">
-
-                        <div class="product-info">
-                            <h3 class="product-title">Smartwatch</h3>
-                            <p class="product-text">Track workouts, messages, and daily goals from your wrist.</p>
-                            <p class="product-price">$199</p>
-                        </div>
-                    </article>
+                    <!-- Products are rendered here dynamically using JavaScript -->
                 </div>
 
                 <div class="product-actions">
-                    <label for="product-toggle" class="btn product-toggle">
-                        <span class="toggle-show">Show All Products</span>
-                        <span class="toggle-hide">Show Featured Products</span>
-                    </label>
+                    <button id="show-more-btn" class="btn product-toggle-btn">Show All Products</button>
+                    <p id="catalog-count-message" class="catalog-count-message">Showing 3 of 11 products</p>
                 </div>
             </div>
         </section>
@@ -274,6 +230,24 @@
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
+                </div>
+            </div>
+        </section>
+
+        <section id="reviews" class="reviews-section">
+            <div class="container">
+                <div class="section-header">
+                    <p class="eyebrow">Customer reviews</p>
+                    <h2 class="section-title">What Tech Lovers Say</h2>
+                    <p class="section-description">
+                        Real-time reviews fetched from our global database of creators, students, and professionals.
+                    </p>
+                </div>
+                <div class="reviews-grid" id="reviews-grid">
+                    <div class="reviews-loading">
+                        <span class="spinner"></span>
+                        <p>Syncing latest client feedback...</p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -394,5 +368,187 @@
             </div>
         </div>
     </footer>
+
+    <!-- Shopping Cart Drawer -->
+    <div id="cart-drawer" class="cart-drawer" aria-hidden="true">
+        <div class="cart-drawer-overlay" id="cart-overlay"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h2>Your Cart</h2>
+                <button id="cart-close-btn" class="cart-close-btn" aria-label="Close cart">&times;</button>
+            </div>
+            
+            <div class="cart-drawer-body">
+                <div id="cart-empty-message" class="cart-empty-message">
+                    <div class="cart-empty-icon">🛒</div>
+                    <h3>Your cart is empty</h3>
+                    <p>Add some high-performance tech to get started!</p>
+                    <a href="#products" id="cart-explore-btn" class="btn explore-btn">Explore Catalog</a>
+                </div>
+                <div id="cart-items-list" class="cart-items-list">
+                    <!-- Cart items injected here dynamically -->
+                </div>
+            </div>
+            
+            <div class="cart-drawer-footer" id="cart-summary-section">
+                <!-- Promo Deals Selection (Radio buttons, click only one) -->
+                <div class="cart-deals-container">
+                    <h3 class="trans-select-deal">Select Active Deal</h3>
+                    <div class="deals-options-list">
+                        <label class="deal-option-label">
+                            <input type="radio" name="cart-deal" value="none" checked>
+                            <span class="deal-custom-radio"></span>
+                            <span class="deal-option-text trans-deal-none">No Deal Applied</span>
+                        </label>
+                        <label class="deal-option-label">
+                            <input type="radio" name="cart-deal" value="student">
+                            <span class="deal-custom-radio"></span>
+                            <span class="deal-option-text trans-deal-student">Student Bundle (10% Off)</span>
+                        </label>
+                        <label class="deal-option-label">
+                            <input type="radio" name="cart-deal" value="wfh">
+                            <span class="deal-custom-radio"></span>
+                            <span class="deal-option-text trans-deal-wfh">Work From Home (15% Off)</span>
+                        </label>
+                        <label class="deal-option-label">
+                            <input type="radio" name="cart-deal" value="gaming">
+                            <span class="deal-custom-radio"></span>
+                            <span class="deal-option-text trans-deal-gaming">Gaming Essentials (12% Off)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="cart-totals">
+                    <div class="cart-total-row">
+                        <span class="trans-subtotal">Subtotal</span>
+                        <span id="cart-subtotal">$0.00</span>
+                    </div>
+                    <div class="cart-total-row" id="cart-discount-row" style="display: none;">
+                        <span class="trans-discount">Discount</span>
+                        <span id="cart-discount">-$0.00</span>
+                    </div>
+                    <div class="cart-total-row">
+                        <span class="trans-vat">VAT (20% Inc.)</span>
+                        <span id="cart-tax">$0.00</span>
+                    </div>
+                    <div class="cart-total-row total-row-main">
+                        <span class="trans-total">Total</span>
+                        <span id="cart-total">$0.00</span>
+                    </div>
+                </div>
+                
+                <!-- Card details payment form -->
+                <div class="checkout-payment-form">
+                    <h3>Payment Details</h3>
+                    <div class="cart-form-group">
+                        <label for="checkout-cardholder">Cardholder Name</label>
+                        <input type="text" id="checkout-cardholder" placeholder="Giorgi Beridze" required autocomplete="cc-name">
+                    </div>
+                    <div class="cart-form-group">
+                        <label for="checkout-cardnumber">Card Number</label>
+                        <input type="text" id="checkout-cardnumber" placeholder="4242 4242 4242 4242" maxlength="19" required autocomplete="cc-number">
+                    </div>
+                    <div class="cart-form-row">
+                        <div class="cart-form-group">
+                            <label for="checkout-expiry">Expiry Date</label>
+                            <input type="text" id="checkout-expiry" placeholder="MM/YY" maxlength="5" required autocomplete="cc-exp">
+                        </div>
+                        <div class="cart-form-group">
+                            <label for="checkout-cvv">CVV</label>
+                            <input type="password" id="checkout-cvv" placeholder="•••" maxlength="3" required autocomplete="cc-csc">
+                        </div>
+                    </div>
+                </div>
+
+                <button id="checkout-btn" class="btn checkout-btn">
+                    <span class="btn-text">Place Order Now</span>
+                    <span class="btn-spinner hidden"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- User Profile & Settings Drawer -->
+    <div id="profile-drawer" class="cart-drawer" aria-hidden="true">
+        <div class="cart-drawer-overlay" id="profile-overlay"></div>
+        <div class="cart-drawer-content">
+            <div class="cart-drawer-header">
+                <h2 id="profile-drawer-title">User Profile & Settings</h2>
+                <button id="profile-close-btn" class="cart-close-btn" aria-label="Close profile">&times;</button>
+            </div>
+            
+            <div class="cart-drawer-body">
+                <!-- Configure Language & Currency -->
+                <div class="profile-config-section">
+                    <div class="profile-field-group">
+                        <label id="profile-lang-label" for="profile-language-select">Interface Language</label>
+                        <select id="profile-language-select" class="currency-select">
+                            <option value="EN">English</option>
+                            <option value="KA">Georgian (ქართული)</option>
+                        </select>
+                    </div>
+                    <div class="profile-field-group">
+                        <label id="profile-curr-label" for="profile-currency-select">Display Currency</label>
+                        <select id="profile-currency-select" class="currency-select">
+                            <option value="USD">USD ($)</option>
+                            <option value="EUR">EUR (€)</option>
+                            <option value="GEL">GEL (₾)</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <hr class="profile-divider">
+                
+                <!-- History & Submissions Tabs -->
+                <div class="profile-tabs-header">
+                    <button class="profile-tab-btn active" data-tab="payments" id="profile-tab-payments-btn">Payment History</button>
+                    <button class="profile-tab-btn" data-tab="submissions" id="profile-tab-submissions-btn">Service Requests</button>
+                </div>
+                
+                <div class="profile-tabs-content">
+                    <!-- Payments Pane -->
+                    <div id="profile-pane-payments" class="profile-pane active">
+                        <div id="payment-empty-message" class="cart-empty-message">
+                            <div class="cart-empty-icon">📜</div>
+                            <h3 class="trans-payment-empty-title">No past transactions</h3>
+                            <p class="trans-payment-empty-desc">When you complete a purchase, your receipt details will be displayed here.</p>
+                        </div>
+                        <div id="payment-items-list" class="payment-items-list">
+                            <!-- Past orders injected here dynamically -->
+                        </div>
+                    </div>
+                    
+                    <!-- Submissions Pane -->
+                    <div id="profile-pane-submissions" class="profile-pane">
+                        <div id="submissions-empty-message" class="cart-empty-message">
+                            <div class="cart-empty-icon">🛠</div>
+                            <h3 class="trans-service-empty-title">No service requests</h3>
+                            <p class="trans-service-empty-desc">Any interest forms or contact requests you submit will appear here.</p>
+                        </div>
+                        <div id="submissions-items-list" class="submissions-items-list">
+                            <!-- Submitted forms injected here dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Details Modal -->
+    <div id="product-modal" class="modal-wrapper" aria-hidden="true">
+        <div class="modal-overlay" id="modal-overlay"></div>
+        <div class="modal-content-container">
+            <button id="modal-close-btn" class="modal-close-btn" aria-label="Close details">&times;</button>
+            <div id="modal-body-content">
+                <!-- Dynamic product specifications loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Core Interactive Logic -->
+    <script src="js/main.js" defer></script>
 </body>
 </html>
