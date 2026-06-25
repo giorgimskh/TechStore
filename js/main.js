@@ -171,6 +171,20 @@ document.addEventListener('DOMContentLoaded', () => {
             authorizing: "Authorizing card...",
             
             profileTitle: "User Profile & Settings",
+            authLogInBtn: "Log In",
+            authRegisterBtn: "Register",
+            usernameLabel: "Username",
+            passwordLabel: "Password",
+            emailLabel: "Email Address",
+            signinToggleText: "Don't have an account?",
+            registerToggleText: "Already have an account?",
+            authSignInTitle: "Sign In",
+            authRegisterTitle: "Register",
+            signinUsernamePlaceholder: "Enter username",
+            signinPasswordPlaceholder: "Enter password",
+            registerUsernamePlaceholder: "Choose username",
+            registerEmailPlaceholder: "Enter email",
+            registerPasswordPlaceholder: "Create password",
             langLabel: "Interface Language",
             currLabel: "Display Currency",
             tabPayments: "Payment History",
@@ -248,6 +262,20 @@ document.addEventListener('DOMContentLoaded', () => {
             authorizing: "ტრანზაქცია მუშავდება...",
             
             profileTitle: "მომხმარებლის პროფილი",
+            authLogInBtn: "შესვლა",
+            authRegisterBtn: "რეგისტრაცია",
+            usernameLabel: "მომხმარებლის სახელი",
+            passwordLabel: "პაროლი",
+            emailLabel: "ელ. ფოსტა",
+            signinToggleText: "არ გაქვთ ანგარიში?",
+            registerToggleText: "უკვე გაქვთ ანგარიში?",
+            authSignInTitle: "შესვლა",
+            authRegisterTitle: "რეგისტრაცია",
+            signinUsernamePlaceholder: "შეიყვანეთ მომხმარებლის სახელი",
+            signinPasswordPlaceholder: "შეიყვანეთ პაროლი",
+            registerUsernamePlaceholder: "აირჩიეთ მომხმარებლის სახელი",
+            registerEmailPlaceholder: "შეიყვანეთ ელ. ფოსტა",
+            registerPasswordPlaceholder: "შექმენით პაროლი",
             langLabel: "ინტერფეისის ენა",
             currLabel: "ვალუტა",
             tabPayments: "გადახდების ისტორია",
@@ -411,6 +439,56 @@ document.addEventListener('DOMContentLoaded', () => {
             if (emptyPayDesc) emptyPayDesc.textContent = dict.noTransactionsDesc;
             if (emptySrvTitle) emptySrvTitle.textContent = dict.noSubmissionsTitle;
             if (emptySrvDesc) emptySrvDesc.textContent = dict.noSubmissionsDesc;
+        }
+
+        // Auth Modal translations
+        const authModal = document.getElementById('auth-modal');
+        if (authModal) {
+            const signinUsernameLabel = document.getElementById('signin-username-label');
+            const signinPasswordLabel = document.getElementById('signin-password-label');
+            const signinSubmitBtn = document.getElementById('signin-submit-btn');
+            const signinToggleText = document.getElementById('signin-toggle-text');
+            const signinToggleLink = document.getElementById('signin-toggle-link');
+            
+            const registerUsernameLabel = document.getElementById('register-username-label');
+            const registerEmailLabel = document.getElementById('register-email-label');
+            const registerPasswordLabel = document.getElementById('register-password-label');
+            const registerSubmitBtn = document.getElementById('register-submit-btn');
+            const registerToggleText = document.getElementById('register-toggle-text');
+            const registerToggleLink = document.getElementById('register-toggle-link');
+
+            const signinUsernameInput = document.getElementById('signin-username');
+            const signinPasswordInput = document.getElementById('signin-password');
+            const registerUsernameInput = document.getElementById('register-username');
+            const registerEmailInput = document.getElementById('register-email');
+            const registerPasswordInput = document.getElementById('register-password');
+
+            if (signinUsernameLabel) signinUsernameLabel.textContent = dict.usernameLabel;
+            if (signinPasswordLabel) signinPasswordLabel.textContent = dict.passwordLabel;
+            if (signinSubmitBtn) signinSubmitBtn.textContent = dict.authLogInBtn;
+            if (signinToggleText) signinToggleText.textContent = dict.signinToggleText;
+            if (signinToggleLink) signinToggleLink.textContent = dict.authRegisterBtn;
+
+            if (registerUsernameLabel) registerUsernameLabel.textContent = dict.usernameLabel;
+            if (registerEmailLabel) registerEmailLabel.textContent = dict.emailLabel;
+            if (registerPasswordLabel) registerPasswordLabel.textContent = dict.passwordLabel;
+            if (registerSubmitBtn) registerSubmitBtn.textContent = dict.authRegisterBtn;
+            if (registerToggleText) registerToggleText.textContent = dict.registerToggleText;
+            if (registerToggleLink) registerToggleLink.textContent = dict.authLogInBtn;
+
+            if (signinUsernameInput) signinUsernameInput.placeholder = dict.signinUsernamePlaceholder;
+            if (signinPasswordInput) signinPasswordInput.placeholder = dict.signinPasswordPlaceholder;
+            if (registerUsernameInput) registerUsernameInput.placeholder = dict.registerUsernamePlaceholder;
+            if (registerEmailInput) registerEmailInput.placeholder = dict.registerEmailPlaceholder;
+            if (registerPasswordInput) registerPasswordInput.placeholder = dict.registerPasswordPlaceholder;
+            
+            // Update active modal header if modal is open
+            const authModalTitle = document.getElementById('auth-modal-title');
+            if (authModalTitle && authModal.classList.contains('modal-open')) {
+                const signinForm = document.getElementById('profile-signin-form');
+                const isSignInVisible = signinForm && signinForm.style.display !== 'none';
+                authModalTitle.textContent = isSignInVisible ? dict.authSignInTitle : dict.authRegisterTitle;
+            }
         }
 
         // Translate Inventory Table Headers
@@ -1845,6 +1923,49 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.style.overflow = '';
     };
 
+    const openAuthModal = (mode = 'signin') => {
+        const authModal = document.getElementById('auth-modal');
+        if (!authModal) return;
+        
+        // Hide profile drawer so we don't have overlapping panels
+        toggleProfileDrawer(false);
+
+        authModal.classList.add('modal-open');
+        authModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+
+        showAuthForm(mode);
+    };
+
+    const showAuthForm = (mode) => {
+        const authModalTitle = document.getElementById('auth-modal-title');
+        const signinForm = document.getElementById('profile-signin-form');
+        const registerForm = document.getElementById('profile-register-form');
+        const dict = translations[AppState.language];
+
+        if (mode === 'signin') {
+            if (signinForm) signinForm.style.display = 'block';
+            if (registerForm) registerForm.style.display = 'none';
+            if (authModalTitle) {
+                authModalTitle.textContent = dict.authSignInTitle;
+            }
+        } else {
+            if (signinForm) signinForm.style.display = 'none';
+            if (registerForm) registerForm.style.display = 'block';
+            if (authModalTitle) {
+                authModalTitle.textContent = dict.authRegisterTitle;
+            }
+        }
+    };
+
+    const closeAuthModal = () => {
+        const authModal = document.getElementById('auth-modal');
+        if (!authModal) return;
+        authModal.classList.remove('modal-open');
+        authModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    };
+
     const renderCompareTable = () => {
         if (!elements.compareModalBody) return;
         const productsToCompare = AppState.compareList.map(id => AppState.products.find(p => p.id === id)).filter(Boolean);
@@ -2248,39 +2369,44 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Profile auth form toggles and handlers
+        // Profile auth modal toggles and handlers
         const profileSignInBtn = document.getElementById('profile-signin-btn');
         const profileRegisterBtn = document.getElementById('profile-register-btn');
         
         if (profileSignInBtn) {
             profileSignInBtn.addEventListener('click', () => {
-                if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'block';
-                if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
-                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'none';
+                openAuthModal('signin');
             });
         }
 
         if (profileRegisterBtn) {
             profileRegisterBtn.addEventListener('click', () => {
-                if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'block';
-                if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
-                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'none';
+                openAuthModal('register');
             });
         }
 
-        const signinCancelBtn = document.getElementById('signin-cancel-btn');
-        if (signinCancelBtn) {
-            signinCancelBtn.addEventListener('click', () => {
-                if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
-                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'flex';
+        // Inside Auth Modal: Close and Toggle events
+        const authCloseBtn = document.getElementById('auth-close-btn');
+        const authOverlay = document.getElementById('auth-overlay');
+        const signinToggleLink = document.getElementById('signin-toggle-link');
+        const registerToggleLink = document.getElementById('register-toggle-link');
+
+        if (authCloseBtn) {
+            authCloseBtn.addEventListener('click', closeAuthModal);
+        }
+        if (authOverlay) {
+            authOverlay.addEventListener('click', closeAuthModal);
+        }
+        if (signinToggleLink) {
+            signinToggleLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showAuthForm('register');
             });
         }
-
-        const registerCancelBtn = document.getElementById('register-cancel-btn');
-        if (registerCancelBtn) {
-            registerCancelBtn.addEventListener('click', () => {
-                if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
-                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'flex';
+        if (registerToggleLink) {
+            registerToggleLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                showAuthForm('signin');
             });
         }
 
@@ -2302,6 +2428,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             : `Welcome back, ${username}!`, 
                         'success'
                     );
+                    closeAuthModal();
                 }
             });
         }
@@ -2326,6 +2453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             : `Registration successful! Welcome, ${username}!`, 
                         'success'
                     );
+                    closeAuthModal();
                 }
             });
         }
