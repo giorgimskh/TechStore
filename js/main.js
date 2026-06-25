@@ -926,17 +926,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             logAppEvent('API', 'Error fetching products, utilizing local fallback state', error);
             AppState.products = [
-                { id: "prod-1", title: "Lenovo Legion Pro 5", description: "High performance gaming laptop featuring RTX 4070 graphics and AMD Ryzen 7 processor.", price: 1399, category: "laptops", badge: "Top Choice", brand: "Lenovo", stock: 6, soldCount: 15, image: "images/laptop.jpg", images: ["images/laptop.jpg", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "16.0 inches", processor: "AMD Ryzen 7 7745HX", ram: "16GB DDR5" },
-                { id: "prod-2", title: "Apple iPhone 15 Pro", description: "Titanium design, A17 Pro chip, customizable Action button, and a powerful camera system.", price: 999, category: "smartphones", badge: "New Arrival", brand: "Apple", stock: 12, soldCount: 48, image: "images/smartphone.jpg", images: ["images/smartphone.jpg", "images/hero-tech.jpg", "images/galaxy_s24.png"], screenSize: "6.1 inches", processor: "Apple A17 Pro", ram: "8GB LPDDR5" },
-                { id: "prod-3", title: "Sony WH-1000XM5", description: "Industry leading noise canceling wireless headphones with crystal clear hands-free calling.", price: 349, category: "accessories", badge: "Top Rated", brand: "Sony", stock: 20, soldCount: 95, image: "images/headphones.jpg", images: ["images/headphones.jpg", "images/hero-tech.jpg", "images/gaming-mouse.jpg"], screenSize: "N/A", processor: "Sony V1 Processor", ram: "N/A" },
-                { id: "prod-4", title: "Logitech G502 X Plus", description: "Iconic gaming mouse upgraded with hybrid optical-mechanical switches and LIGHTSPEED wireless.", price: 149, category: "accessories", badge: "Pro Gear", brand: "Logitech", stock: 25, soldCount: 142, image: "images/gaming-mouse.jpg", images: ["images/gaming-mouse.jpg", "images/hero-tech.jpg", "images/headphones.jpg"], screenSize: "N/A", processor: "HERO 25K Sensor", ram: "N/A" },
-                { id: "prod-5", title: "Corsair Vengeance DDR5", description: "High performance RGB desktop memory kit optimized for Intel and AMD motherboards.", price: 129, category: "accessories", badge: "Performance", brand: "Corsair", stock: 18, soldCount: 64, image: "images/ram.jpg", images: ["images/ram.jpg", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "N/A", processor: "N/A", ram: "32GB (2x16GB) DDR5" },
-                { id: "prod-6", title: "Samsung Galaxy Watch 6", description: "Advanced health tracking smartwatch with customized heart rate zones and sleek design.", price: 299, category: "wearables", badge: "Best Tracker", brand: "Samsung", stock: 15, soldCount: 50, image: "images/smartwatch.jpg", images: ["images/smartwatch.jpg", "images/hero-tech.jpg", "images/apple_watch_ultra.png"], screenSize: "1.3 inches", processor: "Exynos W930 Dual-Core", ram: "2GB RAM" },
-                { id: "prod-7", title: "Apple MacBook Pro M3", description: "Supercharged by the M3 chip with a beautiful Liquid Retina XDR screen and massive battery life.", price: 1599, category: "laptops", badge: "Premium", brand: "Apple", stock: 8, soldCount: 22, image: "images/macbook.png", images: ["images/macbook.png", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "14.2 inches", processor: "Apple M3 Chip", ram: "8GB Unified Memory" },
-                { id: "prod-8", title: "Samsung Galaxy S24 Ultra", description: "Ultimate Galaxy smartphone featuring built-in S Pen, titanium body, and Galaxy AI features.", price: 1199, category: "smartphones", badge: "AI Powered", brand: "Samsung", stock: 9, soldCount: 30, image: "images/galaxy_s24.png", images: ["images/galaxy_s24.png", "images/hero-tech.jpg", "images/smartphone.jpg"], screenSize: "6.8 inches", processor: "Snapdragon 8 Gen 3", ram: "12GB LPDDR5X" },
-                { id: "prod-9", title: "Apple Watch Ultra 2", description: "Most rugged and capable Apple Watch designed for outdoor adventures and athletic training.", price: 799, category: "wearables", badge: "Extreme Tech", brand: "Apple", stock: 7, soldCount: 14, image: "images/apple_watch_ultra.png", images: ["images/apple_watch_ultra.png", "images/hero-tech.jpg", "images/smartwatch.jpg"], screenSize: "1.92 inches", processor: "Apple S9 SiP", ram: "64GB Storage" },
-                { id: "prod-10", title: "Asus Zephyrus G14", description: "Ultra-portable 14-inch gaming powerhouse featuring gorgeous OLED display and AMD Ryzen 9.", price: 1499, category: "laptops", badge: "OLED Edition", brand: "Asus", stock: 5, soldCount: 11, image: "images/asus_zephyrus.png", images: ["images/asus_zephyrus.png", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "14.0 inches", processor: "AMD Ryzen 9 8945HS", ram: "16GB DDR5" },
-                { id: "prod-11", title: "Keychron Q1 Pro Keyboard", description: "Full aluminum QMK/VIA wireless mechanical keyboard with double-gasket custom design.", price: 189, category: "accessories", badge: "Custom Deck", brand: "Keychron", stock: 10, soldCount: 38, image: "images/keyboard.png", images: ["images/keyboard.png", "images/hero-tech.jpg", "images/ram.jpg"], screenSize: "N/A", processor: "ARM Cortex-M4 MCU", ram: "N/A" }
+                { id: "prod-1", title: "Lenovo Legion Pro 5", description: "High performance gaming laptop featuring RTX 4070 graphics and AMD Ryzen 7 processor.", price: 1399, category: "laptops", badge: "Top Choice", brand: "Lenovo", stock: 6, soldCount: 15, image: "images/laptop.jpg", images: ["images/laptop.jpg", "images/lenovo_legion_2.png", "images/lenovo_legion_3.png"], screenSize: "16.0 inches", processor: "AMD Ryzen 7 7745HX", ram: "16GB DDR5" },
+                { id: "prod-2", title: "Apple iPhone 15 Pro", description: "Titanium design, A17 Pro chip, customizable Action button, and a powerful camera system.", price: 999, category: "smartphones", badge: "New Arrival", brand: "Apple", stock: 12, soldCount: 48, image: "images/smartphone.jpg", images: ["images/smartphone.jpg", "images/phone_camera_detail.png", "images/phone_screen_detail.png"], screenSize: "6.1 inches", processor: "Apple A17 Pro", ram: "8GB LPDDR5" },
+                { id: "prod-3", title: "Sony WH-1000XM5", description: "Industry leading noise canceling wireless headphones with crystal clear hands-free calling.", price: 349, category: "accessories", badge: "Top Rated", brand: "Sony", stock: 20, soldCount: 95, image: "images/headphones.jpg", images: ["images/headphones.jpg", "images/headphones_earcup_detail.png", "images/headphones_case_detail.png"], screenSize: "N/A", processor: "Sony V1 Processor", ram: "N/A" },
+                { id: "prod-4", title: "Logitech G502 X Plus", description: "Iconic gaming mouse upgraded with hybrid optical-mechanical switches and LIGHTSPEED wireless.", price: 149, category: "accessories", badge: "Pro Gear", brand: "Logitech", stock: 25, soldCount: 142, image: "images/gaming-mouse.jpg", images: ["images/gaming-mouse.jpg", "images/gaming_mouse_sensor.png", "images/gaming_mouse_wheel.png"], screenSize: "N/A", processor: "HERO 25K Sensor", ram: "N/A" },
+                { id: "prod-5", title: "Corsair Vengeance DDR5", description: "High performance RGB desktop memory kit optimized for Intel and AMD motherboards.", price: 129, category: "accessories", badge: "Performance", brand: "Corsair", stock: 18, soldCount: 64, image: "images/ram.jpg", images: ["images/ram.jpg", "images/corsair_ram_detail.png", "images/ram_contacts_detail.png"], screenSize: "N/A", processor: "N/A", ram: "32GB (2x16GB) DDR5" },
+                { id: "prod-6", title: "Samsung Galaxy Watch 6", description: "Advanced health tracking smartwatch with customized heart rate zones and sleek design.", price: 299, category: "wearables", badge: "Best Tracker", brand: "Samsung", stock: 15, soldCount: 50, image: "images/smartwatch.jpg", images: ["images/smartwatch.jpg", "images/smartwatch_screen_detail.png", "images/smartwatch_sensor_detail.png"], screenSize: "1.3 inches", processor: "Exynos W930 Daily-Core", ram: "2GB RAM" },
+                { id: "prod-7", title: "Apple MacBook Pro M3", description: "Supercharged by the M3 chip with a beautiful Liquid Retina XDR screen and massive battery life.", price: 1599, category: "laptops", badge: "Premium", brand: "Apple", stock: 8, soldCount: 22, image: "images/macbook.png", images: ["images/macbook.png", "images/macbook_2.png", "images/macbook_3.png"], screenSize: "14.2 inches", processor: "Apple M3 Chip", ram: "8GB Unified Memory" },
+                { id: "prod-8", title: "Samsung Galaxy S24 Ultra", description: "Ultimate Galaxy smartphone featuring built-in S Pen, titanium body, and Galaxy AI features.", price: 1199, category: "smartphones", badge: "AI Powered", brand: "Samsung", stock: 9, soldCount: 30, image: "images/galaxy_s24.png", images: ["images/galaxy_s24.png", "images/phone_camera_detail.png", "images/phone_screen_detail.png"], screenSize: "6.8 inches", processor: "Snapdragon 8 Gen 3", ram: "12GB LPDDR5X" },
+                { id: "prod-9", title: "Apple Watch Ultra 2", description: "Most rugged and capable Apple Watch designed for outdoor adventures and athletic training.", price: 799, category: "wearables", badge: "Extreme Tech", brand: "Apple", stock: 7, soldCount: 14, image: "images/apple_watch_ultra.png", images: ["images/apple_watch_ultra.png", "images/smartwatch_screen_detail.png", "images/smartwatch_sensor_detail.png"], screenSize: "1.92 inches", processor: "Apple S9 SiP", ram: "64GB Storage" },
+                { id: "prod-10", title: "Asus Zephyrus G14", description: "Ultra-portable 14-inch gaming powerhouse featuring gorgeous OLED display and AMD Ryzen 9.", price: 1499, category: "laptops", badge: "OLED Edition", brand: "Asus", stock: 5, soldCount: 11, image: "images/asus_zephyrus.png", images: ["images/asus_zephyrus.png", "images/asus_zephyrus_cover.png", "images/lenovo_legion_2.png"], screenSize: "14.0 inches", processor: "AMD Ryzen 9 8945HS", ram: "16GB DDR5" },
+                { id: "prod-11", title: "Keychron Q1 Pro Keyboard", description: "Full aluminum QMK/VIA wireless mechanical keyboard with double-gasket custom design.", price: 189, category: "accessories", badge: "Custom Deck", brand: "Keychron", stock: 10, soldCount: 38, image: "images/keyboard.png", images: ["images/keyboard.png", "images/keyboard_switch_detail.png", "images/keyboard_knob_detail.png"], screenSize: "N/A", processor: "ARM Cortex-M4 MCU", ram: "N/A" }
             ];
             saveProductsToStorage();
         }
@@ -1242,8 +1242,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pricesArr = [p90, p60, p30, p15, pToday];
         const maxP = Math.max(...pricesArr);
         const minP = Math.min(...pricesArr);
-        const rangeP = maxP - minP || 1;
-        const mapY = (val) => 70 - ((val - minP) / rangeP) * 60;
+        const mapY = (val) => 90 - ((val - minP) / (maxP - minP || 1)) * 70;
 
         const y90 = mapY(p90);
         const y60 = mapY(p60);
@@ -1281,8 +1280,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mPricesArr = [pm0, pm1, pm2, pm3, pm4, pm5];
         const maxMP = Math.max(...mPricesArr);
         const minMP = Math.min(...mPricesArr);
-        const rangeMP = maxMP - minMP || 1;
-        const mapMY = (val) => 70 - ((val - minMP) / rangeMP) * 60;
+        const mapMY = (val) => 90 - ((val - minMP) / (maxMP - minMP || 1)) * 70;
 
         const ym0 = mapMY(pm0);
         const ym1 = mapMY(pm1);
@@ -1306,17 +1304,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const avgRating = ((r5 * 5 + r4 * 4 + r3 * 3 + r2 * 2 + r1 * 1) / totalReviews).toFixed(1);
 
         const chartHtml = `
-            <div class="price-history-chart-card" style="margin: 16px 0; background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 12px 16px; box-sizing: border-box; position: relative;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                    <h4 style="margin: 0; color: #ffffff; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 4px;">
-                        <span style="color: var(--electric-green);">📊</span> ${AppState.language === 'KA' ? 'ფასების ტრენდი' : 'Price Trend'}
-                    </h4>
-                    <!-- Days / Months Toggle buttons -->
-                    <div style="display: flex; gap: 4px;">
-                        <button id="btn-chart-days" class="btn" style="padding: 4px 8px; font-size: 0.65rem; border-radius: 4px; background: var(--electric-green); color: #000; font-weight: 800; border: none; cursor: pointer; min-height: unset; transition: all 0.2s;">
+            <div class="price-history-chart-card" style="margin: 16px 0; background: rgba(9, 3, 13, 0.6); border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 12px; padding: 16px; box-sizing: border-box; position: relative; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div>
+                        <h4 style="margin: 0; color: #ffffff; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                            <span style="color: var(--electric-green);">📈</span> ${AppState.language === 'KA' ? 'ფასების ანალიტიკა' : 'Product Analytics'}
+                        </h4>
+                        <div id="chart-legend" style="display: flex; align-items: center; gap: 8px; margin-top: 4px; font-size: 0.75rem; color: #94a3b8; font-weight: 600;">
+                            <span id="legend-price" style="font-size: 0.95rem; font-weight: 800; color: #ffffff;">${formatPrice(price)}</span>
+                            <span id="legend-change" style="color: var(--electric-green); font-weight: 750;">0.00%</span>
+                            <span id="legend-date" style="color: #64748b; font-size: 0.7rem;">Today</span>
+                        </div>
+                    </div>
+                    <div style="display: flex; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 2px;">
+                        <button id="btn-chart-days" style="padding: 4px 10px; font-size: 0.68rem; border-radius: 4px; background: var(--electric-green); color: #000000; font-weight: 800; border: none; cursor: pointer; transition: all 0.2s;">
                             ${AppState.language === 'KA' ? 'დღეები' : 'Days'}
                         </button>
-                        <button id="btn-chart-months" class="btn" style="padding: 4px 8px; font-size: 0.65rem; border-radius: 4px; background: rgba(255, 255, 255, 0.05); color: #cbd5e1; font-weight: 800; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; min-height: unset; transition: all 0.2s;">
+                        <button id="btn-chart-months" style="padding: 4px 10px; font-size: 0.68rem; border-radius: 4px; background: transparent; color: #cbd5e1; font-weight: 800; border: none; cursor: pointer; transition: all 0.2s;">
                             ${AppState.language === 'KA' ? 'თვეები' : 'Months'}
                         </button>
                     </div>
@@ -1324,75 +1328,88 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 <!-- 90-Days Price Chart -->
                 <div id="chart-container-days" style="display: block; position: relative;">
-                    <div class="chart-tooltip" style="position: absolute; display: none; background: rgba(9, 3, 13, 0.95); border: 1px solid var(--electric-green); padding: 4px 8px; border-radius: 6px; color: #fff; font-size: 0.72rem; pointer-events: none; z-index: 100; font-weight: 700; white-space: nowrap; transform: translate(-50%, -100%); margin-top: -8px; box-shadow: 0 0 10px var(--electric-green);"></div>
-                    <svg viewBox="0 0 300 80" style="width: 100%; height: 60px; overflow: visible; display: block;">
+                    <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible; display: block;">
                         <defs>
-                            <linearGradient id="chart-glow-${productId}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="var(--electric-green)" stop-opacity="0.35"/>
+                            <linearGradient id="chart-glow-days-${productId}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--electric-green)" stop-opacity="0.25"/>
                                 <stop offset="100%" stop-color="var(--electric-green)" stop-opacity="0"/>
                             </linearGradient>
                         </defs>
-                        <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday} L 290 80 L 10 80 Z" fill="url(#chart-glow-${productId})"></path>
-                        <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday}" fill="none" stroke="var(--electric-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px var(--electric-green));"></path>
                         
-                        <!-- Visual points and alternating invisible hover targets for correct sibling matching -->
-                        <circle cx="10" cy="${y90}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="10" cy="${y90}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p90)}" data-label="-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <!-- Grid Lines & Labels -->
+                        <line x1="40" y1="20" x2="290" y2="20" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                        <text x="35" y="23" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(maxP)}</text>
+                        
+                        <line x1="40" y1="55" x2="290" y2="55" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                        <text x="35" y="58" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(Math.round((maxP + minP) / 2))}</text>
+                        
+                        <line x1="40" y1="90" x2="290" y2="90" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                        <text x="35" y="93" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(minP)}</text>
 
-                        <circle cx="80" cy="${y60}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="80" cy="${y60}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p60)}" data-label="-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <line x1="40" y1="100" x2="290" y2="100" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1" />
 
-                        <circle cx="150" cy="${y30}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="150" cy="${y30}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p30)}" data-label="-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-
-                        <circle cx="220" cy="${y15}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="220" cy="${y15}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p15)}" data-label="-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-
-                        <circle cx="290" cy="${yToday}" r="4" fill="var(--electric-green)" stroke="var(--mint)" stroke-width="1.5"></circle>
-                        <circle cx="290" cy="${yToday}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pToday)}" data-label="${AppState.language === 'KA' ? 'დღეს' : 'Today'}" data-orig-r="4" data-orig-fill="var(--electric-green)" style="cursor: pointer;"></circle>
+                        <!-- Area Fill -->
+                        <path d="M 40 ${y90} L 102.5 ${y60} L 165 ${y30} L 227.5 ${y15} L 290 ${yToday} L 290 100 L 40 100 Z" fill="url(#chart-glow-days-${productId})"></path>
+                        
+                        <!-- Stroke Line -->
+                        <path d="M 40 ${y90} L 102.5 ${y60} L 165 ${y30} L 227.5 ${y15} L 290 ${yToday}" fill="none" stroke="var(--electric-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px rgba(57, 255, 20, 0.5));"></path>
+                        
+                        <!-- Crosshairs -->
+                        <line id="crosshair-x-days" x1="0" y1="10" x2="0" y2="100" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                        <line id="crosshair-y-days" x1="40" y1="0" x2="290" y2="0" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                        
+                        <circle id="tracking-dot-days" cx="290" cy="${yToday}" r="5" fill="var(--electric-green)" stroke="#ffffff" stroke-width="1.5" style="filter: drop-shadow(0px 0px 5px var(--electric-green)); transition: cx 0.1s ease, cy 0.1s ease;" />
+                        
+                        <!-- Interactive Hover Area Overlay -->
+                        <rect x="40" y="10" width="250" height="90" fill="transparent" style="cursor: crosshair; pointer-events: all;" class="chart-overlay-rect" data-type="days" />
                     </svg>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 600;">
-                        <span>-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
-                        <span>-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
-                        <span>-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
-                        <span>-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 700; padding-left: 40px; padding-right: 10px; box-sizing: border-box;">
+                        <span>-90 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
+                        <span>-60 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
+                        <span>-30 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
+                        <span>-15 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
                         <span>${AppState.language === 'KA' ? 'დღეს' : 'Today'}</span>
                     </div>
                 </div>
 
                 <!-- Monthly Price Chart -->
                 <div id="chart-container-months" style="display: none; position: relative;">
-                    <div class="chart-tooltip" style="position: absolute; display: none; background: rgba(9, 3, 13, 0.95); border: 1px solid var(--electric-green); padding: 4px 8px; border-radius: 6px; color: #fff; font-size: 0.72rem; pointer-events: none; z-index: 100; font-weight: 700; white-space: nowrap; transform: translate(-50%, -100%); margin-top: -8px; box-shadow: 0 0 10px var(--electric-green);"></div>
-                    <svg viewBox="0 0 300 80" style="width: 100%; height: 60px; overflow: visible; display: block;">
+                    <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible; display: block;">
                         <defs>
-                            <linearGradient id="chart-glow-m-${productId}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="var(--violet)" stop-opacity="0.35"/>
+                            <linearGradient id="chart-glow-months-${productId}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--violet)" stop-opacity="0.25"/>
                                 <stop offset="100%" stop-color="var(--violet)" stop-opacity="0"/>
                             </linearGradient>
                         </defs>
-                        <path d="M 10 ${ym0} L 66 ${ym1} L 122 ${ym2} L 178 ${ym3} L 234 ${ym4} L 290 ${ym5} L 290 80 L 10 80 Z" fill="url(#chart-glow-m-${productId})"></path>
-                        <path d="M 10 ${ym0} L 66 ${ym1} L 122 ${ym2} L 178 ${ym3} L 234 ${ym4} L 290 ${ym5}" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px var(--violet));"></path>
                         
-                        <!-- Visual points and alternating invisible hover targets for correct sibling matching -->
-                        <circle cx="10" cy="${ym0}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="10" cy="${ym0}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm0)}" data-label="${mLabel0}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <!-- Grid Lines & Labels -->
+                        <line x1="40" y1="20" x2="290" y2="20" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                        <text x="35" y="23" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(maxMP)}</text>
+                        
+                        <line x1="40" y1="55" x2="290" y2="55" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                        <text x="35" y="58" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(Math.round((maxMP + minMP) / 2))}</text>
+                        
+                        <line x1="40" y1="90" x2="290" y2="90" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                        <text x="35" y="93" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(minMP)}</text>
 
-                        <circle cx="66" cy="${ym1}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="66" cy="${ym1}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm1)}" data-label="${mLabel1}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <line x1="40" y1="100" x2="290" y2="100" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1" />
 
-                        <circle cx="122" cy="${ym2}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="122" cy="${ym2}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm2)}" data-label="${mLabel2}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-
-                        <circle cx="178" cy="${ym3}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="178" cy="${ym3}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm3)}" data-label="${mLabel3}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-
-                        <circle cx="234" cy="${ym4}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="234" cy="${ym4}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm4)}" data-label="${mLabel4}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-
-                        <circle cx="290" cy="${ym5}" r="4" fill="var(--violet)" stroke="var(--pink)" stroke-width="1.5"></circle>
-                        <circle cx="290" cy="${ym5}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm5)}" data-label="${mLabel5}" data-orig-r="4" data-orig-fill="var(--violet)" style="cursor: pointer;"></circle>
+                        <!-- Area Fill -->
+                        <path d="M 40 ${ym0} L 90 ${ym1} L 140 ${ym2} L 190 ${ym3} L 240 ${ym4} L 290 ${ym5} L 290 100 L 40 100 Z" fill="url(#chart-glow-months-${productId})"></path>
+                        
+                        <!-- Stroke Line -->
+                        <path d="M 40 ${ym0} L 90 ${ym1} L 140 ${ym2} L 190 ${ym3} L 240 ${ym4} L 290 ${ym5}" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px rgba(124, 58, 237, 0.5));"></path>
+                        
+                        <!-- Crosshairs -->
+                        <line id="crosshair-x-months" x1="0" y1="10" x2="0" y2="100" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                        <line id="crosshair-y-months" x1="40" y1="0" x2="290" y2="0" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                        
+                        <circle id="tracking-dot-months" cx="290" cy="${ym5}" r="5" fill="var(--violet)" stroke="#ffffff" stroke-width="1.5" style="filter: drop-shadow(0px 0px 5px var(--violet)); transition: cx 0.1s ease, cy 0.1s ease;" />
+                        
+                        <!-- Interactive Hover Area Overlay -->
+                        <rect x="40" y="10" width="250" height="90" fill="transparent" style="cursor: crosshair; pointer-events: all;" class="chart-overlay-rect" data-type="months" />
                     </svg>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 600;">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 700; padding-left: 40px; padding-right: 10px; box-sizing: border-box;">
                         <span>${mLabel0}</span>
                         <span>${mLabel1}</span>
                         <span>${mLabel2}</span>
@@ -1519,7 +1536,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Chart Toggle and Hover Point Interactivity
+        // Chart Toggle and Crosshair Interactivity
         const chartCard = elements.modalBodyContent.querySelector('.price-history-chart-card');
         if (chartCard) {
             const btnDays = chartCard.querySelector('#btn-chart-days');
@@ -1532,62 +1549,118 @@ document.addEventListener('DOMContentLoaded', () => {
                     containerDays.style.display = 'block';
                     containerMonths.style.display = 'none';
                     btnDays.style.background = 'var(--electric-green)';
-                    btnDays.style.color = '#000';
-                    btnMonths.style.background = 'rgba(255, 255, 255, 0.05)';
+                    btnDays.style.color = '#000000';
+                    btnMonths.style.background = 'transparent';
                     btnMonths.style.color = '#cbd5e1';
                 });
                 btnMonths.addEventListener('click', () => {
                     containerDays.style.display = 'none';
                     containerMonths.style.display = 'block';
                     btnMonths.style.background = 'var(--electric-green)';
-                    btnMonths.style.color = '#000';
-                    btnDays.style.background = 'rgba(255, 255, 255, 0.05)';
+                    btnMonths.style.color = '#000000';
+                    btnDays.style.background = 'transparent';
                     btnDays.style.color = '#cbd5e1';
                 });
             }
 
-            // Bind tooltips for points in both containers
-            const setupTooltips = (container) => {
-                const tooltip = container.querySelector('.chart-tooltip');
-                const hoverPoints = container.querySelectorAll('.chart-point-hover');
-                if (!tooltip || !hoverPoints) return;
+            // Setup crosshair hover overlay tracking
+            const overlayRects = chartCard.querySelectorAll('.chart-overlay-rect');
+            const legendPrice = chartCard.querySelector('#legend-price');
+            const legendChange = chartCard.querySelector('#legend-change');
+            const legendDate = chartCard.querySelector('#legend-date');
 
-                hoverPoints.forEach(pt => {
-                    pt.addEventListener('mouseenter', () => {
-                        const price = pt.getAttribute('data-price');
-                        const label = pt.getAttribute('data-label');
-                        tooltip.innerHTML = `<div style="font-weight:800; color:var(--electric-green);">${price}</div><div style="font-size:0.6rem; color:#94a3b8;">${label}</div>`;
-                        tooltip.style.display = 'block';
+            if (legendPrice && legendChange && legendDate) {
+                overlayRects.forEach(overlay => {
+                    const type = overlay.getAttribute('data-type');
+                    const isDays = type === 'days';
+                    const container = isDays ? containerDays : containerMonths;
 
-                        // Position tooltip relative to container
-                        const ptRect = pt.getBoundingClientRect();
-                        const containerRect = container.getBoundingClientRect();
-                        const x = ptRect.left - containerRect.left + (ptRect.width / 2);
-                        const y = ptRect.top - containerRect.top - 8;
-                        tooltip.style.left = `${x}px`;
-                        tooltip.style.top = `${y}px`;
+                    // Reconstruct points to find closest on hover
+                    const pts = isDays ? [
+                        { x: 40, y: y90, price: p90, label: `-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
+                        { x: 102.5, y: y60, price: p60, label: `-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
+                        { x: 165, y: y30, price: p30, label: `-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
+                        { x: 227.5, y: y15, price: p15, label: `-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
+                        { x: 290, y: yToday, price: pToday, label: AppState.language === 'KA' ? 'დღეს' : 'Today' }
+                    ] : [
+                        { x: 40, y: ym0, price: pm0, label: mLabel0 },
+                        { x: 90, y: ym1, price: pm1, label: mLabel1 },
+                        { x: 140, y: ym2, price: pm2, label: mLabel2 },
+                        { x: 190, y: ym3, price: pm3, label: mLabel3 },
+                        { x: 240, y: ym4, price: pm4, label: mLabel4 },
+                        { x: 290, y: ym5, price: pm5, label: mLabel5 }
+                    ];
 
-                        // Highlight the visual point circle (the previous element in DOM)
-                        const visualCircle = pt.previousElementSibling;
-                        if (visualCircle) {
-                            visualCircle.setAttribute('r', '7');
-                            visualCircle.setAttribute('fill', 'var(--electric-green)');
+                    const firstPrice = pts[0].price;
+                    const crosshairX = container.querySelector(isDays ? '#crosshair-x-days' : '#crosshair-x-months');
+                    const crosshairY = container.querySelector(isDays ? '#crosshair-y-days' : '#crosshair-y-months');
+                    const trackingDot = container.querySelector(isDays ? '#tracking-dot-days' : '#tracking-dot-months');
+
+                    const resetLegend = () => {
+                        const latest = pts[pts.length - 1];
+                        legendPrice.textContent = formatPrice(latest.price);
+
+                        const changePct = ((latest.price - firstPrice) / firstPrice * 100);
+                        legendChange.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
+                        legendChange.style.color = changePct >= 0 ? 'var(--electric-green)' : '#f87171';
+                        legendDate.textContent = latest.label;
+
+                        if (crosshairX) crosshairX.style.display = 'none';
+                        if (crosshairY) crosshairY.style.display = 'none';
+                        if (trackingDot) {
+                            trackingDot.setAttribute('cx', latest.x);
+                            trackingDot.setAttribute('cy', latest.y);
                         }
+                    };
+
+                    overlay.addEventListener('mousemove', (e) => {
+                        const svg = overlay.ownerSVGElement;
+                        if (!svg) return;
+
+                        const rect = svg.getBoundingClientRect();
+                        const scaleX = 320 / rect.width;
+                        const mouseX = (e.clientX - rect.left) * scaleX;
+
+                        let closest = pts[0];
+                        let minDiff = Math.abs(mouseX - closest.x);
+                        for (let i = 1; i < pts.length; i++) {
+                            const diff = Math.abs(mouseX - pts[i].x);
+                            if (diff < minDiff) {
+                                minDiff = diff;
+                                closest = pts[i];
+                            }
+                        }
+
+                        if (crosshairX) {
+                            crosshairX.setAttribute('x1', closest.x);
+                            crosshairX.setAttribute('x2', closest.x);
+                            crosshairX.style.display = 'block';
+                        }
+                        if (crosshairY) {
+                            crosshairY.setAttribute('y1', closest.y);
+                            crosshairY.setAttribute('y2', closest.y);
+                            crosshairY.style.display = 'block';
+                        }
+                        if (trackingDot) {
+                            trackingDot.setAttribute('cx', closest.x);
+                            trackingDot.setAttribute('cy', closest.y);
+                        }
+
+                        legendPrice.textContent = formatPrice(closest.price);
+                        const changePct = ((closest.price - firstPrice) / firstPrice * 100);
+                        legendChange.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
+                        legendChange.style.color = changePct >= 0 ? 'var(--electric-green)' : '#f87171';
+                        legendDate.textContent = closest.label;
                     });
 
-                    pt.addEventListener('mouseleave', () => {
-                        tooltip.style.display = 'none';
-                        const visualCircle = pt.previousElementSibling;
-                        if (visualCircle) {
-                            visualCircle.setAttribute('r', pt.getAttribute('data-orig-r') || '3');
-                            visualCircle.setAttribute('fill', pt.getAttribute('data-orig-fill') || '#ffffff');
-                        }
+                    overlay.addEventListener('mouseleave', () => {
+                        resetLegend();
                     });
+
+                    // Set default initial state
+                    resetLegend();
                 });
-            };
-
-            if (containerDays) setupTooltips(containerDays);
-            if (containerMonths) setupTooltips(containerMonths);
+            }
         }
     };
 
