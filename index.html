@@ -46,21 +46,21 @@
                 <a href="#products">Products</a>
                 <a href="#deals">Deals</a>
                 <a href="#contact">Contact</a>
-                <a href="#register">Register</a>
-                <div class="nav-actions">
-                    <button id="profile-toggle-btn" class="profile-btn" aria-label="Open profile settings" title="User Profile & Settings">
-                        <span class="profile-icon">👤</span>
-                    </button>
-                    <button id="cart-toggle-btn" class="cart-btn" aria-label="Open shopping cart">
-                        <span class="cart-icon">🛒</span>
-                        <span class="cart-badge" id="cart-badge-count">0</span>
-                    </button>
-                    <button id="recent-toggle-btn" class="cart-btn" aria-label="Open recently viewed products" title="Recently Viewed" style="position: relative;">
-                        <span class="recent-icon">⏳</span>
-                        <span class="cart-badge" id="recent-badge-count" style="background: var(--pink);">0</span>
-                    </button>
-                </div>
+                <a href="#support" id="nav-support-link">Support</a>
             </nav>
+            <div class="nav-actions">
+                <button id="profile-toggle-btn" class="profile-btn" aria-label="Open profile settings" title="User Profile & Settings">
+                    <span class="profile-icon">👤</span>
+                </button>
+                <button id="recent-toggle-btn" class="cart-btn" aria-label="Open recently viewed products" title="Recently Viewed" style="position: relative;">
+                    <span class="recent-icon">⏳</span>
+                    <span class="cart-badge" id="recent-badge-count" style="background: var(--pink);">0</span>
+                </button>
+                <button id="cart-toggle-btn" class="cart-btn" aria-label="Open shopping cart">
+                    <span class="cart-icon">🛒</span>
+                    <span class="cart-badge" id="cart-badge-count">0</span>
+                </button>
+            </div>
         </div>
     </header>
 
@@ -300,8 +300,8 @@
                     </ul>
                 </article>
 
-                <form id="register" class="register-form" action="#" method="post">
-                    <h2>Register Your Interest</h2>
+                <form id="support" class="register-form" action="#" method="post">
+                    <h2>Support & Inquiries</h2>
 
                     <div class="form-row">
                         <label for="first-name">
@@ -473,6 +473,15 @@
                 <div class="checkout-payment-form">
                     <h3>Payment Details</h3>
                     <div class="cart-form-group">
+                        <label for="checkout-address" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                            <span>Delivery Address</span>
+                            <button type="button" id="gps-detect-btn" style="background: none; border: none; color: var(--electric-green); font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; font-weight: 700;">
+                                📍 Auto GPS
+                            </button>
+                        </label>
+                        <input type="text" id="checkout-address" placeholder="Enter delivery address" required>
+                    </div>
+                    <div class="cart-form-group">
                         <label for="checkout-cardholder">Cardholder Name</label>
                         <input type="text" id="checkout-cardholder" placeholder="Giorgi Beridze" required autocomplete="cc-name">
                     </div>
@@ -510,6 +519,17 @@
             </div>
             
             <div class="cart-drawer-body">
+                <!-- Register or Sign In card -->
+                <div class="profile-auth-section" style="background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 16px; margin-bottom: 20px; box-sizing: border-box; text-align: center;">
+                    <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
+                    <h3 style="color: #ffffff; margin-bottom: 6px; font-weight: 800;">Welcome, Guest!</h3>
+                    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;">Sign in to save your history and access exclusive rewards.</p>
+                    <div style="display: flex; gap: 8px; justify-content: center;">
+                        <button id="profile-signin-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: linear-gradient(135deg, var(--violet) 0%, var(--pink) 100%); border: none; color: white; cursor: pointer; font-weight: 700;">Sign In</button>
+                        <button id="profile-register-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: transparent; border: 1px solid var(--electric-green); color: var(--electric-green); cursor: pointer; font-weight: 700;">Register</button>
+                    </div>
+                </div>
+
                 <!-- Configure Language & Currency -->
                 <div class="profile-config-section">
                     <div class="profile-field-group">
@@ -570,9 +590,12 @@
     <div id="recent-drawer" class="cart-drawer" aria-hidden="true">
         <div class="cart-drawer-overlay" id="recent-overlay"></div>
         <div class="cart-drawer-content" style="border-left: 1px solid rgba(138, 255, 193, 0.3);">
-            <div class="cart-drawer-header">
+            <div class="cart-drawer-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h2>Recently Viewed</h2>
-                <button class="drawer-close-btn" id="recent-drawer-close" aria-label="Close Recently Viewed" style="background:transparent; border:none; color:#ffffff; font-size:2rem; cursor:pointer;">&times;</button>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="recent-clear-btn" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; font-size: 0.75rem; font-weight: 700; padding: 4px 8px; border-radius: 4px; cursor: pointer; transition: all 0.2s; white-space: nowrap;">Clear History</button>
+                    <button class="drawer-close-btn" id="recent-drawer-close" aria-label="Close Recently Viewed" style="background:transparent; border:none; color:#ffffff; font-size:2rem; cursor:pointer;">&times;</button>
+                </div>
             </div>
             <div class="cart-drawer-body" id="recent-drawer-body" style="overflow-y: auto; flex-grow: 1; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
                 <!-- Recently viewed items with context loaded here dynamically -->
@@ -601,8 +624,9 @@
         <div class="modal-overlay" id="compare-modal-overlay"></div>
         <div class="modal-content-container compare-modal-container">
             <button id="compare-close-btn" class="modal-close-btn" aria-label="Close comparison">&times;</button>
-            <div class="compare-modal-header">
+            <div class="compare-modal-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
                 <h2>Product Comparison</h2>
+                <button id="compare-clear-btn" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; font-size: 0.85rem; font-weight: 700; padding: 6px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s; margin-right: 40px;" onmouseover="this.style.background='#ef4444'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'; this.style.color='#f87171';">Clear All</button>
             </div>
             <div class="compare-modal-body" id="compare-modal-body">
                 <!-- structured table rendered here -->

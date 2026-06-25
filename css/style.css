@@ -3050,5 +3050,88 @@ textarea:focus-visible {
     }
 }
 
+/* Header alignment and desktop layout overrides */
+.navbar {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    min-height: 84px;
+    gap: 20px;
+}
+
+.header-sharingan {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1;
+    pointer-events: none;
+}
+
+.nav-menu {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    margin-right: 24px;
+    z-index: 2;
+}
+
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 2;
+    margin-left: 0;
+}
+
+/* Responsive mobile header layout (Logo + actions side-by-side at top, nav menu below) */
+@media (max-width: 768px) {
+    .navbar {
+        display: grid !important;
+        grid-template-columns: 1fr auto !important;
+        grid-template-rows: auto auto auto !important;
+        gap: 16px 12px !important;
+        padding: 16px 0 !important;
+        align-items: center !important;
+        justify-items: stretch !important;
+    }
+    .logo {
+        grid-column: 1 !important;
+        grid-row: 1 !important;
+        justify-self: start !important;
+    }
+    .nav-actions {
+        grid-column: 2 !important;
+        grid-row: 1 !important;
+        justify-self: end !important;
+        margin-left: 0 !important;
+        width: auto !important;
+        padding-top: 0 !important;
+    }
+    .header-sharingan {
+        grid-column: 1 / span 2 !important;
+        grid-row: 2 !important;
+        position: relative !important;
+        left: auto !important;
+        top: auto !important;
+        transform: none !important;
+        margin: 8px auto !important;
+        order: unset !important;
+    }
+    .nav-menu {
+        grid-column: 1 / span 2 !important;
+        grid-row: 3 !important;
+        width: 100% !important;
+        justify-content: center !important;
+        overflow-x: auto !important;
+        white-space: nowrap !important;
+        margin: 0 !important;
+        padding: 4px 2px 8px !important;
+    }
+}
+
+
 
 
