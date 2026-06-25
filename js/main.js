@@ -1,134 +1,34 @@
 /**
- * TechStore - Core Interactive JavaScript Logic
- * Demonstrates: DOM manipulation, Advanced ES6+, Asynchronous JS (Callbacks, Promises, Async/Await),
- * API Integration (Fetch), and Web Storage (localStorage).
+ * TechStore - Core Interactive Frontend Controller
+ * Built with vanilla JavaScript, using Fetch API for dynamic data,
+ * localStorage for state persistence, and responsive interactive components.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Clear localStorage completely to reset storage on every project run/load
-    localStorage.clear();
-
     // -------------------------------------------------------------------------
     // 1. APPLICATION STATE
     // -------------------------------------------------------------------------
-    const AppState = {
+    const state = {
         products: [],
-        cart: [],
-        payments: [],
-        submissions: [],
-        currency: 'USD',
-        language: 'EN',
-        activeDeal: 'none',
+        cart: JSON.parse(localStorage.getItem('techstore_cart')) || [],
+        payments: JSON.parse(localStorage.getItem('techstore_payments')) || [],
+        submissions: JSON.parse(localStorage.getItem('techstore_registrations')) || [],
+        currency: localStorage.getItem('techstore_currency') || 'USD',
+        language: localStorage.getItem('techstore_language') || 'EN',
+        activeDeal: localStorage.getItem('techstore_active_deal') || 'none',
         exchangeRates: { USD: 1, EUR: 0.92, GEL: 2.75 },
         activeCategory: 'all',
         searchQuery: '',
         minBudget: 0,
         maxBudget: 2000,
         compareList: [],
-        recentlyViewed: [],
+        recentlyViewed: JSON.parse(localStorage.getItem('techstore_recent')) || [],
         showAll: false,
-        activeModalProductId: null,
-        user: localStorage.getItem('techstore_user') || null
-    };
-
-    // Logger utilizing rest parameters (ES6+ Spread/Rest)
-    const logAppEvent = (type, ...details) => {
-        console.log(`[TechStore App][${type}]`, ...details);
+        currentUser: localStorage.getItem('techstore_user') || null
     };
 
     // -------------------------------------------------------------------------
-    // 2. DOM ELEMENT SELECTION
-    // -------------------------------------------------------------------------
-    const elements = {
-        productGrid: document.getElementById('product-grid'),
-        productSearch: document.getElementById('product-search'),
-        filterTabs: document.querySelectorAll('.filter-tab'),
-        cartToggleBtn: document.getElementById('cart-toggle-btn'),
-        cartCloseBtn: document.getElementById('cart-close-btn'),
-        cartOverlay: document.getElementById('cart-overlay'),
-        cartDrawer: document.getElementById('cart-drawer'),
-        cartItemsList: document.getElementById('cart-items-list'),
-        cartBadgeCount: document.getElementById('cart-badge-count'),
-        cartEmptyMessage: document.getElementById('cart-empty-message'),
-        cartSummarySection: document.getElementById('cart-summary-section'),
-        cartSubtotal: document.getElementById('cart-subtotal'),
-        cartDiscountRow: document.getElementById('cart-discount-row'),
-        cartDiscount: document.getElementById('cart-discount'),
-        cartTax: document.getElementById('cart-tax'),
-        cartTotal: document.getElementById('cart-total'),
-        checkoutBtn: document.getElementById('checkout-btn'),
-        registerForm: document.getElementById('support'),
-        recentClearBtn: document.getElementById('recent-clear-btn'),
-        compareClearBtn: document.getElementById('compare-clear-btn'),
-        reviewsGrid: document.getElementById('reviews-grid'),
-        toastContainer: document.getElementById('toast-container'),
-        countMessage: document.getElementById('catalog-count-message'),
-        inventoryTableBody: document.getElementById('inventory-table-body'),
-        
-        // Sizing
-        showMoreBtn: document.getElementById('show-more-btn'),
-        
-        // Profile drawer selectors
-        profileToggleBtn: document.getElementById('profile-toggle-btn'),
-        profileCloseBtn: document.getElementById('profile-close-btn'),
-        profileOverlay: document.getElementById('profile-overlay'),
-        profileDrawer: document.getElementById('profile-drawer'),
-        profileLanguageSelect: document.getElementById('profile-language-select'),
-        profileCurrencySelect: document.getElementById('profile-currency-select'),
-        profileTabButtons: document.querySelectorAll('.profile-tab-btn'),
-        profileWelcomeTitle: document.getElementById('profile-welcome-title'),
-        profileWelcomeDesc: document.getElementById('profile-welcome-desc'),
-        profileAuthBtnGroup: document.getElementById('profile-auth-btn-group'),
-        profileSigninForm: document.getElementById('profile-signin-form'),
-        profileRegisterForm: document.getElementById('profile-register-form'),
-        profileSignoutBtn: document.getElementById('profile-signout-btn'),
-        cartDealSelect: document.getElementById('cart-deal-select'),
-        
-        paymentEmptyMessage: document.getElementById('payment-empty-message'),
-        paymentItemsList: document.getElementById('payment-items-list'),
-        submissionsEmptyMessage: document.getElementById('submissions-empty-message'),
-        submissionsItemsList: document.getElementById('submissions-items-list'),
-        
-        // Details Modal
-        productModal: document.getElementById('product-modal'),
-        modalOverlay: document.getElementById('modal-overlay'),
-        modalCloseBtn: document.getElementById('modal-close-btn'),
-        modalBodyContent: document.getElementById('modal-body-content'),
-        
-        // Payment Card Details Form
-        cardholderInput: document.getElementById('checkout-cardholder'),
-        cardnumberInput: document.getElementById('checkout-cardnumber'),
-        expiryInput: document.getElementById('checkout-expiry'),
-        cvvInput: document.getElementById('checkout-cvv'),
-        
-        // Price Filter and Compare Selectors
-        minPriceRange: document.getElementById('min-price-range'),
-        minPriceVal: document.getElementById('min-price-val'),
-        maxPriceRange: document.getElementById('max-price-range'),
-        maxPriceVal: document.getElementById('max-price-val'),
-        compareFab: document.getElementById('compare-fab'),
-        compareCount: document.getElementById('compare-count'),
-        compareModal: document.getElementById('compare-modal'),
-        compareModalOverlay: document.getElementById('compare-modal-overlay'),
-        compareCloseBtn: document.getElementById('compare-close-btn'),
-        compareModalBody: document.getElementById('compare-modal-body'),
-
-        // Filter Dropdown Panel
-        filterToggleBtn: document.getElementById('filter-toggle-btn'),
-        filterDropdownPanel: document.getElementById('filter-dropdown-panel'),
-        filterTabs: document.querySelectorAll('.filter-tab'),
-
-        // Recently Viewed Selectors
-        recentToggleBtn: document.getElementById('recent-toggle-btn'),
-        recentBadgeCount: document.getElementById('recent-badge-count'),
-        recentDrawer: document.getElementById('recent-drawer'),
-        recentOverlay: document.getElementById('recent-overlay'),
-        recentCloseBtn: document.getElementById('recent-drawer-close'),
-        recentItemsList: document.getElementById('recent-drawer-body')
-    };
-
-    // -------------------------------------------------------------------------
-    // 3. TRANSLATION DICTIONARIES (Localization System)
+    // 2. DICTIONARIES & TRANSLATIONS (EN & KA)
     // -------------------------------------------------------------------------
     const translations = {
         EN: {
@@ -222,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
             inventoryAvailability: "Availability",
             inventorySold: "Units Sold",
 
-            // Hero
             heroEyebrow: "Modern devices. Smart prices.",
             heroTitle: "Upgrade Your Tech Life",
             heroDesc: "Discover laptops, smartphones, accessories, and smart devices in one modern online store.",
@@ -231,7 +130,6 @@ document.addEventListener('DOMContentLoaded', () => {
             statRating: "Customer rating",
             statDevices: "Devices",
             
-            // Deals
             dealsEyebrow: "Student deals",
             dealsTitle: "Bundles Built for Everyday Work",
             dealsDesc: "Save on reliable tech combinations for learning, remote work, content creation, and gaming.",
@@ -245,12 +143,10 @@ document.addEventListener('DOMContentLoaded', () => {
             dealCardDesc3: "Smartphone, smartwatch, case, and charger for a complete connected setup.",
             dealCardSave3: "Save 10%",
 
-            // Media
             mediaEyebrow: "How to Order",
             mediaTitle: "How to Order Your Tech in 3 Simple Steps",
             mediaDesc: "Watch our guide to see how easy it is to find devices, add them to your cart, apply active bundles, and complete your purchase securely.",
 
-            // Reviews
             reviewsEyebrow: "Customer reviews",
             reviewsTitle: "What Tech Lovers Say",
             reviewsDesc: "Real-time reviews fetched from our global database of creators, students, and professionals.",
@@ -264,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
             reviewRole3: "IT Student",
             reviewText3: "Excellent noise cancellation on the Sony WH-1000XM5 headphones. The profile currency switcher makes ordering seamless.",
 
-            // Support Form
             supportTitle: "Support & Inquiries",
             supportFirstName: "First Name",
             supportLastName: "Last Name",
@@ -278,13 +173,10 @@ document.addEventListener('DOMContentLoaded', () => {
             supportExtras: "Extras",
             supportDelivery: "Delivery support",
             supportSetup: "Setup assistance",
-            supportWarranty: "Extended warranty",
-            supportMsg: "Message / Details",
+            supportMsg: "Motivation Letter or Special Requests",
             supportSubmit: "Submit Request",
 
-            // Footer
-            footerAboutTitle: "About TechStore",
-            footerAboutDesc: "Your ultimate destination for high-performance premium hardware, smart devices, and accessories with global checkout options.",
+            footerAboutDesc: "Smart gear, sharp deals, and fast support for students, creators, and everyday tech lovers.",
             footerSupportTitle: "Support",
             footerHours: "Mon - Sat, 10:00 - 19:00",
             footerCopy: "TechStore 2026: All rights reserved",
@@ -381,7 +273,6 @@ document.addEventListener('DOMContentLoaded', () => {
             inventoryAvailability: "ხელმისაწვდომობა",
             inventorySold: "გაყიდული რაოდენობა",
 
-            // Hero
             heroEyebrow: "თანამედროვე მოწყობილობები. გონივრული ფასები.",
             heroTitle: "განაახლე შენი ციფრული ცხოვრება",
             heroDesc: "აღმოაჩინე ლეპტოპები, სმარტფონები, აქსესუარები და ჭკვიანი მოწყობილობები ერთ სივრცეში.",
@@ -390,7 +281,6 @@ document.addEventListener('DOMContentLoaded', () => {
             statRating: "მომხმარებელთა შეფასება",
             statDevices: "მოწყობილობა",
             
-            // Deals
             dealsEyebrow: "სტუდენტური ფასდაკლებები",
             dealsTitle: "აქციები ყოველდღიური მუშაობისთვის",
             dealsDesc: "დაზოგე თანხა საიმედო ნაკრებებზე სწავლისთვის, დისტანციური მუშაობისთვის, შემოქმედებისა და გეიმინგისთვის.",
@@ -398,18 +288,16 @@ document.addEventListener('DOMContentLoaded', () => {
             dealCardDesc1: "ლეპტოპი, უსადენო მაუსი და დამცავი ზურგჩანთა გაკვეთილებისა და პროექტებისთვის.",
             dealCardSave1: "დაზოგე 12%",
             dealCardTitle2: "Creator Kit",
-            dealCardDesc2: "სწრაფი ლეპტოპი, ყურსასმენები და აქსესუარები მონტაჟისთვის, სტრიმინგისთვის და დიზაინისთვის.",
+            dealCardDesc2: "საწრაფი ლეპტოპი, ყურსასმენები და აქსესუარები მონტაჟისთვის, სტრიმინგისთვის და დიზაინისთვის.",
             dealCardSave2: "დაზოგე 15%",
             dealCardTitle3: "Mobile Pro",
             dealCardDesc3: "სმარტფონი, ჭკვიანი საათი, ქეისი და დამტენი სრული დაკავშირებულობისთვის.",
             dealCardSave3: "დაზოგე 10%",
 
-            // Media
             mediaEyebrow: "როგორ შეუკვეთოთ",
             mediaTitle: "როგორ შეუკვეთოთ ტექნიკა 3 მარტივ ნაბიჯში",
             mediaDesc: "უყურეთ ჩვენს გზამკვლევს, რათა ნახოთ რამდენად მარტივია სასურველი მოწყობილობის პოვნა, კალათაში დამატება, ფასდაკლების აქტივაცია და უსაფრთხო ყიდვა.",
 
-            // Reviews
             reviewsEyebrow: "მომხმარებელთა შეფასებები",
             reviewsTitle: "რას ამბობენ ტექნოლოგიების მოყვარულები",
             reviewsDesc: "რეალური შეფასებები ჩვენი გლობალური ბაზიდან: დეველოპერები, სტუდენტები და პროფესიონალები.",
@@ -423,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
             reviewRole3: "IT სტუდენტი",
             reviewText3: "Sony WH-1000XM5 ყურსასმენებს აქვს ხმაურის საუკეთესო იზოლაცია. ვალუტის გადამრთველი ყიდვის პროცესს ბევრად ამარტივებს.",
 
-            // Support Form
             supportTitle: "მხარდაჭერა და კითხვები",
             supportFirstName: "სახელი",
             supportLastName: "გვარი",
@@ -437,13 +324,10 @@ document.addEventListener('DOMContentLoaded', () => {
             supportExtras: "დამატებითი სერვისები",
             supportDelivery: "მიწოდების მხარდაჭერა",
             supportSetup: "ინსტალაციაში დახმარება",
-            supportWarranty: "გაფართოებული გარანტია",
-            supportMsg: "შეტყობინება / დეტალები",
+            supportMsg: "მოტივაციის წერილი ან სპეციალური მოთხოვნები",
             supportSubmit: "მოთხოვნის გაგზავნა",
 
-            // Footer
-            footerAboutTitle: "TechStore-ის შესახებ",
-            footerAboutDesc: "თქვენი საბოლოო დანიშნულების ადგილი მაღალი წარმადობის პრემიუმ აპარატურის, ჭკვიანი მოწყობილობებისა და აქსესუარებისთვის.",
+            footerAboutDesc: "ჭკვიანი ტექნიკა, საუკეთესო შეთავაზებები და სწრაფი მხარდაჭერა სტუდენტებისთვის, დეველოპერებისა და ყველასთვის.",
             footerSupportTitle: "მხარდაჭერა",
             footerHours: "ორშ - შაბ, 10:00 - 19:00",
             footerCopy: "TechStore 2026: ყველა უფლება დაცულია",
@@ -451,555 +335,149 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Apply translations to the DOM
-    const translateInterface = () => {
-        const lang = AppState.language;
-        const dict = translations[lang];
-
-        // Nav Menu
-        const navLinks = document.querySelectorAll('.nav-menu a');
-        navLinks.forEach(link => {
-            const href = link.getAttribute('href');
-            if (href === '#home') link.textContent = dict.navHome;
-            else if (href === '#products') link.textContent = dict.navProducts;
-            else if (href === '#deals') link.textContent = dict.navDeals;
-            else if (href === '#support') link.textContent = dict.navSupport;
-        });
-
-        // Section header info
-        const productsSection = document.getElementById('products');
-        if (productsSection) {
-            const eyebrow = productsSection.querySelector('.eyebrow');
-            const title = productsSection.querySelector('.section-title');
-            const desc = productsSection.querySelector('.section-description');
-            if (eyebrow) eyebrow.textContent = dict.eyebrow;
-            if (title) title.textContent = dict.catalogHeader;
-            if (desc) desc.textContent = dict.catalogSub;
-        }
-
-        // Search Input
-        if (elements.productSearch) {
-            elements.productSearch.placeholder = dict.searchPlaceholder;
-        }
-
-        // Category Tabs
-        const categoryTabs = document.querySelectorAll('.filter-tab');
-        if (categoryTabs.length >= 5) {
-            categoryTabs[0].textContent = dict.filterAll;
-            categoryTabs[1].textContent = dict.filterLaptops;
-            categoryTabs[2].textContent = dict.filterSmartphones;
-            categoryTabs[3].textContent = dict.filterAccessories;
-            categoryTabs[4].textContent = dict.filterWearables;
-        }
-
-        // Hero Section
-        const heroEyebrow = document.querySelector('#home .eyebrow');
-        const heroTitle = document.querySelector('#home .hero-title');
-        const heroDesc = document.querySelector('#home .hero-description');
-        const heroBtn = document.querySelector('#home .btn');
-        if (heroEyebrow) heroEyebrow.textContent = dict.heroEyebrow;
-        if (heroTitle) heroTitle.textContent = dict.heroTitle;
-        if (heroDesc) heroDesc.textContent = dict.heroDesc;
-        if (heroBtn) heroBtn.textContent = dict.heroBtn;
-
-        const statPickup = document.querySelector('#home .hero-stats div:nth-child(1) span');
-        const statRating = document.querySelector('#home .hero-stats div:nth-child(2) span');
-        const statDevices = document.querySelector('#home .hero-stats div:nth-child(3) span');
-        if (statPickup) statPickup.textContent = dict.statPickup;
-        if (statRating) statRating.textContent = dict.statRating;
-        if (statDevices) statDevices.textContent = dict.statDevices;
-
-        // Deals Section
-        const dealsEyebrow = document.querySelector('#deals .section-header .eyebrow');
-        const dealsTitle = document.querySelector('#deals .section-header .section-title');
-        const dealsDesc = document.querySelector('#deals .section-header .section-description');
-        if (dealsEyebrow) dealsEyebrow.textContent = dict.dealsEyebrow;
-        if (dealsTitle) dealsTitle.textContent = dict.dealsTitle;
-        if (dealsDesc) dealsDesc.textContent = dict.dealsDesc;
-
-        const dealTitle1 = document.querySelector('#deals .deal-list article:nth-child(1) h3');
-        const dealDesc1 = document.querySelector('#deals .deal-list article:nth-child(1) p');
-        const dealSave1 = document.querySelector('#deals .deal-list article:nth-child(1) span');
-        if (dealTitle1) dealTitle1.textContent = dict.dealCardTitle1;
-        if (dealDesc1) dealDesc1.textContent = dict.dealCardDesc1;
-        if (dealSave1) dealSave1.textContent = dict.dealCardSave1;
-
-        const dealTitle2 = document.querySelector('#deals .deal-list article:nth-child(2) h3');
-        const dealDesc2 = document.querySelector('#deals .deal-list article:nth-child(2) p');
-        const dealSave2 = document.querySelector('#deals .deal-list article:nth-child(2) span');
-        if (dealTitle2) dealTitle2.textContent = dict.dealCardTitle2;
-        if (dealDesc2) dealDesc2.textContent = dict.dealCardDesc2;
-        if (dealSave2) dealSave2.textContent = dict.dealCardSave2;
-
-        const dealTitle3 = document.querySelector('#deals .deal-list article:nth-child(3) h3');
-        const dealDesc3 = document.querySelector('#deals .deal-list article:nth-child(3) p');
-        const dealSave3 = document.querySelector('#deals .deal-list article:nth-child(3) span');
-        if (dealTitle3) dealTitle3.textContent = dict.dealCardTitle3;
-        if (dealDesc3) dealDesc3.textContent = dict.dealCardDesc3;
-        if (dealSave3) dealSave3.textContent = dict.dealCardSave3;
-
-        // Media Section
-        const mediaEyebrow = document.querySelector('.media-section .section-header .eyebrow');
-        const mediaTitle = document.querySelector('.media-section .section-header .section-title');
-        const mediaDesc = document.querySelector('.media-section .section-header .section-description');
-        if (mediaEyebrow) mediaEyebrow.textContent = dict.mediaEyebrow;
-        if (mediaTitle) mediaTitle.textContent = dict.mediaTitle;
-        if (mediaDesc) mediaDesc.textContent = dict.mediaDesc;
-
-        // Reviews Section
-        const reviewsEyebrow = document.querySelector('#reviews .section-header .eyebrow');
-        const reviewsTitle = document.querySelector('#reviews .section-header .section-title');
-        const reviewsDesc = document.querySelector('#reviews .section-header .section-description');
-        if (reviewsEyebrow) reviewsEyebrow.textContent = dict.reviewsEyebrow;
-        if (reviewsTitle) reviewsTitle.textContent = dict.reviewsTitle;
-        if (reviewsDesc) reviewsDesc.textContent = dict.reviewsDesc;
-
-        // Support Form
-        const supTitle = document.querySelector('#support .trans-support-title');
-        const supFirst = document.querySelector('#support .trans-first-name');
-        const supLast = document.querySelector('#support .trans-last-name');
-        const supEmail = document.querySelector('#support .trans-support-email');
-        const supInterest = document.querySelector('#support .trans-support-interest');
-        const supChoose = document.querySelector('#support .trans-choose-cat');
-        const supCatLaptops = document.querySelector('#support .trans-cat-laptops');
-        const supCatSmart = document.querySelector('#support .trans-cat-smartphones');
-        const supCatAcc = document.querySelector('#support .trans-cat-accessories');
-        const supCatWear = document.querySelector('#support .trans-cat-wearables');
-        const supGoal = document.querySelector('#support .trans-support-goal');
-        const supStudy = document.querySelector('#support .trans-goal-study');
-        const supWork = document.querySelector('#support .trans-goal-work');
-        const supGaming = document.querySelector('#support .trans-goal-gaming');
-        const supExtras = document.querySelector('#support .trans-support-extras');
-        const supDelivery = document.querySelector('#support .trans-extra-delivery');
-        const supSetup = document.querySelector('#support .trans-extra-setup');
-        const supMsg = document.querySelector('#support .trans-support-msg');
-        const supSubmit = document.querySelector('#support .trans-support-submit');
-
-        if (supTitle) supTitle.textContent = dict.supportTitle;
-        if (supFirst) supFirst.textContent = dict.supportFirstName;
-        if (supLast) supLast.textContent = dict.supportLastName;
-        if (supEmail) supEmail.textContent = dict.supportEmail;
-        if (supInterest) supInterest.textContent = dict.supportInterest;
-        if (supChoose) supChoose.textContent = dict.supportChoose;
-        if (supCatLaptops) supCatLaptops.textContent = dict.filterLaptops;
-        if (supCatSmart) supCatSmart.textContent = dict.filterSmartphones;
-        if (supCatAcc) supCatAcc.textContent = dict.filterAccessories;
-        if (supCatWear) supCatWear.textContent = dict.filterWearables;
-        if (supGoal) supGoal.textContent = dict.supportGoal;
-        if (supStudy) supStudy.textContent = dict.supportStudy;
-        if (supWork) supWork.textContent = dict.supportWork;
-        if (supGaming) supGaming.textContent = dict.supportGaming;
-        if (supExtras) supExtras.textContent = dict.supportExtras;
-        if (supDelivery) supDelivery.textContent = dict.supportDelivery;
-        if (supSetup) supSetup.textContent = dict.supportSetup;
-        if (supMsg) supMsg.textContent = dict.supportMsg;
-        if (supSubmit) supSubmit.textContent = dict.supportSubmit;
-
-        // Footer Section
-        const fAbout = document.querySelector('footer .trans-footer-about');
-        const fSupportTitle = document.querySelector('footer .trans-footer-support-title');
-        const fHours = document.querySelector('footer .trans-footer-hours');
-        const fCopy = document.querySelector('footer .trans-footer-copy');
-        const fTop = document.querySelector('footer .trans-footer-top');
-
-        if (fAbout) fAbout.textContent = dict.footerAboutDesc;
-        if (fSupportTitle) fSupportTitle.textContent = dict.footerSupportTitle;
-        if (fHours) fHours.textContent = dict.footerHours;
-        if (fCopy) fCopy.textContent = dict.footerCopy;
-        if (fTop) fTop.textContent = dict.footerTop;
-
-        // Cart Drawer
-        const cartDrawer = document.getElementById('cart-drawer');
-        if (cartDrawer) {
-            const h2 = cartDrawer.querySelector('.cart-drawer-header h2');
-            if (h2) h2.textContent = dict.cartTitle;
-
-            const emptyH3 = cartDrawer.querySelector('.cart-empty-message h3');
-            const emptyP = cartDrawer.querySelector('.cart-empty-message p');
-            const emptyBtn = cartDrawer.querySelector('#cart-explore-btn');
-            if (emptyH3) emptyH3.textContent = dict.cartEmptyTitle;
-            if (emptyP) emptyP.textContent = dict.cartEmptyDesc;
-            if (emptyBtn) emptyBtn.textContent = dict.cartExplore;
-
-            // Deals texts
-            const dealH3 = cartDrawer.querySelector('.trans-select-deal');
-            const dealNone = cartDrawer.querySelector('.trans-deal-none');
-            const dealStudent = cartDrawer.querySelector('.trans-deal-student');
-            const dealWfh = cartDrawer.querySelector('.trans-deal-wfh');
-            const dealGaming = cartDrawer.querySelector('.trans-deal-gaming');
-            if (dealH3) dealH3.textContent = dict.selectDeal;
-            if (dealNone) dealNone.textContent = dict.dealNone;
-            if (dealStudent) dealStudent.textContent = dict.dealStudent;
-            if (dealWfh) dealWfh.textContent = dict.dealWfh;
-            if (dealGaming) dealGaming.textContent = dict.dealGaming;
-
-            // Total Labels
-            const labelSub = cartDrawer.querySelector('.trans-subtotal');
-            const labelDisc = cartDrawer.querySelector('.trans-discount');
-            const labelVat = cartDrawer.querySelector('.trans-vat');
-            const labelTot = cartDrawer.querySelector('.trans-total');
-            if (labelSub) labelSub.textContent = dict.subtotal;
-            if (labelDisc) labelDisc.textContent = dict.discount;
-            if (labelVat) labelVat.textContent = dict.vat;
-            if (labelTot) labelTot.textContent = dict.total;
-
-            // Form Headers
-            const payHeader = cartDrawer.querySelector('.checkout-payment-form h3');
-            if (payHeader) payHeader.textContent = dict.paymentDetailsHeader;
-
-            const lblAddressText = cartDrawer.querySelector('label[for="checkout-address"] span');
-            if (lblAddressText) lblAddressText.textContent = dict.addressLabel || "Delivery Address";
-
-            const lblCardholder = cartDrawer.querySelector('label[for="checkout-cardholder"]');
-            if (lblCardholder) lblCardholder.textContent = dict.cardholderLabel;
-
-            const lblCardnumber = cartDrawer.querySelector('label[for="checkout-cardnumber"]');
-            if (lblCardnumber) lblCardnumber.textContent = dict.cardnumberLabel;
-
-            const lblExpiry = cartDrawer.querySelector('label[for="checkout-expiry"]');
-            if (lblExpiry) lblExpiry.textContent = dict.expiryLabel;
-
-            const lblCvv = cartDrawer.querySelector('label[for="checkout-cvv"]');
-            if (lblCvv) lblCvv.textContent = dict.cvvLabel;
-
-            const checkoutText = elements.checkoutBtn.querySelector('.btn-text');
-            if (checkoutText && !elements.checkoutBtn.disabled) {
-                checkoutText.textContent = dict.placeOrder;
-            }
-        }
-
-        // Profile Drawer
-        if (elements.profileDrawer) {
-            const title = document.getElementById('profile-drawer-title');
-            const langLabel = document.getElementById('profile-lang-label');
-            const currLabel = document.getElementById('profile-curr-label');
-            const tabPayments = document.getElementById('profile-tab-payments-btn');
-            const tabSubmissions = document.getElementById('profile-tab-submissions-btn');
-            
-            const emptyPayTitle = elements.profileDrawer.querySelector('.trans-payment-empty-title');
-            const emptyPayDesc = elements.profileDrawer.querySelector('.trans-payment-empty-desc');
-            const emptySrvTitle = elements.profileDrawer.querySelector('.trans-service-empty-title');
-            const emptySrvDesc = elements.profileDrawer.querySelector('.trans-service-empty-desc');
-
-            if (title) title.textContent = dict.profileTitle;
-            if (langLabel) langLabel.textContent = dict.langLabel;
-            if (currLabel) currLabel.textContent = dict.currLabel;
-            if (tabPayments) tabPayments.textContent = dict.tabPayments;
-            if (tabSubmissions) tabSubmissions.textContent = dict.tabSubmissions;
-            
-            if (emptyPayTitle) emptyPayTitle.textContent = dict.noTransactionsTitle;
-            if (emptyPayDesc) emptyPayDesc.textContent = dict.noTransactionsDesc;
-            if (emptySrvTitle) emptySrvTitle.textContent = dict.noSubmissionsTitle;
-            if (emptySrvDesc) emptySrvDesc.textContent = dict.noSubmissionsDesc;
-        }
-
-        // Auth Modal translations
-        const authModal = document.getElementById('auth-modal');
-        if (authModal) {
-            const signinUsernameLabel = document.getElementById('signin-username-label');
-            const signinPasswordLabel = document.getElementById('signin-password-label');
-            const signinSubmitBtn = document.getElementById('signin-submit-btn');
-            const signinToggleText = document.getElementById('signin-toggle-text');
-            const signinToggleLink = document.getElementById('signin-toggle-link');
-            
-            const registerUsernameLabel = document.getElementById('register-username-label');
-            const registerEmailLabel = document.getElementById('register-email-label');
-            const registerPasswordLabel = document.getElementById('register-password-label');
-            const registerSubmitBtn = document.getElementById('register-submit-btn');
-            const registerToggleText = document.getElementById('register-toggle-text');
-            const registerToggleLink = document.getElementById('register-toggle-link');
-
-            const signinUsernameInput = document.getElementById('signin-username');
-            const signinPasswordInput = document.getElementById('signin-password');
-            const registerUsernameInput = document.getElementById('register-username');
-            const registerEmailInput = document.getElementById('register-email');
-            const registerPasswordInput = document.getElementById('register-password');
-
-            if (signinUsernameLabel) signinUsernameLabel.textContent = dict.usernameLabel;
-            if (signinPasswordLabel) signinPasswordLabel.textContent = dict.passwordLabel;
-            if (signinSubmitBtn) signinSubmitBtn.textContent = dict.authLogInBtn;
-            if (signinToggleText) signinToggleText.textContent = dict.signinToggleText;
-            if (signinToggleLink) signinToggleLink.textContent = dict.authRegisterBtn;
-
-            if (registerUsernameLabel) registerUsernameLabel.textContent = dict.usernameLabel;
-            if (registerEmailLabel) registerEmailLabel.textContent = dict.emailLabel;
-            if (registerPasswordLabel) registerPasswordLabel.textContent = dict.passwordLabel;
-            if (registerSubmitBtn) registerSubmitBtn.textContent = dict.authRegisterBtn;
-            if (registerToggleText) registerToggleText.textContent = dict.registerToggleText;
-            if (registerToggleLink) registerToggleLink.textContent = dict.authLogInBtn;
-
-            if (signinUsernameInput) signinUsernameInput.placeholder = dict.signinUsernamePlaceholder;
-            if (signinPasswordInput) signinPasswordInput.placeholder = dict.signinPasswordPlaceholder;
-            if (registerUsernameInput) registerUsernameInput.placeholder = dict.registerUsernamePlaceholder;
-            if (registerEmailInput) registerEmailInput.placeholder = dict.registerEmailPlaceholder;
-            if (registerPasswordInput) registerPasswordInput.placeholder = dict.registerPasswordPlaceholder;
-            
-            // Update active modal header if modal is open
-            const authModalTitle = document.getElementById('auth-modal-title');
-            if (authModalTitle && authModal.classList.contains('modal-open')) {
-                const signinForm = document.getElementById('profile-signin-form');
-                const isSignInVisible = signinForm && signinForm.style.display !== 'none';
-                authModalTitle.textContent = isSignInVisible ? dict.authSignInTitle : dict.authRegisterTitle;
-            }
-        }
-
-        // Translate Inventory Table Headers
-        const thProduct = document.getElementById('inventory-th-product');
-        const thCategory = document.getElementById('inventory-th-category');
-        const thPrice = document.getElementById('inventory-th-price');
-        const thAvailability = document.getElementById('inventory-th-availability');
-        const thSold = document.getElementById('inventory-th-sold');
-
-        if (thProduct) thProduct.textContent = dict.inventoryProduct;
-        if (thCategory) thCategory.textContent = dict.inventoryCategory;
-        if (thPrice) thPrice.textContent = dict.inventoryPrice;
-        if (thAvailability) thAvailability.textContent = dict.inventoryAvailability;
-        if (thSold) thSold.textContent = dict.inventorySold;
-
-        // Refresh dynamic UI elements
-        renderCatalog();
-        renderCart();
-        renderInventoryTable();
-        fetchReviews();
-    };
-
     // -------------------------------------------------------------------------
-    // 4. UTILITIES & HELPER FUNCTIONS
+    // 3. HELPER FUNCTIONS & TOASTS
     // -------------------------------------------------------------------------
-
-    // Callback demonstration: Custom toast notifications
-    const showToast = (message, type = 'success', callback = null) => {
-        if (!elements.toastContainer) return;
-
+    const showToast = (message, type = 'success') => {
+        const container = document.getElementById('toast-container');
+        if (!container) return;
+        
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
-        
         toast.innerHTML = `
             <div class="toast-content">
                 <span class="toast-icon">${type === 'success' ? '✓' : '⚠'}</span>
                 <span class="toast-message">${message}</span>
             </div>
-            <button class="toast-close" aria-label="Dismiss alert">&times;</button>
+            <button class="toast-close">&times;</button>
         `;
-
-        elements.toastContainer.appendChild(toast);
+        container.appendChild(toast);
         setTimeout(() => toast.classList.add('active'), 50);
-
-        const dismissToast = () => {
+        
+        const close = () => {
             toast.classList.remove('active');
-            toast.addEventListener('transitionend', () => {
-                toast.remove();
-                if (callback && typeof callback === 'function') {
-                    callback();
-                }
-            }, { once: true });
+            toast.addEventListener('transitionend', () => toast.remove(), { once: true });
         };
-
-        toast.querySelector('.toast-close').addEventListener('click', dismissToast);
-        setTimeout(dismissToast, 4000);
+        
+        toast.querySelector('.toast-close').addEventListener('click', close);
+        setTimeout(close, 4000);
     };
 
-    // Price conversion utility using Destructuring and Template Literals
-    const formatPrice = (priceInUSD) => {
-        const { currency, exchangeRates } = AppState;
-        const rate = exchangeRates[currency] || 1;
-        const converted = (priceInUSD * rate).toFixed(2);
-
-        const symbols = {
-            USD: `$${converted}`,
-            EUR: `€${converted}`,
-            GEL: `₾${converted}`
-        };
-
-        return symbols[currency] || `$${converted}`;
+    const formatPrice = (priceUSD) => {
+        const rate = state.exchangeRates[state.currency] || 1;
+        const converted = (priceUSD * rate).toFixed(2);
+        const symbols = { USD: '$', EUR: '€', GEL: '₾' };
+        return `${symbols[state.currency] || '$'}${converted}`;
     };
 
-    // Web Storage Helpers
-    const saveCartToStorage = () => {
-        localStorage.setItem('techstore_cart', JSON.stringify(AppState.cart));
-    };
-
-    const loadCartFromStorage = () => {
-        const storedCart = localStorage.getItem('techstore_cart');
-        if (storedCart) {
-            try {
-                AppState.cart = JSON.parse(storedCart);
-            } catch (error) {
-                AppState.cart = [];
-            }
-        }
-    };
-
-    const saveProductsToStorage = () => {
-        localStorage.setItem('techstore_products_state', JSON.stringify(AppState.products));
-    };
-
-    const loadProductsFromStorage = () => {
-        const storedProducts = localStorage.getItem('techstore_products_state');
-        if (storedProducts) {
-            try {
-                AppState.products = JSON.parse(storedProducts);
-                logAppEvent('WebStorage', 'Loaded customized product stocks/sales state');
-                return true;
-            } catch (e) {
-                return false;
-            }
-        }
-        return false;
-    };
-
-    const savePaymentsToStorage = () => {
-        localStorage.setItem('techstore_payments', JSON.stringify(AppState.payments));
-    };
-
-    const loadPaymentsFromStorage = () => {
-        const storedPayments = localStorage.getItem('techstore_payments');
-        if (storedPayments) {
-            try {
-                AppState.payments = JSON.parse(storedPayments);
-            } catch (e) {
-                AppState.payments = [];
-            }
-        }
-    };
-
-    const saveLanguageToStorage = () => {
-        localStorage.setItem('techstore_language', AppState.language);
-    };
-
-    const loadLanguageFromStorage = () => {
-        const storedLang = localStorage.getItem('techstore_language');
-        if (storedLang) {
-            AppState.language = storedLang;
-            if (elements.profileLanguageSelect) {
-                elements.profileLanguageSelect.value = storedLang;
-            }
-        }
-    };
-
-    const loadCurrencyFromStorage = () => {
-        const storedCurrency = localStorage.getItem('techstore_currency');
-        if (storedCurrency) {
-            AppState.currency = storedCurrency;
-            if (elements.profileCurrencySelect) {
-                elements.profileCurrencySelect.value = storedCurrency;
-            }
-        }
-    };
-
-    const loadSubmissionsFromStorage = () => {
-        const stored = localStorage.getItem('techstore_registrations');
-        if (stored) {
-            try {
-                AppState.submissions = JSON.parse(stored);
-            } catch (e) {
-                AppState.submissions = [];
-            }
-        }
-    };
-
-    // Helper to get available stock of a product, accounting for cart quantities
     const getAvailableStock = (product) => {
-        const cartItem = AppState.cart.find(item => item.product.id === product.id);
+        const cartItem = state.cart.find(item => item.product.id === product.id);
         const cartQty = cartItem ? cartItem.quantity : 0;
         return Math.max(0, product.stock - cartQty);
     };
 
     // -------------------------------------------------------------------------
-    // 5. API INTEGRATION & ASYNC OPERATIONS
+    // 4. DATA FETCHING (PRODUCTS, CURRENCY, REVIEWS)
     // -------------------------------------------------------------------------
-
-    // Fetch Products (Async/Await)
     const fetchProducts = async () => {
-        // Try to load cached product stocks first
-        if (loadProductsFromStorage()) {
-            return;
-        }
-
-        logAppEvent('API', 'Fetching products database...');
         try {
-            const response = await fetch('data/products.json');
-            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-            AppState.products = await response.json();
-            saveProductsToStorage();
-            logAppEvent('API', 'Products catalog synced successfully', AppState.products);
-        } catch (error) {
-            logAppEvent('API', 'Error fetching products, utilizing local fallback state', error);
-            AppState.products = [
-                { id: "prod-1", title: "Lenovo Legion Pro 5", description: "High performance gaming laptop featuring RTX 4070 graphics and AMD Ryzen 7 processor.", price: 1399, category: "laptops", badge: "Top Choice", brand: "Lenovo", stock: 6, soldCount: 15, image: "images/laptop.jpg", images: ["images/laptop.jpg", "images/lenovo_legion_2.png", "images/lenovo_legion_3.png"], screenSize: "16.0 inches", processor: "AMD Ryzen 7 7745HX", ram: "16GB DDR5" },
-                { id: "prod-2", title: "Apple iPhone 15 Pro", description: "Titanium design, A17 Pro chip, customizable Action button, and a powerful camera system.", price: 999, category: "smartphones", badge: "New Arrival", brand: "Apple", stock: 12, soldCount: 48, image: "images/smartphone.jpg", images: ["images/smartphone.jpg", "images/phone_camera_detail.png", "images/phone_screen_detail.png"], screenSize: "6.1 inches", processor: "Apple A17 Pro", ram: "8GB LPDDR5" },
-                { id: "prod-3", title: "Sony WH-1000XM5", description: "Industry leading noise canceling wireless headphones with crystal clear hands-free calling.", price: 349, category: "accessories", badge: "Top Rated", brand: "Sony", stock: 20, soldCount: 95, image: "images/headphones.jpg", images: ["images/headphones.jpg", "images/headphones_earcup_detail.png", "images/headphones_case_detail.png"], screenSize: "N/A", processor: "Sony V1 Processor", ram: "N/A" },
-                { id: "prod-4", title: "Logitech G502 X Plus", description: "Iconic gaming mouse upgraded with hybrid optical-mechanical switches and LIGHTSPEED wireless.", price: 149, category: "accessories", badge: "Pro Gear", brand: "Logitech", stock: 25, soldCount: 142, image: "images/gaming-mouse.jpg", images: ["images/gaming-mouse.jpg", "images/gaming_mouse_sensor.png", "images/gaming_mouse_wheel.png"], screenSize: "N/A", processor: "HERO 25K Sensor", ram: "N/A" },
-                { id: "prod-5", title: "Corsair Vengeance DDR5", description: "High performance RGB desktop memory kit optimized for Intel and AMD motherboards.", price: 129, category: "accessories", badge: "Performance", brand: "Corsair", stock: 18, soldCount: 64, image: "images/ram.jpg", images: ["images/ram.jpg", "images/corsair_ram_detail.png", "images/ram_contacts_detail.png"], screenSize: "N/A", processor: "N/A", ram: "32GB (2x16GB) DDR5" },
-                { id: "prod-6", title: "Samsung Galaxy Watch 6", description: "Advanced health tracking smartwatch with customized heart rate zones and sleek design.", price: 299, category: "wearables", badge: "Best Tracker", brand: "Samsung", stock: 15, soldCount: 50, image: "images/smartwatch.jpg", images: ["images/smartwatch.jpg", "images/smartwatch_screen_detail.png", "images/smartwatch_sensor_detail.png"], screenSize: "1.3 inches", processor: "Exynos W930 Daily-Core", ram: "2GB RAM" },
-                { id: "prod-7", title: "Apple MacBook Pro M3", description: "Supercharged by the M3 chip with a beautiful Liquid Retina XDR screen and massive battery life.", price: 1599, category: "laptops", badge: "Premium", brand: "Apple", stock: 8, soldCount: 22, image: "images/macbook.png", images: ["images/macbook.png", "images/macbook_2.png", "images/macbook_3.png"], screenSize: "14.2 inches", processor: "Apple M3 Chip", ram: "8GB Unified Memory" },
-                { id: "prod-8", title: "Samsung Galaxy S24 Ultra", description: "Ultimate Galaxy smartphone featuring built-in S Pen, titanium body, and Galaxy AI features.", price: 1199, category: "smartphones", badge: "AI Powered", brand: "Samsung", stock: 9, soldCount: 30, image: "images/galaxy_s24.png", images: ["images/galaxy_s24.png", "images/phone_camera_detail.png", "images/phone_screen_detail.png"], screenSize: "6.8 inches", processor: "Snapdragon 8 Gen 3", ram: "12GB LPDDR5X" },
-                { id: "prod-9", title: "Apple Watch Ultra 2", description: "Most rugged and capable Apple Watch designed for outdoor adventures and athletic training.", price: 799, category: "wearables", badge: "Extreme Tech", brand: "Apple", stock: 7, soldCount: 14, image: "images/apple_watch_ultra.png", images: ["images/apple_watch_ultra.png", "images/smartwatch_screen_detail.png", "images/smartwatch_sensor_detail.png"], screenSize: "1.92 inches", processor: "Apple S9 SiP", ram: "64GB Storage" },
-                { id: "prod-10", title: "Asus Zephyrus G14", description: "Ultra-portable 14-inch gaming powerhouse featuring gorgeous OLED display and AMD Ryzen 9.", price: 1499, category: "laptops", badge: "OLED Edition", brand: "Asus", stock: 5, soldCount: 11, image: "images/asus_zephyrus.png", images: ["images/asus_zephyrus.png", "images/asus_zephyrus_cover.png", "images/lenovo_legion_2.png"], screenSize: "14.0 inches", processor: "AMD Ryzen 9 8945HS", ram: "16GB DDR5" },
-                { id: "prod-11", title: "Keychron Q1 Pro Keyboard", description: "Full aluminum QMK/VIA wireless mechanical keyboard with double-gasket custom design.", price: 189, category: "accessories", badge: "Custom Deck", brand: "Keychron", stock: 10, soldCount: 38, image: "images/keyboard.png", images: ["images/keyboard.png", "images/keyboard_switch_detail.png", "images/keyboard_knob_detail.png"], screenSize: "N/A", processor: "ARM Cortex-M4 MCU", ram: "N/A" }
-            ];
-            saveProductsToStorage();
+            // Fetch directly from Fake Store API (electronics category)
+            const res = await fetch('https://fakestoreapi.com/products/category/electronics');
+            if (!res.ok) throw new Error('Fake Store API network response was not ok');
+            const data = await res.json();
+            
+            // Map the API data to match our application's expected tech product schema
+            const mappedProducts = data.map(p => {
+                const titleLower = p.title.toLowerCase();
+                let category = 'accessories';
+                let brand = 'Generic';
+                
+                // Categorize items based on keywords in title
+                if (titleLower.includes('laptop') || titleLower.includes('book') || titleLower.includes('acer') || titleLower.includes('asus')) {
+                    category = 'laptops';
+                    brand = titleLower.includes('acer') ? 'Acer' : (titleLower.includes('asus') ? 'Asus' : 'Generic Laptop');
+                } else if (titleLower.includes('phone') || titleLower.includes('mobile') || titleLower.includes('samsung') || titleLower.includes('iphone')) {
+                    category = 'smartphones';
+                    brand = titleLower.includes('samsung') ? 'Samsung' : (titleLower.includes('iphone') ? 'Apple' : 'Generic Mobile');
+                } else if (titleLower.includes('watch') || titleLower.includes('fitbit')) {
+                    category = 'wearables';
+                    brand = titleLower.includes('fitbit') ? 'Fitbit' : 'Apple';
+                } else if (titleLower.includes('drive') || titleLower.includes('ssd') || titleLower.includes('sandisk') || titleLower.includes('wd')) {
+                    category = 'accessories';
+                    brand = titleLower.includes('sandisk') ? 'SanDisk' : 'WD';
+                }
+                
+                return {
+                    id: String(p.id),
+                    title: p.title,
+                    description: p.description,
+                    price: p.price,
+                    image: p.image,
+                    images: [p.image, p.image, p.image], // Product detail gallery images
+                    category: category,
+                    brand: brand,
+                    stock: 12,
+                    soldCount: p.rating ? Math.round(p.rating.count / 10) : 5,
+                    badge: (p.rating && p.rating.rate > 4.0) ? 'Best Seller' : 'New',
+                    screenSize: 'N/A',
+                    processor: 'N/A',
+                    ram: 'N/A'
+                };
+            });
+
+            // Merge dynamic stock counts and sold counts from local storage overrides
+            const savedStocks = JSON.parse(localStorage.getItem('techstore_product_stocks')) || {};
+            const savedSoldCount = JSON.parse(localStorage.getItem('techstore_product_sold')) || {};
+            
+            state.products = mappedProducts.map(p => ({
+                ...p,
+                stock: savedStocks[p.id] !== undefined ? savedStocks[p.id] : p.stock,
+                soldCount: savedSoldCount[p.id] !== undefined ? savedSoldCount[p.id] : p.soldCount
+            }));
+            
+        } catch (err) {
+            console.error('Error fetching from Fake Store API:', err);
+            showToast('Unable to fetch product catalog from API.', 'error');
         }
     };
 
-    // Fetch Live Exchange Rates (Async/Await)
     const fetchExchangeRates = async () => {
         try {
-            const response = await fetch('https://open.er-api.com/v6/latest/USD');
-            if (!response.ok) throw new Error('Currency API error');
-            const data = await response.json();
-            const { rates } = data;
-            AppState.exchangeRates = {
-                USD: 1,
-                EUR: rates.EUR || 0.92,
-                GEL: rates.GEL || 2.75
-            };
-        } catch (error) {
-            logAppEvent('API', 'Failed fetching live currency rates, using defaults', error);
+            const res = await fetch('https://open.er-api.com/v6/latest/USD');
+            if (res.ok) {
+                const data = await res.json();
+                state.exchangeRates.EUR = data.rates.EUR || 0.92;
+                state.exchangeRates.GEL = data.rates.GEL || 2.75;
+            }
+        } catch (err) {
+            console.warn('Currency API failed, using local backups.', err);
         }
     };
 
-    // Fetch Reviews from public API - Guarantees reviews are ALWAYS in ENGLISH
     const fetchReviews = async () => {
-        if (!elements.reviewsGrid) return;
+        const reviewsGrid = document.getElementById('reviews-grid');
+        if (!reviewsGrid) return;
         
-        const dict = translations[AppState.language] || translations.EN;
-        const defaultReviews = [
-            {
-                name: dict.reviewName1 || "Alex Johnson",
-                role: dict.reviewRole1 || "Software Engineer",
-                rating: 5,
-                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80",
-                text: dict.reviewText1 || "The Lenovo Legion Pro laptop is incredibly fast. Very impressed with the quick checkout process and customer support!"
-            },
-            {
-                name: dict.reviewName2 || "Sarah Miller",
-                role: dict.reviewRole2 || "Creative Lead",
-                rating: 5,
-                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
-                text: dict.reviewText2 || "My new iPhone 15 Pro arrived within 2 days. The support team is very responsive. Will definitely purchase again."
-            },
-            {
-                name: dict.reviewName3 || "David Kim",
-                role: dict.reviewRole3 || "IT Student",
-                rating: 4,
-                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
-                text: dict.reviewText3 || "Excellent noise cancellation on the Sony WH-1000XM5 headphones. The profile currency switcher makes ordering seamless."
-            }
+        const dict = translations[state.language];
+        const fallbackReviews = [
+            { name: dict.reviewName1, role: dict.reviewRole1, text: dict.reviewText1, rating: 5, avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80' },
+            { name: dict.reviewName2, role: dict.reviewRole2, text: dict.reviewText2, rating: 5, avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80' },
+            { name: dict.reviewName3, role: dict.reviewRole3, text: dict.reviewText3, rating: 4, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80' }
         ];
 
         try {
-            const response = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=3');
-            if (response.ok) {
-                const comments = await response.json();
-                elements.reviewsGrid.innerHTML = comments.map((comment, index) => {
-                    const name = defaultReviews[index] ? defaultReviews[index].name : comment.name.split(' ')[0];
-                    const role = defaultReviews[index] ? defaultReviews[index].role : "TechStore Client";
-                    const rating = defaultReviews[index] ? defaultReviews[index].rating : 5;
-                    const avatar = defaultReviews[index] ? defaultReviews[index].avatar : `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80`;
-                    const text = defaultReviews[index] ? defaultReviews[index].text : "Great product, excellent build quality and highly recommended!";
-                    
+            const res = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=3');
+            if (res.ok) {
+                const comments = await res.json();
+                reviewsGrid.innerHTML = comments.map((c, i) => {
+                    const fallback = fallbackReviews[i] || {};
+                    const name = fallback.name || c.name.split(' ')[0];
+                    const role = fallback.role || 'Verified Buyer';
+                    const text = fallback.text || c.body;
+                    const rating = fallback.rating || 5;
+                    const avatar = fallback.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80';
                     const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                    
                     return `
                         <div class="review-card">
                             <div class="review-header">
@@ -1016,209 +494,76 @@ document.addEventListener('DOMContentLoaded', () => {
                 }).join('');
                 return;
             }
-        } catch (error) {
-            logAppEvent('API', 'Error displaying reviews, using default local reviews', error);
+        } catch (err) {
+            console.warn('Reviews API failed, using fallback ratings:', err);
         }
-
-        // Fallback render of default reviews (always in English)
-        elements.reviewsGrid.innerHTML = defaultReviews.map(review => {
-            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+        
+        reviewsGrid.innerHTML = fallbackReviews.map(r => {
+            const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
             return `
                 <div class="review-card">
                     <div class="review-header">
-                        <img src="${review.avatar}" alt="${review.name}" class="review-avatar" loading="lazy">
+                        <img src="${r.avatar}" alt="${r.name}" class="review-avatar" loading="lazy">
                         <div class="review-user-info">
-                            <h3 class="review-user-name">${review.name}</h3>
-                            <p class="review-user-role">${review.role}</p>
+                           <h3 class="review-user-name">${r.name}</h3>
+                           <p class="review-user-role">${r.role}</p>
                         </div>
                     </div>
-                    <div class="review-rating" aria-label="${review.rating} stars">${stars}</div>
-                    <p class="review-text">"${review.text}"</p>
+                    <div class="review-rating" aria-label="${r.rating} stars">${stars}</div>
+                    <p class="review-text">"${r.text}"</p>
                 </div>
             `;
         }).join('');
     };
 
-    // Simulated Checkout API returning custom Promise
-    const submitOrderAPI = (cartData, cardDetails) => {
-        return new Promise((resolve, reject) => {
-            logAppEvent('Checkout', 'Routing payment and validating inputs...', cardDetails);
-            
-            setTimeout(() => {
-                const isSuccessful = Math.random() > 0.05; // 95% success rate
-                if (isSuccessful) {
-                    resolve({
-                        orderId: `TS-${Math.floor(100000 + Math.random() * 900000)}`,
-                        status: 'paid',
-                        cardLast4: cardDetails.cardNumber.slice(-4),
-                        timestamp: new Date().toISOString()
-                    });
-                } else {
-                    reject(new Error('Transaction declined: Card processor rejected payment.'));
-                }
-            }, 1800);
-        });
-    };
-
     // -------------------------------------------------------------------------
-    // 6. INTERACTIVE RENDERING ACTIONS (DOM & ES6+)
+    // 5. INTERACTIVE DRAWERS & MODALS TOOGLE
     // -------------------------------------------------------------------------
-
-    // Render Products Catalog Grid
-    const renderCatalog = () => {
-        if (!elements.productGrid) return;
-        const dict = translations[AppState.language];
-
-        // Apply filters
-        const filtered = AppState.products.filter(product => {
-            const matchesCategory = AppState.activeCategory === 'all' || product.category === AppState.activeCategory;
-            const matchesSearch = product.title.toLowerCase().includes(AppState.searchQuery.toLowerCase()) ||
-                                  product.description.toLowerCase().includes(AppState.searchQuery.toLowerCase());
-            const matchesBudget = product.price >= AppState.minBudget && product.price <= AppState.maxBudget;
-            return matchesCategory && matchesSearch && matchesBudget;
-        });
-
-        // Slice list according to catalog sizing (3 initially, or all matching)
-        const visibleList = AppState.showAll ? filtered : filtered.slice(0, 3);
-
-        // Update counts
-        if (elements.countMessage) {
-            elements.countMessage.textContent = AppState.language === 'KA' 
-                ? `ნაჩვენებია ${visibleList.length} / ${filtered.length} პროდუქტიდან`
-                : `Showing ${visibleList.length} of ${filtered.length} products`;
+    const toggleDrawer = (drawerId, open) => {
+        const drawer = document.getElementById(drawerId);
+        if (!drawer) return;
+        const openClass = drawerId === 'recent-drawer' ? 'drawer-open' : 'modal-open';
+        
+        if (open) {
+            drawer.classList.add(openClass);
+            drawer.setAttribute('aria-hidden', 'false');
+        } else {
+            drawer.classList.remove(openClass);
+            drawer.setAttribute('aria-hidden', 'true');
         }
-
-        // Render products
-        elements.productGrid.innerHTML = visibleList.map(product => {
-            const { id, title, price, description, image, badge } = product;
-            const availableStock = getAvailableStock(product);
-            const isOutOfStock = availableStock <= 0;
-            const isChecked = AppState.compareList.includes(id);
-
-            return `
-                <article class="product-card" data-id="${id}" style="cursor: pointer;">
-                    ${badge ? `<span class="product-badge">${badge}</span>` : ''}
-                    <div class="compare-checkbox-wrapper" style="position: absolute; top: 14px; right: 14px; z-index: 5; background: rgba(9, 3, 13, 0.85); padding: 5px 8px; border-radius: 6px; color: #ffffff; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(57, 255, 20, 0.4);">
-                        <input type="checkbox" class="compare-checkbox" data-id="${id}" ${isChecked ? 'checked' : ''} style="cursor: pointer; accent-color: var(--electric-green);">
-                        <span style="font-weight: 700; cursor: pointer;">Compare</span>
-                    </div>
-                    <div class="product-image-container">
-                        <img src="${image}" alt="${title}" class="product-image" loading="lazy">
-                    </div>
-                    <div class="product-info">
-                        <h3 class="product-title">${title}</h3>
-                        <p class="product-text">${description}</p>
-                        <div class="product-purchase-row">
-                            <span class="product-price">${formatPrice(price)}</span>
-                            <button class="btn add-to-cart-btn" data-id="${id}" ${isOutOfStock ? 'disabled' : ''}>
-                                ${isOutOfStock ? dict.outOfStock : dict.addToCart}
-                            </button>
-                        </div>
-                    </div>
-                </article>
-            `;
-        }).join('');
-
-        // Attach event listeners
-        elements.productGrid.querySelectorAll('.product-card').forEach(card => {
-            card.addEventListener('click', (e) => {
-                if (e.target.closest('.add-to-cart-btn')) return;
-                if (e.target.closest('.compare-checkbox-wrapper') || e.target.closest('.compare-checkbox')) return;
-                const productId = card.getAttribute('data-id');
-                openProductModal(productId);
-            });
-        });
-
-        elements.productGrid.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const productId = btn.getAttribute('data-id');
-                addToCart(productId);
-            });
-        });
-
-        // Compare checkbox listener
-        elements.productGrid.querySelectorAll('.compare-checkbox').forEach(cb => {
-            cb.addEventListener('change', (e) => {
-                const productId = cb.getAttribute('data-id');
-                if (cb.checked) {
-                    if (!AppState.compareList.includes(productId)) {
-                        AppState.compareList.push(productId);
-                    }
-                } else {
-                    AppState.compareList = AppState.compareList.filter(id => id !== productId);
-                }
-                updateCompareFAB();
-            });
-        });
-
-        // Sync showMoreBtn label
-        if (elements.showMoreBtn) {
-            elements.showMoreBtn.textContent = AppState.showAll ? dict.showFeatured : dict.showAll;
-        }
-
-        // Keep inventory table in sync
-        renderInventoryTable();
     };
 
-    // Dynamic Inventory Table Status Renderer
-    const renderInventoryTable = () => {
-        if (!elements.inventoryTableBody) return;
-        const dict = translations[AppState.language];
-        
-        elements.inventoryTableBody.innerHTML = AppState.products.map(product => {
-            const { title, category, price, stock, soldCount } = product;
-            
-            let availabilityText = "";
-            let availabilityClass = "";
-            if (stock <= 0) {
-                availabilityText = dict.outOfStock;
-                availabilityClass = "stock-out";
-            } else if (stock <= 3) {
-                availabilityText = AppState.language === 'KA' ? 'ლიმიტირებული' : 'Limited';
-                availabilityClass = "stock-alert";
-            } else {
-                availabilityText = AppState.language === 'KA' ? 'მარაგშია' : 'In Stock';
-                availabilityClass = "stock-in";
-            }
-            
-            const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
-            
-            return `
-                <tr>
-                    <td style="color: #ffffff; font-weight: 700;">${title}</td>
-                    <td>${formattedCategory}</td>
-                    <td>${formatPrice(price)}</td>
-                    <td class="${availabilityClass}">${availabilityText} (${stock})</td>
-                    <td style="font-weight: 700; color: #ffffff;">${soldCount}</td>
-                </tr>
-            `;
-        }).join('');
+    const closeModal = () => {
+        const modal = document.getElementById('product-modal');
+        if (modal) {
+            modal.classList.remove('modal-open');
+            modal.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
     };
 
-    // Open & Render Product Details Modal
-    const openProductModal = (productId) => {
-        AppState.activeModalProductId = productId;
+    const openProductModal = (id) => {
+        state.activeModalProductId = id;
+        addToRecentlyViewed(id);
+        renderModalContent(id);
         
-        // Add to recently viewed (prevent duplicates, keep top 5)
-        AppState.recentlyViewed = [productId, ...AppState.recentlyViewed.filter(id => id !== productId)].slice(0, 5);
-        updateRecentlyViewed();
-
-        renderModalContent(productId);
-        
-        if (elements.productModal) {
-            elements.productModal.classList.add('modal-open');
-            elements.productModal.setAttribute('aria-hidden', 'false');
+        const modal = document.getElementById('product-modal');
+        if (modal) {
+            modal.classList.add('modal-open');
+            modal.setAttribute('aria-hidden', 'false');
             document.body.style.overflow = 'hidden';
         }
     };
 
     const renderModalContent = (productId) => {
-        if (!elements.modalBodyContent) return;
-        const product = AppState.products.find(p => p.id === productId);
+        const content = document.getElementById('modal-body-content');
+        if (!content) return;
+        
+        const product = state.products.find(p => p.id === productId);
         if (!product) return;
 
-        const dict = translations[AppState.language];
-        const { title, brand, description, price, badge, image, soldCount } = product;
+        const dict = translations[state.language];
+        const { title, brand, description, price, image, soldCount } = product;
         const availableStock = getAvailableStock(product);
         const isOutOfStock = availableStock <= 0;
         const productImages = product.images || [image];
@@ -1251,8 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const yToday = mapY(pToday);
 
         // Months trend (5 months ago, 4 months ago, 3 months ago, 2 months ago, 1 month ago, Current)
-        // Let's dynamic month names based on current locale
-        const monthNames = AppState.language === 'KA'
+        const monthNames = state.language === 'KA'
             ? ["იან", "თებ", "მარ", "აპრ", "მაი", "ივნ", "ივლ", "აგვ", "სექ", "ოქტ", "ნოე", "დეკ"]
             : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
         
@@ -1289,246 +633,153 @@ document.addEventListener('DOMContentLoaded', () => {
         const ym4 = mapMY(pm4);
         const ym5 = mapMY(pm5);
 
-        // Deterministic ratings generation
-        const seedStr = productId || "";
-        const seedVal = seedStr.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
-        
-        // Generate mock review counts for 5, 4, 3, 2, 1 stars
-        const r5 = 15 + (seedVal % 45);
-        const r4 = 5 + (seedVal % 15);
-        const r3 = 2 + (seedVal % 8);
-        const r2 = 1 + (seedVal % 4);
-        const r1 = seedVal % 3;
-        
-        const totalReviews = r5 + r4 + r3 + r2 + r1;
-        const avgRating = ((r5 * 5 + r4 * 4 + r3 * 3 + r2 * 2 + r1 * 1) / totalReviews).toFixed(1);
+        content.innerHTML = `
+            <div class="product-detail-modal-layout">
+                <!-- Left Column: Gallery & Details -->
+                <div>
+                    <div id="zoom-container" style="position: relative; overflow: hidden; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); cursor: zoom-in; display: flex; align-items: center; justify-content: center; height: 320px;">
+                        <img id="main-product-detail-img" src="${image}" alt="${title}" style="max-height: 100%; max-width: 100%; object-fit: contain; transition: transform 0.1s ease;">
+                    </div>
 
-        const chartHtml = `
-            <div class="price-history-chart-card" style="margin: 16px 0; background: rgba(9, 3, 13, 0.6); border: 1px solid rgba(124, 58, 237, 0.3); border-radius: 12px; padding: 16px; box-sizing: border-box; position: relative; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4); backdrop-filter: blur(10px);">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
-                    <div>
-                        <h4 style="margin: 0; color: #ffffff; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
-                            <span style="color: var(--electric-green);">📈</span> ${AppState.language === 'KA' ? 'ფასების ანალიტიკა' : 'Product Analytics'}
-                        </h4>
-                        <div id="chart-legend" style="display: flex; align-items: center; gap: 8px; margin-top: 4px; font-size: 0.75rem; color: #94a3b8; font-weight: 600;">
-                            <span id="legend-price" style="font-size: 0.95rem; font-weight: 800; color: #ffffff;">${formatPrice(price)}</span>
-                            <span id="legend-change" style="color: var(--electric-green); font-weight: 750;">0.00%</span>
-                            <span id="legend-date" style="color: #64748b; font-size: 0.7rem;">Today</span>
+                    
+                    <!-- Product Info directly below Gallery -->
+                    <div style="margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
+                        <h4 style="color: var(--electric-green); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin: 0 0 8px 0;">Description</h4>
+                        <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0 0 16px 0;">${description}</p>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.85rem; color: #94a3b8;">
+                            <span>${state.language === 'KA' ? 'მარაგშია' : 'Stock level'}: <strong style="color: #fff;">${availableStock}</strong></span>
+                            <span>${state.language === 'KA' ? 'გაყიდულია' : 'Sold'}: <strong style="color: #fff;">${soldCount}</strong></span>
                         </div>
                     </div>
-                    <div style="display: flex; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px; padding: 2px;">
-                        <button id="btn-chart-days" style="padding: 4px 10px; font-size: 0.68rem; border-radius: 4px; background: var(--electric-green); color: #000000; font-weight: 800; border: none; cursor: pointer; transition: all 0.2s;">
-                            ${AppState.language === 'KA' ? 'დღეები' : 'Days'}
-                        </button>
-                        <button id="btn-chart-months" style="padding: 4px 10px; font-size: 0.68rem; border-radius: 4px; background: transparent; color: #cbd5e1; font-weight: 800; border: none; cursor: pointer; transition: all 0.2s;">
-                            ${AppState.language === 'KA' ? 'თვეები' : 'Months'}
-                        </button>
-                    </div>
                 </div>
 
-                <!-- 90-Days Price Chart -->
-                <div id="chart-container-days" style="display: block; position: relative;">
-                    <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible; display: block;">
-                        <defs>
-                            <linearGradient id="chart-glow-days-${productId}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="var(--electric-green)" stop-opacity="0.25"/>
-                                <stop offset="100%" stop-color="var(--electric-green)" stop-opacity="0"/>
-                            </linearGradient>
-                        </defs>
+                <!-- Right Column: Specs, Purchase & Analytics -->
+                <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 6px 0;">${title}</h2>
+                        <p style="color: var(--electric-green); font-weight: 700; margin: 0 0 16px 0;">${brand}</p>
                         
-                        <!-- Grid Lines & Labels -->
-                        <line x1="40" y1="20" x2="290" y2="20" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
-                        <text x="35" y="23" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(maxP)}</text>
-                        
-                        <line x1="40" y1="55" x2="290" y2="55" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
-                        <text x="35" y="58" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(Math.round((maxP + minP) / 2))}</text>
-                        
-                        <line x1="40" y1="90" x2="290" y2="90" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
-                        <text x="35" y="93" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(minP)}</text>
-
-                        <line x1="40" y1="100" x2="290" y2="100" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1" />
-
-                        <!-- Area Fill -->
-                        <path d="M 40 ${y90} L 102.5 ${y60} L 165 ${y30} L 227.5 ${y15} L 290 ${yToday} L 290 100 L 40 100 Z" fill="url(#chart-glow-days-${productId})"></path>
-                        
-                        <!-- Stroke Line -->
-                        <path d="M 40 ${y90} L 102.5 ${y60} L 165 ${y30} L 227.5 ${y15} L 290 ${yToday}" fill="none" stroke="var(--electric-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px rgba(57, 255, 20, 0.5));"></path>
-                        
-                        <!-- Crosshairs -->
-                        <line id="crosshair-x-days" x1="0" y1="10" x2="0" y2="100" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
-                        <line id="crosshair-y-days" x1="40" y1="0" x2="290" y2="0" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
-                        
-                        <circle id="tracking-dot-days" cx="290" cy="${yToday}" r="5" fill="var(--electric-green)" stroke="#ffffff" stroke-width="1.5" style="filter: drop-shadow(0px 0px 5px var(--electric-green)); transition: cx 0.1s ease, cy 0.1s ease;" />
-                        
-                        <!-- Interactive Hover Area Overlay -->
-                        <rect x="40" y="10" width="250" height="90" fill="transparent" style="cursor: crosshair; pointer-events: all;" class="chart-overlay-rect" data-type="days" />
-                    </svg>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 700; padding-left: 40px; padding-right: 10px; box-sizing: border-box;">
-                        <span>-90 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
-                        <span>-60 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
-                        <span>-30 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
-                        <span>-15 ${AppState.language === 'KA' ? 'დღე' : 'd'}</span>
-                        <span>${AppState.language === 'KA' ? 'დღეს' : 'Today'}</span>
+                        <!-- Specs -->
+                        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
+                            ${product.screenSize && product.screenSize !== 'N/A' ? `<div style="display:flex; justify-content:space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 4px;"><span style="color:#64748b;">Screen Size</span><span style="color:#fff; font-weight:600;">${product.screenSize}</span></div>` : ''}
+                            ${product.processor && product.processor !== 'N/A' ? `<div style="display:flex; justify-content:space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 4px;"><span style="color:#64748b;">Processor</span><span style="color:#fff; font-weight:600;">${product.processor}</span></div>` : ''}
+                            ${product.ram && product.ram !== 'N/A' ? `<div style="display:flex; justify-content:space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 4px;"><span style="color:#64748b;">RAM</span><span style="color:#fff; font-weight:600;">${product.ram}</span></div>` : ''}
+                        </div>
                     </div>
-                </div>
 
-                <!-- Monthly Price Chart -->
-                <div id="chart-container-months" style="display: none; position: relative;">
-                    <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible; display: block;">
-                        <defs>
-                            <linearGradient id="chart-glow-months-${productId}" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stop-color="var(--violet)" stop-opacity="0.25"/>
-                                <stop offset="100%" stop-color="var(--violet)" stop-opacity="0"/>
-                            </linearGradient>
-                        </defs>
-                        
-                        <!-- Grid Lines & Labels -->
-                        <line x1="40" y1="20" x2="290" y2="20" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
-                        <text x="35" y="23" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(maxMP)}</text>
-                        
-                        <line x1="40" y1="55" x2="290" y2="55" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
-                        <text x="35" y="58" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(Math.round((maxMP + minMP) / 2))}</text>
-                        
-                        <line x1="40" y1="90" x2="290" y2="90" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
-                        <text x="35" y="93" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(minMP)}</text>
-
-                        <line x1="40" y1="100" x2="290" y2="100" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1" />
-
-                        <!-- Area Fill -->
-                        <path d="M 40 ${ym0} L 90 ${ym1} L 140 ${ym2} L 190 ${ym3} L 240 ${ym4} L 290 ${ym5} L 290 100 L 40 100 Z" fill="url(#chart-glow-months-${productId})"></path>
-                        
-                        <!-- Stroke Line -->
-                        <path d="M 40 ${ym0} L 90 ${ym1} L 140 ${ym2} L 190 ${ym3} L 240 ${ym4} L 290 ${ym5}" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px rgba(124, 58, 237, 0.5));"></path>
-                        
-                        <!-- Crosshairs -->
-                        <line id="crosshair-x-months" x1="0" y1="10" x2="0" y2="100" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
-                        <line id="crosshair-y-months" x1="40" y1="0" x2="290" y2="0" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
-                        
-                        <circle id="tracking-dot-months" cx="290" cy="${ym5}" r="5" fill="var(--violet)" stroke="#ffffff" stroke-width="1.5" style="filter: drop-shadow(0px 0px 5px var(--violet)); transition: cx 0.1s ease, cy 0.1s ease;" />
-                        
-                        <!-- Interactive Hover Area Overlay -->
-                        <rect x="40" y="10" width="250" height="90" fill="transparent" style="cursor: crosshair; pointer-events: all;" class="chart-overlay-rect" data-type="months" />
-                    </svg>
-                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 700; padding-left: 40px; padding-right: 10px; box-sizing: border-box;">
-                        <span>${mLabel0}</span>
-                        <span>${mLabel1}</span>
-                        <span>${mLabel2}</span>
-                        <span>${mLabel3}</span>
-                        <span>${mLabel4}</span>
-                        <span>${mLabel5}</span>
-                    </div>
-                </div>
-            </div>
-        `;
-
-        elements.modalBodyContent.innerHTML = `
-            <div class="modal-grid">
-                <div class="modal-img-wrapper" style="display: flex; flex-direction: column; align-items: center;">
-                    <div class="main-image-zoom-container" id="zoom-container" style="position: relative; overflow: hidden; border-radius: 10px; cursor: zoom-in; width: 100%; border: 1px solid rgba(57, 255, 20, 0.25); background: rgba(9, 3, 13, 0.4);">
-                        <img src="${image}" alt="${title}" id="main-modal-img" class="zoom-image" style="width: 100%; height: auto; display: block; transition: transform 0.1s ease; transform-origin: center center;">
-                    </div>
-                    <div class="modal-thumbnails" style="display: flex; gap: 8px; margin-top: 12px; justify-content: center; flex-wrap: wrap;">
-                        ${productImages.map(imgSrc => `
-                            <img src="${imgSrc}" class="modal-thumbnail-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 2px solid rgba(255,255,255,0.2); cursor: pointer; transition: border-color 0.2s;" alt="${title} thumbnail">
-                        `).join('')}
-                    </div>
-                </div>
-                <div class="modal-details">
-                    ${badge ? `<span class="modal-badge">${badge}</span>` : ''}
-                    <h2 class="modal-title">${title}</h2>
-                    <p class="modal-brand">${dict.brand}: ${brand}</p>
-                    <p class="modal-desc">${description}</p>
-                    
-                    <div class="modal-reviews-summary" style="margin: 16px 0; padding: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(57, 255, 20, 0.15); border-radius: 10px;">
-                        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
-                            <div style="text-align: center;">
-                                <div style="font-size: 2.2rem; font-weight: 800; color: var(--electric-green); line-height: 1;">${avgRating}</div>
-                                <div style="font-size: 0.7rem; color: #8b9bb4; margin-top: 4px;">${AppState.language === 'KA' ? '5-დან' : 'out of 5'}</div>
-                            </div>
-                            <div style="flex-grow: 1;">
-                                <div style="display: flex; align-items: center; gap: 4px; color: #fbbf24; font-size: 0.95rem;">
-                                    ${'★'.repeat(Math.round(avgRating))}${'☆'.repeat(5 - Math.round(avgRating))}
-                                    <span style="font-size: 0.78rem; color: #cbd5e1; font-weight: 700; margin-left: 6px;">${totalReviews} ${AppState.language === 'KA' ? 'შეფასება' : 'reviews'}</span>
+                    <!-- Financial Stock Style Price Chart -->
+                    <div class="price-history-chart-card" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <div>
+                                <h4 style="margin: 0; font-size: 0.8rem; color: #64748b; text-transform: uppercase;">Price Analysis</h4>
+                                <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 4px;">
+                                    <span id="legend-price" style="font-size: 1.15rem; font-weight: 800; color: #fff;">${formatPrice(price)}</span>
+                                    <span id="legend-change" style="font-size: 0.8rem; font-weight: 700; color: var(--electric-green);">0.00%</span>
                                 </div>
                             </div>
+                            <div style="display: flex; gap: 4px;">
+                                <button id="btn-chart-days" style="padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; border: none; background: var(--electric-green); color: #000; font-weight: 700; cursor: pointer;">90D</button>
+                                <button id="btn-chart-months" style="padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: #cbd5e1; font-weight: 700; cursor: pointer;">6M</button>
+                            </div>
                         </div>
-                        
-                        <div style="display: flex; flex-direction: column; gap: 6px;">
-                            ${[
-                                { stars: 5, count: r5 },
-                                { stars: 4, count: r4 },
-                                { stars: 3, count: r3 },
-                                { stars: 2, count: r2 },
-                                { stars: 1, count: r1 }
-                            ].map(item => {
-                                const pct = ((item.count / totalReviews) * 100).toFixed(0);
-                                return `
-                                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: #cbd5e1;">
-                                        <span style="width: 75px; text-align: right; font-weight: 600;">${item.stars} ${AppState.language === 'KA' ? 'ვარსკვლავი' : 'stars'}</span>
-                                        <div style="flex-grow: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
-                                            <div style="width: ${pct}%; height: 100%; background: var(--electric-green); border-radius: 3px;"></div>
-                                        </div>
-                                        <span style="width: 35px; text-align: left; font-weight: 700; color: #8b9bb4;">${item.count}</span>
-                                    </div>
-                                `;
-                            }).join('')}
+
+                        <!-- 90 Days Chart (Stock style) -->
+                        <div id="chart-container-days" style="display: block;">
+                            <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible;">
+                                <defs>
+                                    <linearGradient id="chart-glow-days-${productId}" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--electric-green)" stop-opacity="0.25"/>
+                                        <stop offset="100%" stop-color="var(--electric-green)" stop-opacity="0"/>
+                                    </linearGradient>
+                                </defs>
+                                <line x1="40" y1="20" x2="290" y2="20" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                                <text x="35" y="23" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(maxP)}</text>
+                                <line x1="40" y1="55" x2="290" y2="55" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                                <text x="35" y="58" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(Math.round((maxP + minP) / 2))}</text>
+                                <line x1="40" y1="90" x2="290" y2="90" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                                <text x="35" y="93" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(minP)}</text>
+                                <line x1="40" y1="100" x2="290" y2="100" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1" />
+                                <path d="M 40 ${y90} L 102.5 ${y60} L 165 ${y30} L 227.5 ${y15} L 290 ${yToday} L 290 100 L 40 100 Z" fill="url(#chart-glow-days-${productId})"></path>
+                                <path d="M 40 ${y90} L 102.5 ${y60} L 165 ${y30} L 227.5 ${y15} L 290 ${yToday}" fill="none" stroke="var(--electric-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <line id="crosshair-x-days" x1="0" y1="10" x2="0" y2="100" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                                <line id="crosshair-y-days" x1="40" y1="0" x2="290" y2="0" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                                <circle id="tracking-dot-days" cx="290" cy="${yToday}" r="5" fill="var(--electric-green)" stroke="#ffffff" stroke-width="1.5" />
+                                <rect x="40" y="10" width="250" height="90" fill="transparent" style="cursor: crosshair; pointer-events: all;" class="chart-overlay-rect" data-type="days" />
+                            </svg>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 700; padding-left: 40px;">
+                                <span>-90d</span>
+                                <span>-60d</span>
+                                <span>-30d</span>
+                                <span>-15d</span>
+                                <span>Today</span>
+                            </div>
+                        </div>
+
+                        <!-- 6 Months Chart -->
+                        <div id="chart-container-months" style="display: none;">
+                            <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible;">
+                                <defs>
+                                    <linearGradient id="chart-glow-months-${productId}" x1="0" y1="0" x2="0" y2="1">
+                                        <stop offset="0%" stop-color="var(--violet)" stop-opacity="0.25"/>
+                                        <stop offset="100%" stop-color="var(--violet)" stop-opacity="0"/>
+                                    </linearGradient>
+                                </defs>
+                                <line x1="40" y1="20" x2="290" y2="20" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                                <text x="35" y="23" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(maxMP)}</text>
+                                <line x1="40" y1="55" x2="290" y2="55" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                                <text x="35" y="58" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(Math.round((maxMP + minMP) / 2))}</text>
+                                <line x1="40" y1="90" x2="290" y2="90" stroke="rgba(255, 255, 255, 0.08)" stroke-width="1" stroke-dasharray="2,2" />
+                                <text x="35" y="93" fill="#64748b" font-size="7" font-weight="700" text-anchor="end">${formatPrice(minMP)}</text>
+                                <line x1="40" y1="100" x2="290" y2="100" stroke="rgba(255, 255, 255, 0.15)" stroke-width="1" />
+                                <path d="M 40 ${ym0} L 90 ${ym1} L 140 ${ym2} L 190 ${ym3} L 240 ${ym4} L 290 ${ym5} L 290 100 L 40 100 Z" fill="url(#chart-glow-months-${productId})"></path>
+                                <path d="M 40 ${ym0} L 90 ${ym1} L 140 ${ym2} L 190 ${ym3} L 240 ${ym4} L 290 ${ym5}" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></path>
+                                <line id="crosshair-x-months" x1="0" y1="10" x2="0" y2="100" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                                <line id="crosshair-y-months" x1="40" y1="0" x2="290" y2="0" stroke="rgba(255, 255, 255, 0.3)" stroke-width="1" stroke-dasharray="3,3" style="display: none;" />
+                                <circle id="tracking-dot-months" cx="290" cy="${ym5}" r="5" fill="var(--violet)" stroke="#ffffff" stroke-width="1.5" />
+                                <rect x="40" y="10" width="250" height="90" fill="transparent" style="cursor: crosshair; pointer-events: all;" class="chart-overlay-rect" data-type="months" />
+                            </svg>
+                            <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 700; padding-left: 40px;">
+                                <span>${mLabel0}</span>
+                                <span>${mLabel1}</span>
+                                <span>${mLabel2}</span>
+                                <span>${mLabel3}</span>
+                                <span>${mLabel4}</span>
+                                <span>${mLabel5}</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="modal-stats">
-                        <div class="modal-stat-box">
-                            <span class="modal-stat-label">${dict.availableStock}</span>
-                            <span class="modal-stat-val ${isOutOfStock ? 'stock-out' : (availableStock <= 3 ? 'stock-alert' : '')}">
-                                ${isOutOfStock ? dict.outOfStock : `${availableStock} ${dict.units}`}
-                            </span>
-                        </div>
-                        <div class="modal-stat-box">
-                            <span class="modal-stat-label">${dict.unitsSold}</span>
-                            <span class="modal-stat-val">${soldCount} ${dict.units}</span>
-                        </div>
-                    </div>
-
-                    ${chartHtml}
-
-                    <div class="modal-purchase-row">
-                        <span class="modal-price">${formatPrice(price)}</span>
-                        <button class="btn modal-action-btn add-to-cart-btn" data-id="${productId}" ${isOutOfStock ? 'disabled' : ''}>
-                            ${isOutOfStock ? dict.outOfStock : dict.addToCart}
+                    <!-- Price & Cart Button -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">
+                        <span style="font-size: 1.6rem; font-weight: 800; color: #fff;">${formatPrice(price)}</span>
+                        <button id="modal-add-to-cart-btn" class="btn" style="background: #DAA520; color: #000; font-weight: 800; padding: 12px 24px; border-radius: 8px; cursor: pointer; transition: all 0.2s;" ${isOutOfStock ? 'disabled' : ''}>
+                            ${isOutOfStock ? (state.language === 'KA' ? 'ამოიყიდა' : 'Out of Stock') : (state.language === 'KA' ? 'კალათაში დამატება' : 'Add to Cart')}
                         </button>
                     </div>
                 </div>
             </div>
         `;
 
-        // Bind event listeners inside modal
-        elements.modalBodyContent.querySelector('.add-to-cart-btn').addEventListener('click', () => {
+        // Event listener for modal Add to Cart button
+        document.getElementById('modal-add-to-cart-btn')?.addEventListener('click', () => {
             addToCart(productId);
+            // Refresh modal content to update stock level visual
             renderModalContent(productId);
         });
 
-        // Clickable thumbnails logic
-        const mainImg = elements.modalBodyContent.querySelector('#main-modal-img');
-        const thumbs = elements.modalBodyContent.querySelectorAll('.modal-thumbnail-img');
-        if (thumbs.length > 0) {
-            thumbs[0].style.borderColor = 'var(--electric-green)';
-            thumbs.forEach(thumb => {
-                thumb.addEventListener('click', () => {
-                    mainImg.src = thumb.src;
-                    thumbs.forEach(t => t.style.borderColor = 'rgba(255,255,255,0.2)');
-                    thumb.style.borderColor = 'var(--electric-green)';
-                });
-            });
-        }
 
-        // Hover-to-Zoom logic
-        const zoomContainer = elements.modalBodyContent.querySelector('#zoom-container');
+
+        // Hover to Zoom logic
+        const zoomContainer = document.getElementById('zoom-container');
+        const mainImg = document.getElementById('main-product-detail-img');
         if (zoomContainer && mainImg) {
             zoomContainer.addEventListener('mousemove', (e) => {
                 const rect = zoomContainer.getBoundingClientRect();
                 const x = ((e.clientX - rect.left) / rect.width) * 100;
                 const y = ((e.clientY - rect.top) / rect.height) * 100;
                 mainImg.style.transformOrigin = `${x}% ${y}%`;
-                mainImg.style.transform = 'scale(2.2)';
+                mainImg.style.transform = 'scale(2)';
             });
             zoomContainer.addEventListener('mouseleave', () => {
                 mainImg.style.transform = 'scale(1)';
@@ -1536,1484 +787,1247 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Chart Toggle and Crosshair Interactivity
-        const chartCard = elements.modalBodyContent.querySelector('.price-history-chart-card');
-        if (chartCard) {
-            const btnDays = chartCard.querySelector('#btn-chart-days');
-            const btnMonths = chartCard.querySelector('#btn-chart-months');
-            const containerDays = chartCard.querySelector('#chart-container-days');
-            const containerMonths = chartCard.querySelector('#chart-container-months');
+        const legendPrice = document.getElementById('legend-price');
+        const legendChange = document.getElementById('legend-change');
 
-            if (btnDays && btnMonths && containerDays && containerMonths) {
-                btnDays.addEventListener('click', () => {
-                    containerDays.style.display = 'block';
-                    containerMonths.style.display = 'none';
-                    btnDays.style.background = 'var(--electric-green)';
-                    btnDays.style.color = '#000000';
-                    btnMonths.style.background = 'transparent';
-                    btnMonths.style.color = '#cbd5e1';
-                });
-                btnMonths.addEventListener('click', () => {
-                    containerDays.style.display = 'none';
-                    containerMonths.style.display = 'block';
-                    btnMonths.style.background = 'var(--electric-green)';
-                    btnMonths.style.color = '#000000';
-                    btnDays.style.background = 'transparent';
-                    btnDays.style.color = '#cbd5e1';
-                });
+        const resetLegend = (isDaysView) => {
+            if (legendPrice) legendPrice.textContent = formatPrice(price);
+            if (legendChange) {
+                const firstP = isDaysView ? p90 : pm0;
+                const pct = ((price - firstP) / firstP) * 100;
+                legendChange.textContent = `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`;
+                legendChange.style.color = pct >= 0 ? 'var(--electric-green)' : '#f87171';
             }
+        };
 
-            // Setup crosshair hover overlay tracking
-            const overlayRects = chartCard.querySelectorAll('.chart-overlay-rect');
-            const legendPrice = chartCard.querySelector('#legend-price');
-            const legendChange = chartCard.querySelector('#legend-change');
-            const legendDate = chartCard.querySelector('#legend-date');
+        // Chart toggle event listeners
+        const btnDays = document.getElementById('btn-chart-days');
+        const btnMonths = document.getElementById('btn-chart-months');
+        const containerDays = document.getElementById('chart-container-days');
+        const containerMonths = document.getElementById('chart-container-months');
 
-            if (legendPrice && legendChange && legendDate) {
-                overlayRects.forEach(overlay => {
-                    const type = overlay.getAttribute('data-type');
-                    const isDays = type === 'days';
-                    const container = isDays ? containerDays : containerMonths;
-
-                    // Reconstruct points to find closest on hover
-                    const pts = isDays ? [
-                        { x: 40, y: y90, price: p90, label: `-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
-                        { x: 102.5, y: y60, price: p60, label: `-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
-                        { x: 165, y: y30, price: p30, label: `-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
-                        { x: 227.5, y: y15, price: p15, label: `-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}` },
-                        { x: 290, y: yToday, price: pToday, label: AppState.language === 'KA' ? 'დღეს' : 'Today' }
-                    ] : [
-                        { x: 40, y: ym0, price: pm0, label: mLabel0 },
-                        { x: 90, y: ym1, price: pm1, label: mLabel1 },
-                        { x: 140, y: ym2, price: pm2, label: mLabel2 },
-                        { x: 190, y: ym3, price: pm3, label: mLabel3 },
-                        { x: 240, y: ym4, price: pm4, label: mLabel4 },
-                        { x: 290, y: ym5, price: pm5, label: mLabel5 }
-                    ];
-
-                    const firstPrice = pts[0].price;
-                    const crosshairX = container.querySelector(isDays ? '#crosshair-x-days' : '#crosshair-x-months');
-                    const crosshairY = container.querySelector(isDays ? '#crosshair-y-days' : '#crosshair-y-months');
-                    const trackingDot = container.querySelector(isDays ? '#tracking-dot-days' : '#tracking-dot-months');
-
-                    const resetLegend = () => {
-                        const latest = pts[pts.length - 1];
-                        legendPrice.textContent = formatPrice(latest.price);
-
-                        const changePct = ((latest.price - firstPrice) / firstPrice * 100);
-                        legendChange.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
-                        legendChange.style.color = changePct >= 0 ? 'var(--electric-green)' : '#f87171';
-                        legendDate.textContent = latest.label;
-
-                        if (crosshairX) crosshairX.style.display = 'none';
-                        if (crosshairY) crosshairY.style.display = 'none';
-                        if (trackingDot) {
-                            trackingDot.setAttribute('cx', latest.x);
-                            trackingDot.setAttribute('cy', latest.y);
-                        }
-                    };
-
-                    overlay.addEventListener('mousemove', (e) => {
-                        const svg = overlay.ownerSVGElement;
-                        if (!svg) return;
-
-                        const rect = svg.getBoundingClientRect();
-                        const scaleX = 320 / rect.width;
-                        const mouseX = (e.clientX - rect.left) * scaleX;
-
-                        let closest = pts[0];
-                        let minDiff = Math.abs(mouseX - closest.x);
-                        for (let i = 1; i < pts.length; i++) {
-                            const diff = Math.abs(mouseX - pts[i].x);
-                            if (diff < minDiff) {
-                                minDiff = diff;
-                                closest = pts[i];
-                            }
-                        }
-
-                        if (crosshairX) {
-                            crosshairX.setAttribute('x1', closest.x);
-                            crosshairX.setAttribute('x2', closest.x);
-                            crosshairX.style.display = 'block';
-                        }
-                        if (crosshairY) {
-                            crosshairY.setAttribute('y1', closest.y);
-                            crosshairY.setAttribute('y2', closest.y);
-                            crosshairY.style.display = 'block';
-                        }
-                        if (trackingDot) {
-                            trackingDot.setAttribute('cx', closest.x);
-                            trackingDot.setAttribute('cy', closest.y);
-                        }
-
-                        legendPrice.textContent = formatPrice(closest.price);
-                        const changePct = ((closest.price - firstPrice) / firstPrice * 100);
-                        legendChange.textContent = `${changePct >= 0 ? '+' : ''}${changePct.toFixed(2)}%`;
-                        legendChange.style.color = changePct >= 0 ? 'var(--electric-green)' : '#f87171';
-                        legendDate.textContent = closest.label;
-                    });
-
-                    overlay.addEventListener('mouseleave', () => {
-                        resetLegend();
-                    });
-
-                    // Set default initial state
-                    resetLegend();
-                });
-            }
+        if (btnDays && btnMonths && containerDays && containerMonths) {
+            btnDays.addEventListener('click', () => {
+                containerDays.style.display = 'block';
+                containerMonths.style.display = 'none';
+                btnDays.style.background = 'var(--electric-green)';
+                btnDays.style.color = '#000';
+                btnDays.style.border = 'none';
+                btnMonths.style.background = 'transparent';
+                btnMonths.style.color = '#cbd5e1';
+                btnMonths.style.border = '1px solid rgba(255,255,255,0.1)';
+                resetLegend(true);
+            });
+            btnMonths.addEventListener('click', () => {
+                containerDays.style.display = 'none';
+                containerMonths.style.display = 'block';
+                btnMonths.style.background = 'var(--electric-green)';
+                btnMonths.style.color = '#000';
+                btnMonths.style.border = 'none';
+                btnDays.style.background = 'transparent';
+                btnDays.style.color = '#cbd5e1';
+                btnDays.style.border = '1px solid rgba(255,255,255,0.1)';
+                resetLegend(false);
+            });
         }
+
+        // Setup hover tracking for both SVGs
+        const setupChartHover = (container, isDays) => {
+            if (!container) return;
+            const svg = container.querySelector('svg');
+            if (!svg) return;
+
+            const pts = isDays ? [
+                { x: 40, y: y90, price: p90, label: '-90d' },
+                { x: 102.5, y: y60, price: p60, label: '-60d' },
+                { x: 165, y: y30, price: p30, label: '-30d' },
+                { x: 227.5, y: y15, price: p15, label: '-15d' },
+                { x: 290, y: yToday, price: pToday, label: 'Today' }
+            ] : [
+                { x: 40, y: ym0, price: pm0, label: mLabel0 },
+                { x: 90, y: ym1, price: pm1, label: mLabel1 },
+                { x: 140, y: ym2, price: pm2, label: mLabel2 },
+                { x: 190, y: ym3, price: pm3, label: mLabel3 },
+                { x: 240, y: ym4, price: pm4, label: mLabel4 },
+                { x: 290, y: ym5, price: pm5, label: mLabel5 }
+            ];
+
+            const firstPrice = pts[0].price;
+            const crosshairX = container.querySelector(isDays ? '#crosshair-x-days' : '#crosshair-x-months');
+            const crosshairY = container.querySelector(isDays ? '#crosshair-y-days' : '#crosshair-y-months');
+            const trackingDot = container.querySelector(isDays ? '#tracking-dot-days' : '#tracking-dot-months');
+
+            svg.addEventListener('mousemove', (e) => {
+                const rect = svg.getBoundingClientRect();
+                if (!rect.width) return;
+
+                // Normalize coordinate relative to the SVG's 320px width viewbox
+                const mouseX = (e.clientX - rect.left) * (320 / rect.width);
+
+                // Find closest data point
+                let closest = pts[0];
+                let minDiff = Math.abs(mouseX - closest.x);
+                for (let i = 1; i < pts.length; i++) {
+                    const diff = Math.abs(mouseX - pts[i].x);
+                    if (diff < minDiff) {
+                        minDiff = diff;
+                        closest = pts[i];
+                    }
+                }
+
+                // If mouse is within active charting area range (approx 30px to 305px)
+                if (mouseX >= 30 && mouseX <= 305) {
+                    if (crosshairX) {
+                        crosshairX.setAttribute('x1', closest.x);
+                        crosshairX.setAttribute('x2', closest.x);
+                        crosshairX.style.display = 'block';
+                    }
+                    if (crosshairY) {
+                        crosshairY.setAttribute('y1', closest.y);
+                        crosshairY.setAttribute('y2', closest.y);
+                        crosshairY.style.display = 'block';
+                    }
+                    if (trackingDot) {
+                        trackingDot.setAttribute('cx', closest.x);
+                        trackingDot.setAttribute('cy', closest.y);
+                    }
+                    if (legendPrice) legendPrice.textContent = formatPrice(closest.price);
+                    if (legendChange) {
+                        const pct = ((closest.price - firstPrice) / firstPrice) * 100;
+                        legendChange.textContent = `${pct >= 0 ? '+' : ''}${pct.toFixed(2)}%`;
+                        legendChange.style.color = pct >= 0 ? 'var(--electric-green)' : '#f87171';
+                    }
+                } else {
+                    if (crosshairX) crosshairX.style.display = 'none';
+                    if (crosshairY) crosshairY.style.display = 'none';
+                }
+            });
+
+            svg.addEventListener('mouseleave', () => {
+                if (crosshairX) crosshairX.style.display = 'none';
+                if (crosshairY) crosshairY.style.display = 'none';
+                if (trackingDot) {
+                    const lastPt = pts[pts.length - 1];
+                    trackingDot.setAttribute('cx', lastPt.x);
+                    trackingDot.setAttribute('cy', lastPt.y);
+                }
+                resetLegend(isDays);
+            });
+        };
+
+        setupChartHover(containerDays, true);
+        setupChartHover(containerMonths, false);
     };
 
-    const closeProductModal = () => {
-        if (elements.productModal) {
-            elements.productModal.classList.remove('modal-open');
-            elements.productModal.setAttribute('aria-hidden', 'true');
-            document.body.style.overflow = '';
-            AppState.activeModalProductId = null;
+    // -------------------------------------------------------------------------
+    // 6. DOM RENDERERS (CATALOG, CART, PAYMENTS, SUBMISSIONS, COMPARE)
+    // -------------------------------------------------------------------------
+    const renderCatalog = () => {
+        const grid = document.getElementById('product-grid');
+        if (!grid) return;
+
+        const filtered = state.products.filter(p => {
+            const catMatch = state.activeCategory === 'all' || p.category === state.activeCategory;
+            const searchMatch = p.title.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
+                                p.description.toLowerCase().includes(state.searchQuery.toLowerCase());
+            const priceMatch = p.price >= state.minBudget && p.price <= state.maxBudget;
+            return catMatch && searchMatch && priceMatch;
+        });
+
+        const visible = state.showAll ? filtered : filtered.slice(0, 8);
+        
+        const countMsg = document.getElementById('catalog-count-message');
+        if (countMsg) {
+            countMsg.textContent = state.language === 'KA' 
+                ? `ნაჩვენებია ${visible.length} / ${filtered.length} პროდუქტიდან`
+                : `Showing ${visible.length} of ${filtered.length} products`;
         }
+
+        grid.innerHTML = visible.map(p => {
+            const stockLeft = getAvailableStock(p);
+            const isOut = stockLeft <= 0;
+            const isComparing = state.compareList.includes(p.id);
+
+            return `
+                <article class="product-card" data-id="${p.id}">
+                    ${p.badge ? `<span class="product-badge">${p.badge}</span>` : ''}
+                    <div class="product-image-container">
+                        <img src="${p.image}" alt="${p.title}" class="product-card-img" loading="lazy">
+                    </div>
+                    <div class="product-card-content">
+                        <h3 class="product-card-title">${p.title}</h3>
+                        <p class="product-card-desc">${p.description}</p>
+                        <div class="product-card-meta">
+                            <span class="product-card-price">${formatPrice(p.price)}</span>
+                            <span class="product-card-stock ${isOut ? 'out-of-stock' : ''}">
+                                ${isOut ? (state.language === 'KA' ? 'ამოიყიდა' : 'Out of Stock') : `${state.language === 'KA' ? 'მარაგშია' : 'In Stock'}: ${stockLeft}`}
+                            </span>
+                        </div>
+                        <div class="product-card-actions">
+                            <label class="compare-checkbox-label">
+                                <input type="checkbox" class="compare-checkbox" ${isComparing ? 'checked' : ''}>
+                                <span>${state.language === 'KA' ? 'შედარება' : 'Compare'}</span>
+                            </label>
+                            <button class="btn add-to-cart-btn" ${isOut ? 'disabled' : ''}>
+                                ${state.language === 'KA' ? 'კალათაში დამატება' : 'Add to Cart'}
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            `;
+        }).join('');
+        
+        // Dynamic event attachments
+        grid.querySelectorAll('.product-card').forEach(card => {
+            const id = card.getAttribute('data-id');
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('button') || e.target.closest('input') || e.target.closest('label')) return;
+                openProductModal(id);
+            });
+            card.querySelector('.add-to-cart-btn')?.addEventListener('click', () => addToCart(id));
+            card.querySelector('.compare-checkbox')?.addEventListener('change', (e) => toggleCompare(id, e.target.checked));
+        });
     };
 
-    // Render Shopping Cart Contents (with dynamic Deals checkout logic)
+    const calculateCartTotal = () => {
+        const subtotal = state.cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+        let discount = 0;
+        if (state.activeDeal === 'student') discount = subtotal * 0.10;
+        else if (state.activeDeal === 'wfh') discount = subtotal * 0.15;
+        else if (state.activeDeal === 'gaming') discount = subtotal * 0.12;
+
+        const netTotal = subtotal - discount;
+        const vat = netTotal * 0.20;
+        return { subtotal, discount, vat, total: netTotal };
+    };
+
     const renderCart = () => {
-        const dict = translations[AppState.language];
-        const totalItems = AppState.cart.reduce((sum, item) => sum + item.quantity, 0);
-        if (elements.cartBadgeCount) {
-            elements.cartBadgeCount.textContent = totalItems;
-            elements.cartBadgeCount.classList.remove('badge-pop');
-            void elements.cartBadgeCount.offsetWidth;
-            elements.cartBadgeCount.classList.add('badge-pop');
-        }
+        const list = document.getElementById('cart-items-list');
+        const badge = document.getElementById('cart-badge-count');
+        const emptyMsg = document.getElementById('cart-empty-message');
+        const formSection = document.getElementById('cart-form-section');
+        const summarySection = document.getElementById('cart-summary-section');
 
-        const cartFormSection = document.getElementById('cart-form-section');
-        if (AppState.cart.length === 0) {
-            if (elements.cartEmptyMessage) elements.cartEmptyMessage.style.display = 'flex';
-            if (elements.cartSummarySection) elements.cartSummarySection.style.display = 'none';
-            if (cartFormSection) cartFormSection.style.display = 'none';
-            if (elements.cartItemsList) elements.cartItemsList.innerHTML = '';
+        if (badge) badge.textContent = state.cart.reduce((sum, item) => sum + item.quantity, 0);
+        if (!list) return;
+
+        if (state.cart.length === 0) {
+            if (emptyMsg) emptyMsg.style.display = 'block';
+            if (formSection) formSection.style.display = 'none';
+            if (summarySection) summarySection.style.display = 'none';
+            list.innerHTML = '';
             return;
         }
 
-        if (elements.cartEmptyMessage) elements.cartEmptyMessage.style.display = 'none';
-        if (elements.cartSummarySection) elements.cartSummarySection.style.display = 'block';
-        if (cartFormSection) cartFormSection.style.display = 'block';
+        if (emptyMsg) emptyMsg.style.display = 'none';
+        if (formSection) formSection.style.display = 'block';
+        if (summarySection) summarySection.style.display = 'block';
 
-        if (elements.cartItemsList) {
-            elements.cartItemsList.innerHTML = AppState.cart.map(item => {
-                const { product, quantity } = item;
-                const { id, title, price, image } = product;
-
-                return `
-                    <div class="cart-item" data-id="${id}">
-                        <img src="${image}" alt="${title}" class="cart-item-img">
-                        <div class="cart-item-info">
-                            <h4 class="cart-item-title">${title}</h4>
-                            <p class="cart-item-price">${formatPrice(price)}</p>
-                            <div class="cart-item-controls">
-                                <div class="quantity-selector">
-                                    <button class="quantity-btn dec-qty-btn" data-id="${id}">-</button>
-                                    <span class="quantity-val">${quantity}</span>
-                                    <button class="quantity-btn inc-qty-btn" data-id="${id}">+</button>
-                                </div>
-                                <button class="cart-item-remove" data-id="${id}" aria-label="${dict.toastRemoved}">${AppState.language === 'KA' ? 'ამოშლა' : 'Remove'}</button>
-                            </div>
-                        </div>
+        list.innerHTML = state.cart.map(item => {
+            const { product, quantity } = item;
+            const availableStock = getAvailableStock(product) + quantity;
+            return `
+                <div class="cart-item" style="display: flex; gap: 12px; align-items: center; padding: 12px; border-bottom: 1px solid rgba(255,255,255,0.06);">
+                    <img src="${product.image}" alt="${product.title}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                    <div style="flex-grow: 1;">
+                        <h4 style="font-size: 0.9rem; font-weight: 800; color: #ffffff; margin: 0;">${product.title}</h4>
+                        <span style="font-size: 0.8rem; color: var(--electric-green); font-weight: 700;">${formatPrice(product.price)}</span>
                     </div>
-                `;
-            }).join('');
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <button class="cart-qty-btn decrease-qty" data-id="${product.id}" style="width: 24px; height: 24px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;">-</button>
+                        <span style="font-weight: 700; font-size: 0.9rem; color: #fff; min-width: 20px; text-align: center;">${quantity}</span>
+                        <button class="cart-qty-btn increase-qty" data-id="${product.id}" style="width: 24px; height: 24px; border-radius: 4px; border: 1px solid rgba(255,255,255,0.2); background: transparent; color: #fff; cursor: pointer;" ${quantity >= availableStock ? 'disabled' : ''}>+</button>
+                    </div>
+                    <button class="remove-cart-item-btn" data-id="${product.id}" style="background: transparent; border: none; color: #f87171; font-size: 1.2rem; cursor: pointer; margin-left: 8px;">&times;</button>
+                </div>
+            `;
+        }).join('');
 
-            elements.cartItemsList.querySelectorAll('.dec-qty-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => adjustCartQuantity(e.target.getAttribute('data-id'), -1));
-            });
-            elements.cartItemsList.querySelectorAll('.inc-qty-btn').forEach(btn => {
-                btn.addEventListener('click', (e) => adjustCartQuantity(e.target.getAttribute('data-id'), 1));
-            });
-            elements.cartItemsList.querySelectorAll('.cart-item-remove').forEach(btn => {
-                btn.addEventListener('click', (e) => removeFromCart(e.target.getAttribute('data-id')));
-            });
-        }
+        // Update Totals
+        const totals = calculateCartTotal();
+        const subtotalEl = document.getElementById('cart-subtotal');
+        const discountEl = document.getElementById('cart-discount');
+        const discountRow = document.getElementById('cart-discount-row');
+        const taxEl = document.getElementById('cart-tax');
+        const totalEl = document.getElementById('cart-total');
 
-        // Calculate Subtotals & Deals
-        const subtotal = AppState.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-        
-        let discountRate = 0;
-        if (AppState.activeDeal === 'student') discountRate = 0.10;
-        else if (AppState.activeDeal === 'wfh') discountRate = 0.15;
-        else if (AppState.activeDeal === 'gaming') discountRate = 0.12;
+        if (subtotalEl) subtotalEl.textContent = formatPrice(totals.subtotal);
+        if (taxEl) taxEl.textContent = formatPrice(totals.vat);
+        if (totalEl) totalEl.textContent = formatPrice(totals.total);
 
-        const discount = subtotal * discountRate;
-        const discountedSubtotal = subtotal - discount;
-        const vatRate = 0.20;
-        const tax = discountedSubtotal * vatRate;
-        const total = discountedSubtotal + tax;
-
-        if (elements.cartSubtotal) elements.cartSubtotal.textContent = formatPrice(subtotal);
-        
-        if (elements.cartDiscountRow && elements.cartDiscount) {
-            if (discount > 0) {
-                elements.cartDiscountRow.style.display = 'flex';
-                elements.cartDiscount.textContent = `-${formatPrice(discount)}`;
-            } else {
-                elements.cartDiscountRow.style.display = 'none';
-            }
-        }
-        
-        if (elements.cartTax) elements.cartTax.textContent = formatPrice(tax);
-        if (elements.cartTotal) elements.cartTotal.textContent = formatPrice(total);
-
-        // Sync dropdown value state
-        if (elements.cartDealSelect) {
-            elements.cartDealSelect.value = AppState.activeDeal;
-        }
-    };
-
-    // Update User Profile auth UI dynamically based on AppState.user
-    const updateProfileAuthUI = () => {
-        if (!elements.profileWelcomeTitle) return;
-
-        if (AppState.user) {
-            elements.profileWelcomeTitle.textContent = AppState.language === 'KA' 
-                ? `მოგესალმებით, ${AppState.user}!` 
-                : `Welcome, ${AppState.user}!`;
-            elements.profileWelcomeDesc.textContent = AppState.language === 'KA'
-                ? "თქვენ წარმატებით ხართ შესული სისტემაში."
-                : "You are successfully logged in.";
-            if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'none';
-            if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
-            if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
-            if (elements.profileSignoutBtn) elements.profileSignoutBtn.style.display = 'block';
+        if (totals.discount > 0) {
+            if (discountEl) discountEl.textContent = `-${formatPrice(totals.discount)}`;
+            if (discountRow) discountRow.style.display = 'flex';
         } else {
-            elements.profileWelcomeTitle.textContent = AppState.language === 'KA' 
-                ? "მოგესალმებით, სტუმარო!" 
-                : "Welcome, Guest!";
-            elements.profileWelcomeDesc.textContent = AppState.language === 'KA'
-                ? "შედით სისტემაში ისტორიის შესანახად და ბონუსებისთვის."
-                : "Sign in to save your history and access exclusive rewards.";
-            if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'flex';
-            if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
-            if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
-            if (elements.profileSignoutBtn) elements.profileSignoutBtn.style.display = 'none';
-        }
-    };
-
-    // Render Past Payments/Transactions inside user Profile Pane
-    const renderPayments = () => {
-        if (!elements.paymentItemsList) return;
-
-        if (AppState.payments.length === 0) {
-            if (elements.paymentEmptyMessage) elements.paymentEmptyMessage.style.display = 'flex';
-            elements.paymentItemsList.innerHTML = '';
-            return;
+            if (discountRow) discountRow.style.display = 'none';
         }
 
-        if (elements.paymentEmptyMessage) elements.paymentEmptyMessage.style.display = 'none';
+        const dealSelect = document.getElementById('cart-deal-select');
+        if (dealSelect) dealSelect.value = state.activeDeal;
 
-        elements.paymentItemsList.innerHTML = AppState.payments.map(order => {
-            const { orderId, timestamp, items, totalCharge, cardLast4 } = order;
-            const dateStr = new Date(timestamp).toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            return `
-                <div class="payment-order-card">
-                    <div class="payment-order-header">
-                        <span class="payment-order-id">${orderId}</span>
-                        <span class="payment-order-date">${dateStr}</span>
-                    </div>
-                    <div class="payment-order-body">
-                        ${items.map(item => `
-                            <div class="payment-order-item">
-                                <span>${item.title} (x${item.qty})</span>
-                                <span>${formatPrice(item.price * item.qty)}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="payment-order-footer">
-                        <span>${AppState.language === 'KA' ? 'გადახდილია ბარათით' : 'Paid with'} **** ${cardLast4}</span>
-                        <span class="payment-order-total">${formatPrice(totalCharge)}</span>
-                    </div>
-                </div>
-            `;
-        }).join('');
-    };
-
-    // Render Customer Service History inside user Profile Pane
-    const renderSubmissions = () => {
-        if (!elements.submissionsItemsList) return;
-
-        if (AppState.submissions.length === 0) {
-            if (elements.submissionsEmptyMessage) elements.submissionsEmptyMessage.style.display = 'flex';
-            elements.submissionsItemsList.innerHTML = '';
-            return;
-        }
-
-        if (elements.submissionsEmptyMessage) elements.submissionsEmptyMessage.style.display = 'none';
-
-        elements.submissionsItemsList.innerHTML = AppState.submissions.map((sub, index) => {
-            const { firstName, lastName, email, interest, goal, message, timestamp, review } = sub;
-            const dateStr = new Date(timestamp).toLocaleDateString(undefined, {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-
-            const hasReview = !!review;
-            const statusBadgeText = hasReview 
-                ? (AppState.language === 'KA' ? 'განხილული' : 'Reviewed') 
-                : (AppState.language === 'KA' ? 'განხილვის პროცესში' : 'Pending Review');
-            
-            const statusBadgeClass = hasReview ? 'status-reviewed' : 'status-pending';
-
-            return `
-                <div class="submission-card" data-index="${index}">
-                    <div class="submission-card-status-row">
-                        <span class="status-badge ${statusBadgeClass}">${statusBadgeText}</span>
-                        <button class="delete-sub-btn" data-index="${index}" title="${AppState.language === 'KA' ? 'წაშლა' : 'Delete Request'}">&times;</button>
-                    </div>
-                    <div class="submission-card-body">
-                        <div class="submission-card-field">
-                            <strong>${AppState.language === 'KA' ? 'სახელი' : 'Name'}:</strong>
-                            <span>${firstName} ${lastName}</span>
-                        </div>
-                        <div class="submission-card-field">
-                            <strong>Email:</strong>
-                            <span>${email}</span>
-                        </div>
-                        <div class="submission-card-field">
-                            <strong>${AppState.language === 'KA' ? 'კატეგორია' : 'Category'}:</strong>
-                            <span style="text-transform: capitalize; color: var(--electric-green); font-weight: 700;">${interest}</span>
-                        </div>
-                        ${goal ? `
-                        <div class="submission-card-field">
-                            <strong>${AppState.language === 'KA' ? 'მიზანი' : 'Goal'}:</strong>
-                            <span>${goal}</span>
-                        </div>
-                        ` : ''}
-                        ${message ? `
-                        <div class="submission-card-field" style="flex-direction: column; margin-top: 4px;">
-                            <strong>${AppState.language === 'KA' ? 'შეტყობინება' : 'Message'}:</strong>
-                            <span style="font-style: italic; color: #cbd5e1; margin-top: 2px;">"${message}"</span>
-                        </div>
-                        ` : ''}
-                        
-                        <!-- Review Component inside Service request card -->
-                        <div class="submission-review-section">
-                            ${hasReview ? `
-                                <div class="completed-review-box">
-                                    <div class="stars-display">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
-                                    <p class="review-comment">"${review.comment}"</p>
-                                </div>
-                            ` : `
-                                <button class="btn btn-review-toggle" data-index="${index}">
-                                    ${AppState.language === 'KA' ? 'შეფასება' : 'Leave a Review'}
-                                </button>
-                                <div class="review-form-wrapper hidden" id="review-form-${index}">
-                                    <div class="rating-input-stars">
-                                        <span class="star-btn" data-rating="1">★</span>
-                                        <span class="star-btn" data-rating="2">★</span>
-                                        <span class="star-btn" data-rating="3">★</span>
-                                        <span class="star-btn" data-rating="4">★</span>
-                                        <span class="star-btn" data-rating="5">★</span>
-                                    </div>
-                                    <textarea placeholder="${AppState.language === 'KA' ? 'დაწერეთ თქვენი აზრი სერვისზე...' : 'Write your feedback on support...'}" class="review-comment-input"></textarea>
-                                    <button class="btn submit-sub-review-btn" data-index="${index}" style="margin-top: 6px;">
-                                        ${AppState.language === 'KA' ? 'გაგზავნა' : 'Submit Review'}
-                                    </button>
-                                </div>
-                            `}
-                        </div>
-                    </div>
-                </div>
-            `;
-        }).join('');
-
-        // Attach listeners for review forms toggle
-        elements.submissionsItemsList.querySelectorAll('.btn-review-toggle').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const idx = e.target.getAttribute('data-index');
-                const form = document.getElementById(`review-form-${idx}`);
-                if (form) {
-                    form.classList.toggle('hidden');
+        // Attach quantity and delete click event listeners
+        list.querySelectorAll('.decrease-qty').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const item = state.cart.find(i => i.product.id === id);
+                if (item) {
+                    if (item.quantity > 1) item.quantity -= 1;
+                    else state.cart = state.cart.filter(i => i.product.id !== id);
+                    localStorage.setItem('techstore_cart', JSON.stringify(state.cart));
+                    translateInterface();
                 }
             });
         });
 
-        // Attach listeners for star rating selections
-        elements.submissionsItemsList.querySelectorAll('.review-form-wrapper').forEach(wrapper => {
-            let selectedRating = 5; // Default rating
-            const stars = wrapper.querySelectorAll('.star-btn');
-            
-            // Set initial all gold
-            stars.forEach((s, idx) => {
-                s.style.color = '#fbbf24';
+        list.querySelectorAll('.increase-qty').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const item = state.cart.find(i => i.product.id === id);
+                if (item) {
+                    item.quantity += 1;
+                    localStorage.setItem('techstore_cart', JSON.stringify(state.cart));
+                    translateInterface();
+                }
             });
-            
-            stars.forEach(star => {
-                star.addEventListener('click', (e) => {
-                    selectedRating = parseInt(e.target.getAttribute('data-rating'));
-                    stars.forEach((s, idx) => {
-                        if (idx < selectedRating) {
-                            s.style.color = '#fbbf24';
-                        } else {
-                            s.style.color = '#64748b';
-                        }
-                    });
-                    wrapper.setAttribute('data-selected-rating', selectedRating);
-                });
-            });
-            
-            wrapper.setAttribute('data-selected-rating', selectedRating);
         });
 
-        // Attach submit review listeners
-        elements.submissionsItemsList.querySelectorAll('.submit-sub-review-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const idx = parseInt(e.target.getAttribute('data-index'));
-                const wrapper = document.getElementById(`review-form-${idx}`);
-                const rating = parseInt(wrapper.getAttribute('data-selected-rating')) || 5;
-                const comment = wrapper.querySelector('.review-comment-input').value.trim();
+        list.querySelectorAll('.remove-cart-item-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                state.cart = state.cart.filter(i => i.product.id !== id);
+                localStorage.setItem('techstore_cart', JSON.stringify(state.cart));
+                translateInterface();
+            });
+        });
+    };
+
+    const addToCart = (id) => {
+        const p = state.products.find(prod => prod.id === id);
+        if (!p) return;
+
+        const availableStock = getAvailableStock(p);
+        if (availableStock <= 0) {
+            showToast(translations[state.language].toastOutOfStock, 'error');
+            return;
+        }
+
+        const existing = state.cart.find(item => item.product.id === id);
+        if (existing) existing.quantity += 1;
+        else state.cart.push({ product: p, quantity: 1 });
+
+        localStorage.setItem('techstore_cart', JSON.stringify(state.cart));
+        showToast(`"${p.title}" ${translations[state.language].toastAdded}`, 'success');
+        translateInterface();
+    };
+
+    const renderPayments = () => {
+        const list = document.getElementById('payment-items-list');
+        const emptyMsg = document.getElementById('payment-empty-message');
+        if (!list) return;
+
+        if (state.payments.length === 0) {
+            if (emptyMsg) emptyMsg.style.display = 'block';
+            list.innerHTML = '';
+            return;
+        }
+
+        if (emptyMsg) emptyMsg.style.display = 'none';
+        list.innerHTML = state.payments.map(receipt => `
+            <div class="payment-card" style="padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; margin-bottom: 12px; font-size: 0.85rem;">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 6px; font-weight:800; color:var(--electric-green);">
+                    <span>Order: ${receipt.orderId}</span>
+                    <span>${new Date(receipt.timestamp).toLocaleDateString()}</span>
+                </div>
+                <div style="color: #cbd5e1; margin-bottom: 6px;">
+                    ${receipt.items.map(item => `<div>${item.title} x ${item.quantity} (${formatPrice(item.price)})</div>`).join('')}
+                </div>
+                <div style="text-align: right; font-weight: 800; color: #fff;">
+                    Total Paid: ${formatPrice(receipt.total)} (Card: **** ${receipt.cardLast4})
+                </div>
+            </div>
+        `).join('');
+    };
+
+    const renderSubmissions = () => {
+        const list = document.getElementById('submissions-items-list');
+        const emptyMsg = document.getElementById('submissions-empty-message');
+        if (!list) return;
+
+        if (state.submissions.length === 0) {
+            if (emptyMsg) emptyMsg.style.display = 'block';
+            list.innerHTML = '';
+            return;
+        }
+
+        if (emptyMsg) emptyMsg.style.display = 'none';
+        list.innerHTML = state.submissions.map((sub, idx) => `
+            <div class="submission-card" style="padding:12px; background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.06); border-radius:8px; margin-bottom:12px; font-size:0.85rem; position:relative;">
+                <button class="delete-sub-btn" data-index="${idx}" style="position:absolute; top:8px; right:8px; background:transparent; border:none; color:#f87171; font-size:1.2rem; cursor:pointer;">&times;</button>
+                <div style="font-weight:800; color:var(--violet); margin-bottom:4px;">Request Status: ${sub.review ? 'Reviewed' : 'Pending Review'}</div>
+                <div style="color:#cbd5e1; margin-bottom:6px;">
+                    <strong>Name:</strong> ${sub.firstName} ${sub.lastName}<br>
+                    <strong>Email:</strong> ${sub.email}<br>
+                    <strong>Category:</strong> ${sub.interest}<br>
+                    <strong>Goal:</strong> ${sub.goal || 'N/A'}<br>
+                    <strong>Message:</strong> "${sub.message || ''}"
+                </div>
                 
+                <div style="margin-top:10px; border-top:1px solid rgba(255,255,255,0.06); padding-top:8px;">
+                    ${sub.review ? `
+                        <div style="color:#fbbf24;">
+                            <strong>Rating:</strong> ${'★'.repeat(sub.review.rating)}${'☆'.repeat(5 - sub.review.rating)}<br>
+                            <strong>Feedback:</strong> "${sub.review.comment}"
+                        </div>
+                    ` : `
+                        <button class="btn btn-review-toggle" data-index="${idx}" style="padding:2px 8px; font-size:0.75rem; min-height:unset; background:transparent; border:1px solid var(--electric-green); color:var(--electric-green); border-radius:4px; cursor:pointer;">Leave Feedback</button>
+                        <div class="review-form-wrapper hidden" id="review-form-${idx}" style="margin-top:8px;">
+                            <div class="rating-input-stars" style="color:#fbbf24; font-size:1.1rem; cursor:pointer; margin-bottom:6px;" data-selected-rating="5">
+                                <span class="star-btn" data-rating="1">★</span>
+                                <span class="star-btn" data-rating="2">★</span>
+                                <span class="star-btn" data-rating="3">★</span>
+                                <span class="star-btn" data-rating="4">★</span>
+                                <span class="star-btn" data-rating="5">★</span>
+                            </div>
+                            <textarea placeholder="Write feedback..." class="review-comment-input" style="width:100%; font-size:0.8rem; background:rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:4px; color:#fff; padding:6px; box-sizing:border-box; min-height:40px;"></textarea>
+                            <button class="btn submit-sub-review-btn" data-index="${idx}" style="padding:2px 8px; font-size:0.75rem; min-height:unset; margin-top:4px; cursor:pointer;">Submit</button>
+                        </div>
+                    `}
+                </div>
+            </div>
+        `).join('');
+
+        // Event hooks for feedback and submission management
+        list.querySelectorAll('.btn-review-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = btn.getAttribute('data-index');
+                const form = document.getElementById(`review-form-${idx}`);
+                if (form) form.classList.toggle('hidden');
+            });
+        });
+
+        list.querySelectorAll('.rating-input-stars').forEach(wrapper => {
+            const stars = wrapper.querySelectorAll('.star-btn');
+            stars.forEach(star => {
+                star.addEventListener('click', (e) => {
+                    const rating = e.target.getAttribute('data-rating');
+                    wrapper.setAttribute('data-selected-rating', rating);
+                    stars.forEach((s, idx) => {
+                        s.style.color = idx < rating ? '#fbbf24' : '#64748b';
+                    });
+                });
+            });
+        });
+
+        list.querySelectorAll('.submit-sub-review-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = btn.getAttribute('data-index');
+                const wrapper = document.getElementById(`review-form-${idx}`);
+                const comment = wrapper.querySelector('.review-comment-input').value.trim();
+                const rating = parseInt(wrapper.getAttribute('data-selected-rating')) || 5;
+
                 if (comment.length < 5) {
-                    showToast(AppState.language === 'KA' ? 'გთხოვთ შეიყვანოთ უფრო გრძელი კომენტარი (მინ. 5 სიმბოლო)' : 'Please enter a longer comment (min 5 chars)', 'error');
+                    showToast(state.language === 'KA' ? 'შეიყვანეთ მინიმუმ 5 სიმბოლო' : 'Please enter at least 5 characters', 'error');
                     return;
                 }
 
-                // Update AppState
-                AppState.submissions[idx].review = { rating, comment };
-                localStorage.setItem('techstore_registrations', JSON.stringify(AppState.submissions));
-                
-                showToast(AppState.language === 'KA' ? 'შეფასება დამატებულია!' : 'Review submitted successfully!', 'success');
+                state.submissions[idx].review = { rating, comment };
+                localStorage.setItem('techstore_registrations', JSON.stringify(state.submissions));
+                showToast(state.language === 'KA' ? 'შეფასება დამატებულია!' : 'Feedback submitted successfully!', 'success');
                 renderSubmissions();
             });
         });
 
-        // Attach delete submission listeners
-        elements.submissionsItemsList.querySelectorAll('.delete-sub-btn').forEach(btn => {
+        list.querySelectorAll('.delete-sub-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const idx = parseInt(e.target.getAttribute('data-index'));
-                AppState.submissions.splice(idx, 1);
-                localStorage.setItem('techstore_registrations', JSON.stringify(AppState.submissions));
-                showToast(AppState.language === 'KA' ? 'ჩანაწერი წაშლილია' : 'Record removed successfully', 'success');
+                const idx = parseInt(btn.getAttribute('data-index'));
+                state.submissions.splice(idx, 1);
+                localStorage.setItem('techstore_registrations', JSON.stringify(state.submissions));
+                showToast(state.language === 'KA' ? 'ჩანაწერი წაშლილია' : 'Request deleted', 'success');
                 renderSubmissions();
             });
         });
     };
 
-    // Toggle Profile Drawer Tabs View
-    const handleProfileTabSwitch = (tabName) => {
-        elements.profileTabButtons.forEach(btn => {
-            if (btn.getAttribute('data-tab') === tabName) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-
-        const panePayments = document.getElementById('profile-pane-payments');
-        const paneSubmissions = document.getElementById('profile-pane-submissions');
-
-        if (tabName === 'payments') {
-            panePayments.classList.add('active');
-            paneSubmissions.classList.remove('active');
-            renderPayments();
-        } else {
-            panePayments.classList.remove('active');
-            paneSubmissions.classList.add('active');
-            renderSubmissions();
-        }
-    };
-
-    // -------------------------------------------------------------------------
-    // 7. CART SYSTEM MUTATORS (ES6+ Spread & Rest)
-    // -------------------------------------------------------------------------
-
-    const addToCart = (productId) => {
-        const dict = translations[AppState.language];
-        const product = AppState.products.find(p => p.id === productId);
-        if (!product) return;
-
-        const availableStock = getAvailableStock(product);
-        if (availableStock <= 0) {
-            showToast(dict.toastOutOfStock, 'error');
-            return;
-        }
-
-        const existingIndex = AppState.cart.findIndex(item => item.product.id === productId);
-
-        if (existingIndex > -1) {
-            const updatedCart = [...AppState.cart];
-            updatedCart[existingIndex].quantity += 1;
-            AppState.cart = updatedCart;
-        } else {
-            AppState.cart = [...AppState.cart, { product, quantity: 1 }];
-        }
-
-        saveCartToStorage();
-        renderCart();
-        renderCatalog();
-
-        showToast(`${product.title} ${dict.toastAdded}`, 'success');
-    };
-
-    const removeFromCart = (productId) => {
-        const dict = translations[AppState.language];
-        const itemToRemove = AppState.cart.find(item => item.product.id === productId);
-        AppState.cart = AppState.cart.filter(item => item.product.id !== productId);
-        
-        saveCartToStorage();
-        renderCart();
-        renderCatalog();
-
-        if (AppState.activeModalProductId === productId) {
-            renderModalContent(productId);
-        }
-
-        if (itemToRemove) {
-            showToast(`${itemToRemove.product.title} ${dict.toastRemoved}`, 'success');
-        }
-    };
-
-    const adjustCartQuantity = (productId, adjustment) => {
-        const dict = translations[AppState.language];
-        const targetIndex = AppState.cart.findIndex(item => item.product.id === productId);
-        if (targetIndex === -1) return;
-
-        const item = AppState.cart[targetIndex];
-        const newQty = item.quantity + adjustment;
-
-        if (adjustment > 0) {
-            // Check stock limits before adding
-            if (newQty > item.product.stock) {
-                showToast(`${dict.toastLimitReached} ${item.product.stock} ${dict.toastUnitsInStock}`, 'error');
+    const toggleCompare = (id, checked) => {
+        if (checked) {
+            if (state.compareList.length >= 3) {
+                showToast(state.language === 'KA' ? 'შედარება შესაძლებელია მაქსიმუმ 3 პროდუქტისთვის' : 'You can compare maximum 3 products', 'error');
+                renderCatalog();
                 return;
             }
-        }
-
-        if (newQty <= 0) {
-            removeFromCart(productId);
+            if (!state.compareList.includes(id)) state.compareList.push(id);
         } else {
-            const updatedCart = [...AppState.cart];
-            updatedCart[targetIndex].quantity = newQty;
-            AppState.cart = updatedCart;
-            saveCartToStorage();
-            renderCart();
-            renderCatalog();
+            state.compareList = state.compareList.filter(pid => pid !== id);
+        }
+        updateCompareFab();
+    };
 
-            if (AppState.activeModalProductId === productId) {
-                renderModalContent(productId);
-            }
+    const updateCompareFab = () => {
+        const fab = document.getElementById('compare-fab');
+        const count = document.getElementById('compare-count');
+        if (fab && count) {
+            count.textContent = state.compareList.length;
+            if (state.compareList.length > 0) fab.classList.remove('hidden');
+            else fab.classList.add('hidden');
         }
     };
 
-    // Open/Close Drawers
-    const toggleCartDrawer = (isOpen) => {
-        if (!elements.cartDrawer) return;
-        elements.cartDrawer.setAttribute('aria-hidden', !isOpen);
-        if (isOpen) {
-            elements.cartDrawer.classList.add('modal-open');
-            document.body.style.overflow = 'hidden';
-        } else {
-            elements.cartDrawer.classList.remove('modal-open');
-            document.body.style.overflow = '';
-        }
-    };
+    const renderCompareTable = () => {
+        const body = document.getElementById('compare-modal-body');
+        if (!body) return;
 
-    const toggleProfileDrawer = (isOpen) => {
-        if (!elements.profileDrawer) return;
-        elements.profileDrawer.setAttribute('aria-hidden', !isOpen);
-        if (isOpen) {
-            elements.profileDrawer.classList.add('modal-open');
-            document.body.style.overflow = 'hidden';
-            // Open default tab
-            handleProfileTabSwitch('payments');
-        } else {
-            elements.profileDrawer.classList.remove('modal-open');
-            document.body.style.overflow = '';
-        }
-    };
-
-    const toggleRecentDrawer = (isOpen) => {
-        if (!elements.recentDrawer) return;
-        elements.recentDrawer.setAttribute('aria-hidden', !isOpen);
-        if (isOpen) {
-            elements.recentDrawer.classList.add('drawer-open');
-            document.body.style.overflow = 'hidden';
-            updateRecentlyViewed();
-        } else {
-            elements.recentDrawer.classList.remove('drawer-open');
-            document.body.style.overflow = '';
-        }
-    };
-
-    const updateRecentlyViewed = () => {
-        if (elements.recentBadgeCount) {
-            elements.recentBadgeCount.textContent = AppState.recentlyViewed.length;
-        }
-
-        if (!elements.recentItemsList) return;
-
-        if (AppState.recentlyViewed.length === 0) {
-            elements.recentItemsList.innerHTML = `
-                <div class="cart-empty-message" style="text-align: center; padding: 24px;">
-                    <div class="cart-empty-icon" style="font-size: 2.5rem; margin-bottom: 12px;">⏳</div>
-                    <h3 style="color: #ffffff; margin-bottom: 6px;">No recently viewed items</h3>
-                    <p style="color: var(--muted); font-size: 0.85rem;">Products you click to view will show up here.</p>
-                </div>
-            `;
+        if (state.compareList.length === 0) {
+            body.innerHTML = `<p style="text-align: center; color: #8b9bb4; padding: 20px;">No products selected for comparison.</p>`;
             return;
         }
 
-        const dict = translations[AppState.language];
+        const productsToCompare = state.compareList.map(id => state.products.find(p => p.id === id)).filter(Boolean);
 
-        elements.recentItemsList.innerHTML = AppState.recentlyViewed.map(id => {
-            const product = AppState.products.find(p => p.id === id);
-            if (!product) return '';
-            
-            const availableStock = getAvailableStock(product);
-            const isOutOfStock = availableStock <= 0;
-            const stockContext = isOutOfStock 
-                ? `<span style="color: #ef4444; font-size: 0.72rem; font-weight: 700; background: rgba(239, 68, 68, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.2);">${dict.outOfStock}</span>` 
-                : `<span style="color: var(--electric-green); font-size: 0.72rem; font-weight: 700; background: rgba(57, 255, 20, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(57, 255, 20, 0.2);">In Stock (${availableStock} left)</span>`;
+        body.innerHTML = `
+            <table class="compare-table" style="width: 100%; border-collapse: collapse; margin-top: 16px; color: #ffffff;">
+                <thead>
+                    <tr>
+                        <th style="padding: 12px; border-bottom: 2px solid rgba(57,255,20,0.3); text-align: left; color: var(--electric-green); font-weight: 800;">Feature</th>
+                        ${productsToCompare.map(p => `
+                            <th style="padding: 12px; border-bottom: 2px solid rgba(57,255,20,0.3); text-align: left; font-weight: 800;">
+                                <div style="display:flex; flex-direction:column; gap:6px; align-items:flex-start;">
+                                    <img src="${p.image}" alt="${p.title}" style="width:50px; height:50px; object-fit:cover; border-radius:4px; border:1px solid rgba(255,255,255,0.1);">
+                                    <span>${p.title}</span>
+                                    <button class="btn remove-compare-btn" data-id="${p.id}" style="padding:2px 8px; font-size:0.7rem; min-height:unset; background:rgba(239,68,68,0.2); border:1px solid #ef4444; color:#f87171; border-radius:4px; cursor:pointer;">Remove</button>
+                                </div>
+                            </th>
+                        `).join('')}
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:700;">Price</td>
+                        ${productsToCompare.map(p => `
+                            <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:800; color:var(--electric-green);">${formatPrice(p.price)}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:700;">Brand</td>
+                        ${productsToCompare.map(p => `
+                            <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);">${p.brand}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:700;">Category</td>
+                        ${productsToCompare.map(p => `
+                            <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); text-transform:capitalize;">${p.category}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:700;">Screen Size</td>
+                        ${productsToCompare.map(p => `
+                            <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);">${p.screenSize || 'N/A'}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:700;">Processor</td>
+                        ${productsToCompare.map(p => `
+                            <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);">${p.processor || 'N/A'}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:700;">RAM</td>
+                        ${productsToCompare.map(p => `
+                            <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);">${p.ram || 'N/A'}</td>
+                        `).join('')}
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06); font-weight:700;">Stock Status</td>
+                        ${productsToCompare.map(p => `
+                            <td style="padding: 10px; border-bottom: 1px solid rgba(255,255,255,0.06);">${p.stock > 0 ? (state.language === 'KA' ? 'მარაგშია' : 'In Stock') : (state.language === 'KA' ? 'ამოიყიდა' : 'Out of Stock')}</td>
+                        `).join('')}
+                    </tr>
+                </tbody>
+            </table>
+        `;
 
-            return `
-                <div class="cart-item" style="display: flex; gap: 12px; background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(138, 255, 193, 0.15); padding: 12px; border-radius: 8px; align-items: center; justify-content: space-between;">
-                    <div style="display: flex; gap: 12px; align-items: center;">
-                        <img src="${product.image}" alt="${product.title}" style="width: 50px; height: 50px; object-fit: contain; border-radius: 6px; background: rgba(255,255,255,0.05); padding: 2px; border: 1px solid rgba(255,255,255,0.1);">
-                        <div>
-                            <h4 style="margin: 0 0 4px 0; font-size: 0.85rem; color: #ffffff; font-weight: 700; line-height: 1.2;">${product.title}</h4>
-                            <p style="margin: 0 0 4px 0; font-size: 0.7rem; color: var(--muted); font-weight: 500;">Category: ${product.category}</p>
-                            ${stockContext}
-                        </div>
-                    </div>
-                    <div style="text-align: right; display: flex; flex-direction: column; gap: 6px; align-items: flex-end;">
-                        <span style="color: var(--mint); font-weight: 800; font-size: 0.9rem;">${formatPrice(product.price)}</span>
-                        <button class="btn recent-view-btn" data-id="${product.id}" style="padding: 4px 8px; font-size: 0.7rem; min-height: unset; border-radius: 4px; background: linear-gradient(135deg, var(--violet) 0%, var(--pink) 100%); border: none; color: white; cursor: pointer; font-weight: 700;">View</button>
-                    </div>
+        body.querySelectorAll('.remove-compare-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const id = e.target.getAttribute('data-id');
+                state.compareList = state.compareList.filter(pid => pid !== id);
+                updateCompareFab();
+                renderCompareTable();
+                renderCatalog();
+            });
+        });
+    };
+
+    const addToRecentlyViewed = (id) => {
+        state.recentlyViewed = [id, ...state.recentlyViewed.filter(pid => pid !== id)].slice(0, 5);
+        localStorage.setItem('techstore_recent', JSON.stringify(state.recentlyViewed));
+        renderRecentlyViewed();
+    };
+
+    const renderRecentlyViewed = () => {
+        const list = document.getElementById('recent-drawer-body');
+        const badge = document.getElementById('recent-badge-count');
+        if (badge) badge.textContent = state.recentlyViewed.length;
+        if (!list) return;
+
+        if (state.recentlyViewed.length === 0) {
+            list.innerHTML = `<p style="text-align: center; color: #8b9bb4; padding: 20px;">No recently viewed products.</p>`;
+            return;
+        }
+
+        const items = state.recentlyViewed.map(id => state.products.find(p => p.id === id)).filter(Boolean);
+        list.innerHTML = items.map(p => `
+            <div class="recent-item-card" style="display: flex; gap: 12px; align-items: center; background: rgba(255,255,255,0.02); padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06); cursor: pointer;" data-id="${p.id}">
+                <img src="${p.image}" alt="${p.title}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px;">
+                <div style="flex-grow: 1;">
+                    <h4 style="font-size: 0.85rem; font-weight: 800; color: #ffffff; margin: 0;">${p.title}</h4>
+                    <span style="font-size: 0.8rem; color: var(--electric-green); font-weight: 700;">${formatPrice(p.price)}</span>
                 </div>
-            `;
-        }).join('');
+            </div>
+        `).join('');
 
-        // Attach event listeners to view buttons
-        elements.recentItemsList.querySelectorAll('.recent-view-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                toggleRecentDrawer(false);
+        list.querySelectorAll('.recent-item-card').forEach(card => {
+            card.addEventListener('click', () => {
+                const id = card.getAttribute('data-id');
+                toggleDrawer('recent-drawer', false);
                 openProductModal(id);
             });
         });
     };
 
     // -------------------------------------------------------------------------
-    // 8. CARD DETAILS VALIDATIONS
+    // 7. LANGUAGE TRANSLATION PIPELINE
     // -------------------------------------------------------------------------
-    const validatePaymentDetails = () => {
-        const dict = translations[AppState.language];
-        const name = elements.cardholderInput.value.trim();
-        const number = elements.cardnumberInput.value.replace(/\s+/g, '');
-        const expiry = elements.expiryInput.value.trim();
-        const cvv = elements.cvvInput.value.trim();
+    const translateInterface = () => {
+        const dict = translations[state.language];
+        
+        const classMap = {
+            'trans-support-title': 'supportTitle',
+            'trans-first-name': 'supportFirstName',
+            'trans-last-name': 'supportLastName',
+            'trans-support-email': 'supportEmail',
+            'trans-support-interest': 'supportInterest',
+            'trans-choose-cat': 'supportChoose',
+            'trans-cat-laptops': 'filterLaptops',
+            'trans-cat-smartphones': 'filterSmartphones',
+            'trans-cat-accessories': 'filterAccessories',
+            'trans-cat-wearables': 'filterWearables',
+            'trans-support-goal': 'supportGoal',
+            'trans-goal-study': 'supportStudy',
+            'trans-goal-work': 'supportWork',
+            'trans-goal-gaming': 'supportGaming',
+            'trans-support-extras': 'supportExtras',
+            'trans-extra-delivery': 'supportDelivery',
+            'trans-extra-setup': 'supportSetup',
+            'trans-support-msg': 'supportMsg',
+            'trans-support-submit': 'supportSubmit',
+            'trans-footer-about': 'footerAboutDesc',
+            'trans-footer-support-title': 'footerSupportTitle',
+            'trans-footer-hours': 'footerHours',
+            'trans-footer-copy': 'footerCopy',
+            'trans-footer-top': 'footerTop',
+            'trans-select-deal': 'selectDeal',
+            'trans-deal-none': 'dealNone',
+            'trans-deal-student': 'dealStudent',
+            'trans-deal-wfh': 'dealWfh',
+            'trans-deal-gaming': 'dealGaming',
+            'trans-subtotal': 'subtotal',
+            'trans-discount': 'discount',
+            'trans-vat': 'vat',
+            'trans-total': 'total',
+            'trans-payment-empty-title': 'noTransactionsTitle',
+            'trans-payment-empty-desc': 'noTransactionsDesc',
+            'trans-service-empty-title': 'noSubmissionsTitle',
+            'trans-service-empty-desc': 'noSubmissionsDesc'
+        };
 
-        if (name.length < 3) {
-            showToast(dict.toastEnterCard, 'error');
-            elements.cardholderInput.focus();
-            return null;
+        Object.entries(classMap).forEach(([className, key]) => {
+            document.querySelectorAll('.' + className).forEach(el => {
+                el.textContent = dict[key] || '';
+            });
+        });
+
+        // Main Navigation
+        document.querySelectorAll('.nav-menu a, #nav-support-link').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === '#home') link.textContent = dict.navHome;
+            else if (href === '#products') link.textContent = dict.navProducts;
+            else if (href === '#deals') link.textContent = dict.navDeals;
+            else if (href === '#support') link.textContent = dict.navSupport;
+        });
+
+        // Catalog Header Section
+        const productsSec = document.getElementById('products');
+        if (productsSec) {
+            const eyebrow = productsSec.querySelector('.eyebrow');
+            const title = productsSec.querySelector('.section-title');
+            const desc = productsSec.querySelector('.section-description');
+            if (eyebrow) eyebrow.textContent = dict.eyebrow;
+            if (title) title.textContent = dict.catalogHeader;
+            if (desc) desc.textContent = dict.catalogSub;
         }
 
-        if (number.length !== 16 || !/^\d+$/.test(number)) {
-            showToast(dict.toastCard16, 'error');
-            elements.cardnumberInput.focus();
-            return null;
+        // Hero Section
+        const heroEyebrow = document.querySelector('#home .eyebrow');
+        const heroTitle = document.querySelector('#home .hero-title');
+        const heroDesc = document.querySelector('#home .hero-description');
+        const heroBtn = document.querySelector('#home .btn');
+        if (heroEyebrow) heroEyebrow.textContent = dict.heroEyebrow;
+        if (heroTitle) heroTitle.textContent = dict.heroTitle;
+        if (heroDesc) heroDesc.textContent = dict.heroDesc;
+        if (heroBtn) heroBtn.textContent = dict.heroBtn;
+
+        const statPickup = document.querySelector('#home .hero-stats div:nth-child(1) span');
+        const statRating = document.querySelector('#home .hero-stats div:nth-child(2) span');
+        const statDevices = document.querySelector('#home .hero-stats div:nth-child(3) span');
+        if (statPickup) statPickup.textContent = dict.statPickup;
+        if (statRating) statRating.textContent = dict.statRating;
+        if (statDevices) statDevices.textContent = dict.statDevices;
+
+        // Deals Section
+        const dealsEyebrow = document.querySelector('#deals .section-header .eyebrow');
+        const dealsTitle = document.querySelector('#deals .section-header .section-title');
+        const dealsDesc = document.querySelector('#deals .section-header .section-description');
+        if (dealsEyebrow) dealsEyebrow.textContent = dict.dealsEyebrow;
+        if (dealsTitle) dealsTitle.textContent = dict.dealsTitle;
+        if (dealsDesc) dealsDesc.textContent = dict.dealsDesc;
+
+        // Deals Info Cards
+        const dealTitle1 = document.querySelector('#deals .deal-list article:nth-child(1) h3');
+        const dealDesc1 = document.querySelector('#deals .deal-list article:nth-child(1) p');
+        const dealSave1 = document.querySelector('#deals .deal-list article:nth-child(1) span');
+        if (dealTitle1) dealTitle1.textContent = dict.dealCardTitle1;
+        if (dealDesc1) dealDesc1.textContent = dict.dealCardDesc1;
+        if (dealSave1) dealSave1.textContent = dict.dealCardSave1;
+
+        const dealTitle2 = document.querySelector('#deals .deal-list article:nth-child(2) h3');
+        const dealDesc2 = document.querySelector('#deals .deal-list article:nth-child(2) p');
+        const dealSave2 = document.querySelector('#deals .deal-list article:nth-child(2) span');
+        if (dealTitle2) dealTitle2.textContent = dict.dealCardTitle2;
+        if (dealDesc2) dealDesc2.textContent = dict.dealCardDesc2;
+        if (dealSave2) dealSave2.textContent = dict.dealCardSave2;
+
+        const dealTitle3 = document.querySelector('#deals .deal-list article:nth-child(3) h3');
+        const dealDesc3 = document.querySelector('#deals .deal-list article:nth-child(3) p');
+        const dealSave3 = document.querySelector('#deals .deal-list article:nth-child(3) span');
+        if (dealTitle3) dealTitle3.textContent = dict.dealCardTitle3;
+        if (dealDesc3) dealDesc3.textContent = dict.dealCardDesc3;
+        if (dealSave3) dealSave3.textContent = dict.dealCardSave3;
+
+        // Video instructions Section
+        const mediaEyebrow = document.querySelector('.media-section .section-header .eyebrow');
+        const mediaTitle = document.querySelector('.media-section .section-header .section-title');
+        const mediaDesc = document.querySelector('.media-section .section-header .section-description');
+        if (mediaEyebrow) mediaEyebrow.textContent = dict.mediaEyebrow;
+        if (mediaTitle) mediaTitle.textContent = dict.mediaTitle;
+        if (mediaDesc) mediaDesc.textContent = dict.mediaDesc;
+
+        // Reviews Static headers
+        const reviewsEyebrow = document.querySelector('#reviews .section-header .eyebrow');
+        const reviewsTitle = document.querySelector('#reviews .section-header .section-title');
+        const reviewsDesc = document.querySelector('#reviews .section-header .section-description');
+        if (reviewsEyebrow) reviewsEyebrow.textContent = dict.reviewsEyebrow;
+        if (reviewsTitle) reviewsTitle.textContent = dict.reviewsTitle;
+        if (reviewsDesc) reviewsDesc.textContent = dict.reviewsDesc;
+
+        // Search inputs & Drawers labels
+        const searchInput = document.getElementById('product-search');
+        if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
+
+        const cartTitle = document.querySelector('#cart-drawer .cart-drawer-header h2');
+        if (cartTitle) cartTitle.textContent = dict.cartTitle;
+
+        const cartEmptyTitle = document.querySelector('#cart-drawer .cart-empty-message h3');
+        const cartEmptyDesc = document.querySelector('#cart-drawer .cart-empty-message p');
+        const cartExplore = document.getElementById('cart-explore-btn');
+        if (cartEmptyTitle) cartEmptyTitle.textContent = dict.cartEmptyTitle;
+        if (cartEmptyDesc) cartEmptyDesc.textContent = dict.cartEmptyDesc;
+        if (cartExplore) cartExplore.textContent = dict.cartExplore;
+
+        const payHeader = document.querySelector('#cart-drawer .checkout-payment-form h3');
+        if (payHeader) payHeader.textContent = dict.paymentDetailsHeader;
+
+        const labelAddress = document.querySelector('label[for="checkout-address"] span');
+        if (labelAddress) labelAddress.textContent = dict.addressLabel;
+
+        const labelCardholder = document.querySelector('label[for="checkout-cardholder"]');
+        if (labelCardholder) labelCardholder.textContent = dict.cardholderLabel;
+
+        const labelCardnumber = document.querySelector('label[for="checkout-cardnumber"]');
+        if (labelCardnumber) labelCardnumber.textContent = dict.cardnumberLabel;
+
+        const labelExpiry = document.querySelector('label[for="checkout-expiry"]');
+        if (labelExpiry) labelExpiry.textContent = dict.expiryLabel;
+
+        const labelCvv = document.querySelector('label[for="checkout-cvv"]');
+        if (labelCvv) labelCvv.textContent = dict.cvvLabel;
+
+        const checkoutBtnText = document.querySelector('#checkout-btn .btn-text');
+        if (checkoutBtnText) checkoutBtnText.textContent = dict.placeOrder;
+
+        // Profile Panel Language Preferences
+        const profileTitle = document.getElementById('profile-drawer-title');
+        const profileLangLabel = document.getElementById('profile-lang-label');
+        const profileTabPayments = document.getElementById('profile-tab-payments-btn');
+        const profileTabSubmissions = document.getElementById('profile-tab-submissions-btn');
+
+        if (profileTitle) profileTitle.textContent = dict.profileTitle;
+        if (profileLangLabel) profileLangLabel.textContent = dict.langLabel;
+        if (profileTabPayments) profileTabPayments.textContent = dict.tabPayments;
+        if (profileTabSubmissions) profileTabSubmissions.textContent = dict.tabSubmissions;
+
+        const profileWelcomeTitle = document.getElementById('profile-welcome-title');
+        const profileWelcomeDesc = document.getElementById('profile-welcome-desc');
+        const profileSignoutBtn = document.getElementById('profile-signout-btn');
+        const profileSigninBtn = document.getElementById('profile-signin-btn');
+        const profileRegisterBtn = document.getElementById('profile-register-btn');
+
+        if (state.currentUser) {
+            if (profileWelcomeTitle) profileWelcomeTitle.textContent = `${state.language === 'KA' ? 'მოგესალმებით,' : 'Welcome back,'} ${state.currentUser}!`;
+            if (profileWelcomeDesc) profileWelcomeDesc.textContent = state.language === 'KA' ? 'თქვენ წარმატებით შესული ხართ სისტემაში.' : 'You are currently signed in.';
+            if (profileSignoutBtn) profileSignoutBtn.style.display = 'block';
+            if (profileSigninBtn) profileSigninBtn.style.display = 'none';
+            if (profileRegisterBtn) profileRegisterBtn.style.display = 'none';
+        } else {
+            if (profileWelcomeTitle) profileWelcomeTitle.textContent = state.language === 'KA' ? 'მოგესალმებით, სტუმარო!' : 'Welcome, Guest!';
+            if (profileWelcomeDesc) profileWelcomeDesc.textContent = state.language === 'KA' ? 'შედით სისტემაში ისტორიის სანახავად.' : 'Sign in to save your history and access exclusive rewards.';
+            if (profileSignoutBtn) profileSignoutBtn.style.display = 'none';
+            if (profileSigninBtn) profileSigninBtn.style.display = 'block';
+            if (profileRegisterBtn) profileRegisterBtn.style.display = 'block';
         }
 
-        if (!/^\d{2}\/\d{2}$/.test(expiry)) {
-            showToast(dict.toastExpiryFormat, 'error');
-            elements.expiryInput.focus();
-            return null;
-        }
-
-        const [month, year] = expiry.split('/').map(Number);
-        if (month < 1 || month > 12) {
-            showToast(dict.toastExpiryMonth, 'error');
-            elements.expiryInput.focus();
-            return null;
-        }
-
-        if (cvv.length !== 3 || !/^\d+$/.test(cvv)) {
-            showToast(dict.toastCVV3, 'error');
-            elements.cvvInput.focus();
-            return null;
-        }
-
-        return { cardholder: name, cardNumber: number, expiry, cvv };
+        renderCatalog();
+        renderCart();
+        renderPayments();
+        renderSubmissions();
+        fetchReviews();
     };
 
-    // Auto-spacing inputs formatting
-    const formatCardInputs = () => {
-        if (elements.cardnumberInput) {
-            elements.cardnumberInput.addEventListener('input', (e) => {
-                let val = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-                let matches = val.match(/\d{4,16}/g);
-                let match = matches && matches[0] || '';
-                let parts = [];
-                for (let i = 0, len = match.length; i < len; i += 4) {
-                    parts.push(match.substring(i, i + 4));
-                }
-                e.target.value = parts.length > 0 ? parts.join(' ') : val;
+    // -------------------------------------------------------------------------
+    // 8. FORMS VALIDATION & USER INTERACTIONS
+    // -------------------------------------------------------------------------
+    const setupCardFormatting = () => {
+        const cardNum = document.getElementById('checkout-cardnumber');
+        const expiry = document.getElementById('checkout-expiry');
+        const cvv = document.getElementById('checkout-cvv');
+
+        if (cardNum) {
+            cardNum.addEventListener('input', (e) => {
+                let val = e.target.value.replace(/\D/g, '');
+                if (val.length > 16) val = val.substring(0, 16);
+                const matches = val.match(/.{1,4}/g);
+                e.target.value = matches ? matches.join(' ') : '';
             });
         }
 
-        if (elements.expiryInput) {
-            elements.expiryInput.addEventListener('input', (e) => {
-                let val = e.target.value.replace(/\//g, '').replace(/[^0-9]/gi, '');
+        if (expiry) {
+            expiry.addEventListener('input', (e) => {
+                let val = e.target.value.replace(/\D/g, '');
+                if (val.length > 4) val = val.substring(0, 4);
                 if (val.length > 2) {
-                    e.target.value = val.substring(0, 2) + '/' + val.substring(2, 4);
+                    e.target.value = `${val.substring(0, 2)}/${val.substring(2)}`;
                 } else {
                     e.target.value = val;
                 }
             });
         }
-    };
 
-    // Compare Feature helper functions
-    const updateCompareFAB = () => {
-        if (!elements.compareFab || !elements.compareCount) return;
-        elements.compareCount.textContent = AppState.compareList.length;
-        if (AppState.compareList.length > 0) {
-            elements.compareFab.classList.remove('hidden');
-        } else {
-            elements.compareFab.classList.add('hidden');
-        }
-    };
-
-    const openCompareModal = () => {
-        if (!elements.compareModal) return;
-        renderCompareTable();
-        elements.compareModal.classList.add('modal-open');
-        elements.compareModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-    };
-
-    const closeCompareModal = () => {
-        if (!elements.compareModal) return;
-        elements.compareModal.classList.remove('modal-open');
-        elements.compareModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    };
-
-    const openAuthModal = (mode = 'signin') => {
-        const authModal = document.getElementById('auth-modal');
-        if (!authModal) return;
-        
-        // Hide profile drawer so we don't have overlapping panels
-        toggleProfileDrawer(false);
-
-        authModal.classList.add('modal-open');
-        authModal.setAttribute('aria-hidden', 'false');
-        document.body.style.overflow = 'hidden';
-
-        showAuthForm(mode);
-    };
-
-    const showAuthForm = (mode) => {
-        const authModalTitle = document.getElementById('auth-modal-title');
-        const signinForm = document.getElementById('profile-signin-form');
-        const registerForm = document.getElementById('profile-register-form');
-        const dict = translations[AppState.language];
-
-        if (mode === 'signin') {
-            if (signinForm) signinForm.style.display = 'block';
-            if (registerForm) registerForm.style.display = 'none';
-            if (authModalTitle) {
-                authModalTitle.textContent = dict.authSignInTitle;
-            }
-        } else {
-            if (signinForm) signinForm.style.display = 'none';
-            if (registerForm) registerForm.style.display = 'block';
-            if (authModalTitle) {
-                authModalTitle.textContent = dict.authRegisterTitle;
-            }
-        }
-    };
-
-    const closeAuthModal = () => {
-        const authModal = document.getElementById('auth-modal');
-        if (!authModal) return;
-        authModal.classList.remove('modal-open');
-        authModal.setAttribute('aria-hidden', 'true');
-        document.body.style.overflow = '';
-    };
-
-    const renderCompareTable = () => {
-        if (!elements.compareModalBody) return;
-        const productsToCompare = AppState.compareList.map(id => AppState.products.find(p => p.id === id)).filter(Boolean);
-
-        if (productsToCompare.length === 0) {
-            elements.compareModalBody.innerHTML = `<p style="text-align: center; color: var(--muted); font-size: 1.1rem; padding: 24px;">No products selected for comparison.</p>`;
-            return;
-        }
-
-        const dict = translations[AppState.language];
-
-        let tableHtml = `<div class="table-wrapper compare-table-wrapper" style="overflow-x: auto; background: rgba(20, 1, 30, 0.95); border: 1px solid rgba(57, 255, 20, 0.4); border-radius: 12px; padding: 12px;"><table class="product-table compare-table" style="width: 100%; min-width: 600px; border-collapse: collapse;">`;
-
-        // Row 1: Image & Remove button
-        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Product</th>`;
-        productsToCompare.forEach(p => {
-            tableHtml += `<td style="text-align: center; padding: 14px; vertical-align: top;">
-                <div class="compare-img-cell" style="position: relative; display: inline-block;">
-                    <img src="${p.image}" alt="${p.title}" style="max-height: 80px; width: auto; object-fit: contain; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); padding: 4px;">
-                    <br>
-                    <button class="compare-remove-btn" data-id="${p.id}" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; cursor: pointer; font-size: 0.75rem; font-weight: 700; margin-top: 8px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'; this.style.color='#f87171';">Remove</button>
-                </div>
-            </td>`;
-        });
-        tableHtml += `</tr>`;
-
-        // Row 2: Name
-        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Name</th>`;
-        productsToCompare.forEach(p => {
-            tableHtml += `<td style="color: #ffffff; font-weight: 700; padding: 14px; font-size: 1rem;">${p.title}</td>`;
-        });
-        tableHtml += `</tr>`;
-
-        // Row 3: Price
-        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Price</th>`;
-        productsToCompare.forEach(p => {
-            tableHtml += `<td style="color: var(--mint); font-weight: 800; font-size: 1.1rem; padding: 14px;">${formatPrice(p.price)}</td>`;
-        });
-        tableHtml += `</tr>`;
-
-        // Row 4: Brand
-        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Brand</th>`;
-        productsToCompare.forEach(p => {
-            tableHtml += `<td style="color: #cbd5e1; padding: 14px;">${p.brand}</td>`;
-        });
-        tableHtml += `</tr>`;
-
-        // Row 5: Screen Size
-        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Screen Size</th>`;
-        productsToCompare.forEach(p => {
-            tableHtml += `<td style="color: #ffffff; font-weight: 600; padding: 14px;">${p.screenSize || 'N/A'}</td>`;
-        });
-        tableHtml += `</tr>`;
-
-        // Row 6: Processor
-        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Processor</th>`;
-        productsToCompare.forEach(p => {
-            tableHtml += `<td style="color: #ffffff; font-weight: 600; padding: 14px;">${p.processor || 'N/A'}</td>`;
-        });
-        tableHtml += `</tr>`;
-
-        // Row 7: RAM
-        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">RAM</th>`;
-        productsToCompare.forEach(p => {
-            tableHtml += `<td style="color: #ffffff; font-weight: 600; padding: 14px;">${p.ram || 'N/A'}</td>`;
-        });
-        tableHtml += `</tr>`;
-
-        // Row 8: Action
-        tableHtml += `<tr><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Action</th>`;
-        productsToCompare.forEach(p => {
-            const availableStock = getAvailableStock(p);
-            const isOutOfStock = availableStock <= 0;
-            tableHtml += `<td style="padding: 14px;">
-                <button class="btn compare-add-to-cart" data-id="${p.id}" ${isOutOfStock ? 'disabled' : ''} style="padding: 6px 12px; font-size: 0.85rem; min-height: unset; border-radius: 6px;">
-                    ${isOutOfStock ? dict.outOfStock : dict.addToCart}
-                </button>
-            </td>`;
-        });
-        tableHtml += `</tr>`;
-
-        tableHtml += `</table></div>`;
-        elements.compareModalBody.innerHTML = tableHtml;
-
-        // Attach listeners inside compared table
-        elements.compareModalBody.querySelectorAll('.compare-remove-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                AppState.compareList = AppState.compareList.filter(pid => pid !== id);
-                updateCompareFAB();
-                
-                // Uncheck main grid check box
-                const cb = document.querySelector(`.compare-checkbox[data-id="${id}"]`);
-                if (cb) cb.checked = false;
-
-                if (AppState.compareList.length === 0) {
-                    closeCompareModal();
-                } else {
-                    renderCompareTable();
-                }
+        if (cvv) {
+            cvv.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 3);
             });
-        });
-
-        elements.compareModalBody.querySelectorAll('.compare-add-to-cart').forEach(btn => {
-            btn.addEventListener('click', () => {
-                const id = btn.getAttribute('data-id');
-                addToCart(id);
-                renderCompareTable();
-            });
-        });
+        }
     };
-
-    // -------------------------------------------------------------------------
-    // 9. EVENT LISTENERS SETUP
-    // -------------------------------------------------------------------------
 
     const setupEventListeners = () => {
-        // Toggle Cart Click Handlers
-        if (elements.cartToggleBtn) {
-            elements.cartToggleBtn.addEventListener('click', () => toggleCartDrawer(true));
-        }
-        if (elements.cartCloseBtn) {
-            elements.cartCloseBtn.addEventListener('click', () => toggleCartDrawer(false));
-        }
-        if (elements.cartOverlay) {
-            elements.cartOverlay.addEventListener('click', () => toggleCartDrawer(false));
+        // Toggle Drawers & Modals handlers
+        document.getElementById('cart-toggle-btn')?.addEventListener('click', () => toggleDrawer('cart-drawer', true));
+        document.getElementById('cart-close-btn')?.addEventListener('click', () => toggleDrawer('cart-drawer', false));
+        document.getElementById('cart-overlay')?.addEventListener('click', () => toggleDrawer('cart-drawer', false));
+        document.getElementById('cart-explore-btn')?.addEventListener('click', () => toggleDrawer('cart-drawer', false));
+
+        document.getElementById('profile-toggle-btn')?.addEventListener('click', () => toggleDrawer('profile-drawer', true));
+        document.getElementById('profile-close-btn')?.addEventListener('click', () => toggleDrawer('profile-drawer', false));
+        document.getElementById('profile-overlay')?.addEventListener('click', () => toggleDrawer('profile-drawer', false));
+
+        document.getElementById('recent-toggle-btn')?.addEventListener('click', () => toggleDrawer('recent-drawer', true));
+        document.getElementById('recent-drawer-close')?.addEventListener('click', () => toggleDrawer('recent-drawer', false));
+        document.getElementById('recent-overlay')?.addEventListener('click', () => toggleDrawer('recent-drawer', false));
+        document.getElementById('recent-clear-btn')?.addEventListener('click', () => {
+            state.recentlyViewed = [];
+            localStorage.removeItem('techstore_recent');
+            renderRecentlyViewed();
+        });
+
+        document.getElementById('modal-close-btn')?.addEventListener('click', closeModal);
+        document.getElementById('modal-overlay')?.addEventListener('click', closeModal);
+
+        document.getElementById('compare-close-btn')?.addEventListener('click', () => toggleDrawer('compare-modal', false));
+        document.getElementById('compare-modal-overlay')?.addEventListener('click', () => toggleDrawer('compare-modal', false));
+        document.getElementById('compare-clear-btn')?.addEventListener('click', () => {
+            state.compareList = [];
+            updateCompareFab();
+            toggleDrawer('compare-modal', false);
+            renderCatalog();
+        });
+        document.getElementById('compare-fab')?.addEventListener('click', () => {
+            renderCompareTable();
+            toggleDrawer('compare-modal', true);
+        });
+
+        // Search and display show limit toggling
+        document.getElementById('product-search')?.addEventListener('input', (e) => {
+            state.searchQuery = e.target.value;
+            renderCatalog();
+        });
+
+        document.getElementById('show-more-btn')?.addEventListener('click', (e) => {
+            state.showAll = !state.showAll;
+            e.target.textContent = state.showAll 
+                ? (state.language === 'KA' ? 'რჩეული პროდუქტები' : 'Show Featured Products')
+                : (state.language === 'KA' ? 'ყველა პროდუქტი' : 'Show All Products');
+            renderCatalog();
+        });
+
+        // Expandable Filters Panel triggers
+        document.getElementById('filter-toggle-btn')?.addEventListener('click', () => {
+            const panel = document.getElementById('filter-dropdown-panel');
+            if (!panel) return;
+            if (panel.style.maxHeight === '0px' || !panel.style.maxHeight) {
+                panel.style.maxHeight = '500px';
+                panel.style.opacity = '1';
+                panel.style.marginTop = '16px';
+                panel.style.padding = '24px';
+            } else {
+                panel.style.maxHeight = '0px';
+                panel.style.opacity = '0';
+                panel.style.marginTop = '0px';
+                panel.style.padding = '0 24px';
+            }
+        });
+
+        // Category selection filters tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', (e) => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                state.activeCategory = e.target.getAttribute('data-category');
+                renderCatalog();
+            });
+        });
+
+        // Min Max budget ranges sliders
+        const minRange = document.getElementById('min-price-range');
+        const maxRange = document.getElementById('max-price-range');
+        const minValText = document.getElementById('min-price-val');
+        const maxValText = document.getElementById('max-price-val');
+
+        if (minRange && maxRange) {
+            minRange.addEventListener('input', (e) => {
+                state.minBudget = parseInt(e.target.value);
+                if (minValText) minValText.textContent = `$${state.minBudget}`;
+                renderCatalog();
+            });
+            maxRange.addEventListener('input', (e) => {
+                state.maxBudget = parseInt(e.target.value);
+                if (maxValText) maxValText.textContent = `$${state.maxBudget}`;
+                renderCatalog();
+            });
         }
 
-        // Toggle User Profile Click Handlers
-        if (elements.profileToggleBtn) {
-            elements.profileToggleBtn.addEventListener('click', () => toggleProfileDrawer(true));
-        }
-        if (elements.profileCloseBtn) {
-            elements.profileCloseBtn.addEventListener('click', () => toggleProfileDrawer(false));
-        }
-        if (elements.profileOverlay) {
-            elements.profileOverlay.addEventListener('click', () => toggleProfileDrawer(false));
-        }
+        // Language and Currency select listeners
+        document.getElementById('profile-language-select')?.addEventListener('change', (e) => {
+            state.language = e.target.value;
+            localStorage.setItem('techstore_language', state.language);
+            showToast(state.language === 'KA' ? 'ენა შეიცვალა ქართულად' : 'Switched language to English', 'success');
+            translateInterface();
+        });
 
-        // Tab Switching inside Profile Drawer
-        elements.profileTabButtons.forEach(btn => {
+        document.getElementById('profile-currency-select')?.addEventListener('change', (e) => {
+            state.currency = e.target.value;
+            localStorage.setItem('techstore_currency', state.currency);
+            showToast(`${translations[state.language].toastCurrency} ${state.currency}`, 'success');
+            translateInterface();
+        });
+
+        // Deal selectors dropdown inside cart drawer
+        document.getElementById('cart-deal-select')?.addEventListener('change', (e) => {
+            state.activeDeal = e.target.value;
+            localStorage.setItem('techstore_active_deal', state.activeDeal);
+            translateInterface();
+        });
+
+        // Profile navigation tabs switcher
+        document.querySelectorAll('.profile-tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                const tab = e.target.getAttribute('data-tab');
-                handleProfileTabSwitch(tab);
-            });
-        });
-
-        // Language Select Listener
-        if (elements.profileLanguageSelect) {
-            elements.profileLanguageSelect.addEventListener('change', (e) => {
-                AppState.language = e.target.value;
-                saveLanguageToStorage();
-                translateInterface();
-                showToast(translations[AppState.language].toastLanguage, 'success');
-            });
-        }
-
-        // Currency Select Listener
-        if (elements.profileCurrencySelect) {
-            elements.profileCurrencySelect.addEventListener('change', (e) => {
-                AppState.currency = e.target.value;
-                localStorage.setItem('techstore_currency', AppState.currency);
-                renderCatalog();
-                renderCart();
-                renderPayments();
+                document.querySelectorAll('.profile-tab-btn').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
                 
-                if (AppState.activeModalProductId) {
-                    renderModalContent(AppState.activeModalProductId);
-                }
+                const tab = e.target.getAttribute('data-tab');
+                const pPane = document.getElementById('profile-pane-payments');
+                const sPane = document.getElementById('profile-pane-submissions');
 
-                const dict = translations[AppState.language];
-                showToast(`${dict.toastCurrency} ${AppState.currency}`, 'success');
-            });
-        }
-
-        // Deal Selector (Select dropdown change handler)
-        if (elements.cartDealSelect) {
-            elements.cartDealSelect.addEventListener('change', (e) => {
-                AppState.activeDeal = e.target.value;
-                localStorage.setItem('techstore_active_deal', AppState.activeDeal);
-                renderCart();
-            });
-        }
-
-        // Home Page Deal Cards Click Handler
-        const dealCards = document.querySelectorAll('.deal-card');
-        dealCards.forEach(card => {
-            card.style.cursor = 'pointer';
-            card.addEventListener('click', () => {
-                const dealType = card.getAttribute('data-deal');
-                if (dealType) {
-                    AppState.activeDeal = dealType;
-                    localStorage.setItem('techstore_active_deal', AppState.activeDeal);
-                    renderCart();
-                    
-                    if (elements.cartDealSelect) {
-                        elements.cartDealSelect.value = dealType;
-                    }
-                    
-                    showToast(
-                        AppState.language === 'KA' 
-                            ? `აქცია წარმატებით გააქტიურდა!` 
-                            : `Deal applied successfully!`,
-                        'success'
-                    );
-                    
-                    // Open cart drawer so they can see the deal applied
-                    toggleCartDrawer(true);
+                if (tab === 'payments') {
+                    pPane?.classList.add('active');
+                    sPane?.classList.remove('active');
+                    renderPayments();
+                } else {
+                    pPane?.classList.remove('active');
+                    sPane?.classList.add('active');
+                    renderSubmissions();
                 }
             });
         });
 
-        // Toggle Product Details Modal Close Click
-        if (elements.modalCloseBtn) {
-            elements.modalCloseBtn.addEventListener('click', closeProductModal);
-        }
-        if (elements.modalOverlay) {
-            elements.modalOverlay.addEventListener('click', closeProductModal);
-        }
-
-        // Catalog Sizing Toggle Button
-        if (elements.showMoreBtn) {
-            elements.showMoreBtn.addEventListener('click', () => {
-                AppState.showAll = !AppState.showAll;
-                renderCatalog();
-            });
-        }
-
-        // Search Input Change Handler (DOM Search)
-        if (elements.productSearch) {
-            elements.productSearch.addEventListener('input', (e) => {
-                AppState.searchQuery = e.target.value;
-                renderCatalog();
-            });
-        }
-
-        // Min Price Range Slider listener
-        if (elements.minPriceRange) {
-            elements.minPriceRange.addEventListener('input', (e) => {
-                AppState.minBudget = parseInt(e.target.value);
-                if (elements.minPriceVal) {
-                    elements.minPriceVal.textContent = formatPrice(AppState.minBudget);
-                }
-                // Keep min <= max
-                if (AppState.minBudget > AppState.maxBudget) {
-                    AppState.maxBudget = AppState.minBudget;
-                    if (elements.maxPriceRange) {
-                        elements.maxPriceRange.value = AppState.maxBudget;
-                    }
-                    if (elements.maxPriceVal) {
-                        elements.maxPriceVal.textContent = formatPrice(AppState.maxBudget);
-                    }
-                }
-                renderCatalog();
-            });
-        }
-
-        // Max Price Range Slider listener
-        if (elements.maxPriceRange) {
-            elements.maxPriceRange.addEventListener('input', (e) => {
-                AppState.maxBudget = parseInt(e.target.value);
-                if (elements.maxPriceVal) {
-                    elements.maxPriceVal.textContent = formatPrice(AppState.maxBudget);
-                }
-                // Keep max >= min
-                if (AppState.maxBudget < AppState.minBudget) {
-                    AppState.minBudget = AppState.maxBudget;
-                    if (elements.minPriceRange) {
-                        elements.minPriceRange.value = AppState.minBudget;
-                    }
-                    if (elements.minPriceVal) {
-                        elements.minPriceVal.textContent = formatPrice(AppState.minBudget);
-                    }
-                }
-                renderCatalog();
-            });
-        }
-
-        // Filters Panel Toggle listener
-        if (elements.filterToggleBtn && elements.filterDropdownPanel) {
-            elements.filterToggleBtn.addEventListener('click', () => {
-                const isOpen = elements.filterDropdownPanel.style.maxHeight !== '0px' && elements.filterDropdownPanel.style.maxHeight !== '';
-                if (isOpen) {
-                    elements.filterDropdownPanel.style.maxHeight = '0px';
-                    elements.filterDropdownPanel.style.opacity = '0';
-                    elements.filterDropdownPanel.style.marginTop = '0px';
-                } else {
-                    elements.filterDropdownPanel.style.maxHeight = '500px';
-                    elements.filterDropdownPanel.style.opacity = '1';
-                    elements.filterDropdownPanel.style.marginTop = '16px';
-                }
-            });
-        }
-
-        // Recently Viewed toggle listeners
-        if (elements.recentToggleBtn) {
-            elements.recentToggleBtn.addEventListener('click', () => {
-                toggleRecentDrawer(true);
-            });
-        }
-        if (elements.recentCloseBtn) {
-            elements.recentCloseBtn.addEventListener('click', () => {
-                toggleRecentDrawer(false);
-            });
-        }
-        if (elements.recentOverlay) {
-            elements.recentOverlay.addEventListener('click', () => {
-                toggleRecentDrawer(false);
-            });
-        }
-        if (elements.recentClearBtn) {
-            elements.recentClearBtn.addEventListener('click', () => {
-                AppState.recentlyViewed = [];
-                updateRecentlyViewed();
-                showToast(
-                    AppState.language === 'KA' ? 'ისტორია გაიწმინდა' : 'History cleared',
-                    'success'
-                );
-            });
-        }
-
-        // Compare FAB click listener
-        if (elements.compareFab) {
-            elements.compareFab.addEventListener('click', () => {
-                openCompareModal();
-            });
-        }
-
-        // Compare Close listeners
-        if (elements.compareCloseBtn) {
-            elements.compareCloseBtn.addEventListener('click', () => {
-                closeCompareModal();
-            });
-        }
-        if (elements.compareModalOverlay) {
-            elements.compareModalOverlay.addEventListener('click', () => {
-                closeCompareModal();
-            });
-        }
-        if (elements.compareClearBtn) {
-            elements.compareClearBtn.addEventListener('click', () => {
-                AppState.compareList = [];
-                document.querySelectorAll('.compare-checkbox').forEach(cb => cb.checked = false);
-                updateCompareFAB();
-                closeCompareModal();
-                showToast(
-                    AppState.language === 'KA' ? 'შედარება გაუქმდა' : 'Comparison cleared',
-                    'success'
-                );
-            });
-        }
-
-        // GPS detection button listener
-        const gpsBtn = document.getElementById('gps-detect-btn');
-        const addressInput = document.getElementById('checkout-address');
-        if (gpsBtn && addressInput) {
-            gpsBtn.addEventListener('click', () => {
-                gpsBtn.disabled = true;
-                gpsBtn.innerHTML = '⌛ Detecting...';
-                if (!navigator.geolocation) {
-                    addressInput.value = "GPS not supported by browser (Tbilisi, Georgia)";
-                    gpsBtn.disabled = false;
-                    gpsBtn.innerHTML = '📍 Auto GPS';
-                    showToast('GPS geolocation is not supported by your browser', 'error');
-                    return;
-                }
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        const { latitude, longitude } = position.coords;
-                        try {
-                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                            if (res.ok) {
-                                const data = await res.json();
-                                if (data && data.display_name) {
-                                    addressInput.value = data.display_name;
-                                    showToast('Address detected successfully!', 'success');
-                                } else {
-                                    addressInput.value = `GPS Coords: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} (Tbilisi, Georgia)`;
-                                    showToast('GPS coordinates fetched', 'success');
-                                }
-                            } else {
-                                addressInput.value = `GPS Coords: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} (Tbilisi, Georgia)`;
-                                showToast('GPS coordinates fetched', 'success');
-                            }
-                        } catch (err) {
-                            addressInput.value = `GPS Coords: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} (Tbilisi, Georgia)`;
-                            showToast('GPS coordinates fetched', 'success');
-                        }
-                        gpsBtn.disabled = false;
-                        gpsBtn.innerHTML = '📍 Auto GPS';
-                    },
-                    (error) => {
-                        console.error(error);
-                        addressInput.value = "Tbilisi, Georgia (GPS Denied/Timeout)";
-                        showToast('Location permission denied or timed out. Used default.', 'warning');
-                        gpsBtn.disabled = false;
-                        gpsBtn.innerHTML = '📍 Auto GPS';
-                    },
-                    { timeout: 10000 }
-                );
-            });
-        }
-
-        // Profile auth modal toggles and handlers
-        const profileSignInBtn = document.getElementById('profile-signin-btn');
-        const profileRegisterBtn = document.getElementById('profile-register-btn');
-        
-        if (profileSignInBtn) {
-            profileSignInBtn.addEventListener('click', () => {
-                openAuthModal('signin');
-            });
-        }
-
-        if (profileRegisterBtn) {
-            profileRegisterBtn.addEventListener('click', () => {
-                openAuthModal('register');
-            });
-        }
-
-        // Inside Auth Modal: Close and Toggle events
-        const authCloseBtn = document.getElementById('auth-close-btn');
-        const authOverlay = document.getElementById('auth-overlay');
+        // Authentication triggers inside drawers & forms
         const signinToggleLink = document.getElementById('signin-toggle-link');
         const registerToggleLink = document.getElementById('register-toggle-link');
+        const signinForm = document.getElementById('profile-signin-form');
+        const registerForm = document.getElementById('profile-register-form');
+        const authTitle = document.getElementById('auth-modal-title');
 
-        if (authCloseBtn) {
-            authCloseBtn.addEventListener('click', closeAuthModal);
-        }
-        if (authOverlay) {
-            authOverlay.addEventListener('click', closeAuthModal);
-        }
-        if (signinToggleLink) {
-            signinToggleLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showAuthForm('register');
-            });
-        }
-        if (registerToggleLink) {
-            registerToggleLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                showAuthForm('signin');
-            });
-        }
+        const showAuthForm = (isSignIn) => {
+            if (isSignIn) {
+                if (signinForm) signinForm.style.display = 'block';
+                if (registerForm) registerForm.style.display = 'none';
+                if (authTitle) authTitle.textContent = state.language === 'KA' ? 'შესვლა' : 'Sign In';
+            } else {
+                if (signinForm) signinForm.style.display = 'none';
+                if (registerForm) registerForm.style.display = 'block';
+                if (authTitle) authTitle.textContent = state.language === 'KA' ? 'რეგისტრაცია' : 'Register';
+            }
+        };
 
-        if (elements.profileSigninForm) {
-            elements.profileSigninForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const usernameInput = document.getElementById('signin-username');
-                const passwordInput = document.getElementById('signin-password');
-                const username = usernameInput ? usernameInput.value.trim() : 'User';
-                if (username) {
-                    AppState.user = username;
-                    localStorage.setItem('techstore_user', username);
-                    updateProfileAuthUI();
-                    if (usernameInput) usernameInput.value = '';
-                    if (passwordInput) passwordInput.value = '';
-                    showToast(
-                        AppState.language === 'KA' 
-                            ? `მოგესალმებით, ${username}!` 
-                            : `Welcome back, ${username}!`, 
-                        'success'
-                    );
-                    closeAuthModal();
-                }
-            });
-        }
-
-        if (elements.profileRegisterForm) {
-            elements.profileRegisterForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const usernameInput = document.getElementById('register-username');
-                const emailInput = document.getElementById('register-email');
-                const passwordInput = document.getElementById('register-password');
-                const username = usernameInput ? usernameInput.value.trim() : 'User';
-                if (username) {
-                    AppState.user = username;
-                    localStorage.setItem('techstore_user', username);
-                    updateProfileAuthUI();
-                    if (usernameInput) usernameInput.value = '';
-                    if (emailInput) emailInput.value = '';
-                    if (passwordInput) passwordInput.value = '';
-                    showToast(
-                        AppState.language === 'KA' 
-                            ? `რეგისტრაცია წარმატებულია! მოგესალმებით, ${username}!` 
-                            : `Registration successful! Welcome, ${username}!`, 
-                        'success'
-                    );
-                    closeAuthModal();
-                }
-            });
-        }
-
-        if (elements.profileSignoutBtn) {
-            elements.profileSignoutBtn.addEventListener('click', () => {
-                AppState.user = null;
-                localStorage.removeItem('techstore_user');
-                updateProfileAuthUI();
-                showToast(
-                    AppState.language === 'KA' 
-                        ? 'გახვედით სისტემიდან.' 
-                        : 'Logged out successfully.', 
-                    'success'
-                );
-            });
-        }
-
-        // Initialize user authentication state
-        updateProfileAuthUI();
-
-
-        // Category Tabs Click Filter Handlers
-        elements.filterTabs.forEach(tab => {
-            tab.addEventListener('click', (e) => {
-                elements.filterTabs.forEach(t => t.classList.remove('active'));
-                e.target.classList.add('active');
-                AppState.activeCategory = e.target.getAttribute('data-category');
-                renderCatalog();
-            });
+        signinToggleLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAuthForm(false);
         });
 
-        // Format Payment Inputs
-        formatCardInputs();
+        registerToggleLink?.addEventListener('click', (e) => {
+            e.preventDefault();
+            showAuthForm(true);
+        });
 
-        // Checkout Button Listener (Promise Consumption)
-        if (elements.checkoutBtn) {
-            elements.checkoutBtn.addEventListener('click', async () => {
-                const dict = translations[AppState.language];
+        document.getElementById('profile-signin-btn')?.addEventListener('click', () => {
+            toggleDrawer('profile-drawer', false);
+            toggleDrawer('auth-modal', true);
+            showAuthForm(true);
+        });
+
+        document.getElementById('profile-register-btn')?.addEventListener('click', () => {
+            toggleDrawer('profile-drawer', false);
+            toggleDrawer('auth-modal', true);
+            showAuthForm(false);
+        });
+
+        document.getElementById('auth-close-btn')?.addEventListener('click', () => toggleDrawer('auth-modal', false));
+        document.getElementById('auth-overlay')?.addEventListener('click', () => toggleDrawer('auth-modal', false));
+
+        signinForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userVal = document.getElementById('signin-username')?.value.trim();
+            if (userVal) {
+                state.currentUser = userVal;
+                localStorage.setItem('techstore_user', userVal);
+                toggleDrawer('auth-modal', false);
+                showToast(state.language === 'KA' ? `მოგესალმებით, ${userVal}!` : `Welcome back, ${userVal}!`, 'success');
+                translateInterface();
+            }
+        });
+
+        registerForm?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userVal = document.getElementById('register-username')?.value.trim();
+            if (userVal) {
+                state.currentUser = userVal;
+                localStorage.setItem('techstore_user', userVal);
+                toggleDrawer('auth-modal', false);
+                showToast(state.language === 'KA' ? `რეგისტრაცია წარმატებულია, მოგესალმებით ${userVal}!` : `Registration successful, welcome ${userVal}!`, 'success');
+                translateInterface();
+            }
+        });
+
+        document.getElementById('profile-signout-btn')?.addEventListener('click', () => {
+            state.currentUser = null;
+            localStorage.removeItem('techstore_user');
+            showToast(state.language === 'KA' ? 'სისტემიდან გამოსვლა წარმატებულია' : 'Signed out successfully', 'success');
+            translateInterface();
+        });
+
+        // Contact Support Form handler submissions
+        const supportForm = document.getElementById('support');
+        if (supportForm) {
+            supportForm.addEventListener('submit', (e) => {
+                e.preventDefault();
                 
-                // 1. Validate payment card details form
-                const cardDetails = validatePaymentDetails();
-                if (!cardDetails) return; // Exit if invalid
+                const firstName = document.getElementById('first-name')?.value.trim();
+                const lastName = document.getElementById('last-name')?.value.trim();
+                const email = document.getElementById('email')?.value.trim();
+                const interest = document.getElementById('interest')?.value;
+                const goalEl = supportForm.querySelector('input[name="goal"]:checked');
+                const goal = goalEl ? goalEl.value : '';
+                const message = document.getElementById('message')?.value.trim();
 
-                const btnText = elements.checkoutBtn.querySelector('.btn-text');
-                const btnSpinner = elements.checkoutBtn.querySelector('.btn-spinner');
+                if (!firstName || !lastName || !email || !interest) {
+                    showToast(state.language === 'KA' ? 'შეავსეთ სავალდებულო ველები' : 'Please fill in all required fields', 'error');
+                    return;
+                }
 
-                // Visual Loading State transition
-                elements.checkoutBtn.disabled = true;
+                const newSub = {
+                    firstName,
+                    lastName,
+                    email,
+                    interest,
+                    goal,
+                    message,
+                    timestamp: new Date().toISOString(),
+                    review: null
+                };
+
+                state.submissions.unshift(newSub);
+                localStorage.setItem('techstore_registrations', JSON.stringify(state.submissions));
+                
+                showToast(state.language === 'KA' ? 'მოთხოვნა წარმატებით გაიგზავნა!' : 'Support request submitted successfully!', 'success');
+                supportForm.reset();
+                renderSubmissions();
+            });
+        }
+
+        // Checkout Purchase Payment Order Form submissions handler
+        const checkoutBtn = document.getElementById('checkout-btn');
+        if (checkoutBtn) {
+            checkoutBtn.addEventListener('click', async () => {
+                if (state.cart.length === 0) return;
+
+                const address = document.getElementById('checkout-address')?.value.trim();
+                const cardholder = document.getElementById('checkout-cardholder')?.value.trim();
+                const cardnumber = document.getElementById('checkout-cardnumber')?.value.replace(/\s/g, '');
+                const expiry = document.getElementById('checkout-expiry')?.value.trim();
+                const cvv = document.getElementById('checkout-cvv')?.value.trim();
+                
+                const dict = translations[state.language];
+
+                if (!address) {
+                    showToast(state.language === 'KA' ? 'გთხოვთ მიუთითოთ მიწოდების მისამართი' : 'Please enter a delivery address', 'error');
+                    return;
+                }
+                if (!cardholder || cardholder.length < 3) {
+                    showToast(dict.toastEnterCard, 'error');
+                    return;
+                }
+                if (!cardnumber || cardnumber.length !== 16) {
+                    showToast(dict.toastCard16, 'error');
+                    return;
+                }
+                const expParts = expiry.split('/');
+                if (expParts.length !== 2 || expParts[0].length !== 2 || expParts[1].length !== 2) {
+                    showToast(dict.toastExpiryFormat, 'error');
+                    return;
+                }
+                const expMonth = parseInt(expParts[0]);
+                if (expMonth < 1 || expMonth > 12) {
+                    showToast(dict.toastExpiryMonth, 'error');
+                    return;
+                }
+                if (!cvv || cvv.length !== 3) {
+                    showToast(dict.toastCVV3, 'error');
+                    return;
+                }
+
+                const btnText = checkoutBtn.querySelector('.btn-text');
+                const btnSpinner = checkoutBtn.querySelector('.btn-spinner');
+                
+                checkoutBtn.disabled = true;
                 if (btnText) btnText.textContent = dict.authorizing;
                 if (btnSpinner) btnSpinner.classList.remove('hidden');
 
-                try {
-                    // Consume Promise using async/await
-                    const receipt = await submitOrderAPI(AppState.cart, cardDetails);
-                    
-                    // 2. Decrement real stock levels and update soldCount inside AppState.products
-                    AppState.cart.forEach(item => {
-                        const product = AppState.products.find(p => p.id === item.product.id);
+                // Simulate payment authorization processing delay
+                setTimeout(() => {
+                    const receipt = {
+                        orderId: `TS-${Math.floor(100000 + Math.random() * 900000)}`,
+                        status: 'paid',
+                        cardLast4: cardnumber.slice(-4),
+                        timestamp: new Date().toISOString(),
+                        items: state.cart.map(item => ({
+                            title: item.product.title,
+                            price: item.product.price,
+                            quantity: item.quantity
+                        })),
+                        total: calculateCartTotal().total
+                    };
+
+                    // Decrement stock levels and increment units sold
+                    state.cart.forEach(item => {
+                        const product = state.products.find(p => p.id === item.product.id);
                         if (product) {
                             product.stock = Math.max(0, product.stock - item.quantity);
                             product.soldCount += item.quantity;
                         }
                     });
 
-                    // Cache product changes to localStorage
-                    saveProductsToStorage();
+                    // Persist updated inventories levels to local storage overrides
+                    const updatedStocks = {};
+                    const updatedSoldCount = {};
+                    state.products.forEach(p => {
+                        updatedStocks[p.id] = p.stock;
+                        updatedSoldCount[p.id] = p.soldCount;
+                    });
+                    localStorage.setItem('techstore_product_stocks', JSON.stringify(updatedStocks));
+                    localStorage.setItem('techstore_product_sold', JSON.stringify(updatedSoldCount));
 
-                    // Calculate Total Charge with active deal discount
-                    const subtotal = AppState.cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-                    let discountRate = 0;
-                    if (AppState.activeDeal === 'student') discountRate = 0.10;
-                    else if (AppState.activeDeal === 'wfh') discountRate = 0.15;
-                    else if (AppState.activeDeal === 'gaming') discountRate = 0.12;
-                    
-                    const chargeAmount = (subtotal * (1 - discountRate)) * 1.20; // with 20% VAT
+                    state.payments.unshift(receipt);
+                    localStorage.setItem('techstore_payments', JSON.stringify(state.payments));
 
-                    // 3. Compile payment history object
-                    const paymentRecord = {
-                        orderId: receipt.orderId,
-                        timestamp: receipt.timestamp,
-                        cardLast4: receipt.cardLast4,
-                        totalCharge: chargeAmount,
-                        items: AppState.cart.map(item => ({
-                            title: item.product.title,
-                            qty: item.quantity,
-                            price: item.product.price
-                        }))
-                    };
+                    state.cart = [];
+                    localStorage.setItem('techstore_cart', JSON.stringify(state.cart));
 
-                    // Add record to state
-                    AppState.payments = [paymentRecord, ...AppState.payments];
-                    savePaymentsToStorage();
-
-                    showToast(`${dict.toastPaymentSuccess} ${receipt.orderId}.`, 'success');
-                    
-                    // Reset cart and checkout form fields
-                    AppState.cart = [];
-                    AppState.activeDeal = 'none';
-                    localStorage.setItem('techstore_active_deal', 'none');
-                    if (elements.cartDealSelect) elements.cartDealSelect.value = 'none';
-                    
-                    saveCartToStorage();
-                    
-                    if (elements.cardholderInput) elements.cardholderInput.value = '';
-                    if (elements.cardnumberInput) elements.cardnumberInput.value = '';
-                    if (elements.expiryInput) elements.expiryInput.value = '';
-                    if (elements.cvvInput) elements.cvvInput.value = '';
-
-                    renderCart();
-                    renderCatalog();
-                    toggleCartDrawer(false);
-
-                    // Re-render modal details if it was open during checkout
-                    if (AppState.activeModalProductId) {
-                        renderModalContent(AppState.activeModalProductId);
-                    }
-                } catch (error) {
-                    logAppEvent('Checkout', 'Order payment declined:', error);
-                    showToast(error.message || 'Checkout failed. Please check card limits.', 'error');
-                } finally {
-                    elements.checkoutBtn.disabled = false;
+                    checkoutBtn.disabled = false;
                     if (btnText) btnText.textContent = dict.placeOrder;
                     if (btnSpinner) btnSpinner.classList.add('hidden');
-                }
+
+                    toggleDrawer('cart-drawer', false);
+                    showToast(`${dict.toastPaymentSuccess} ${receipt.orderId}`, 'success');
+
+                    translateInterface();
+                }, 1500);
             });
         }
 
-        // Form Submission Interception (Customer Service Request Tracker)
-        if (elements.registerForm) {
-            elements.registerForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const formData = new FormData(elements.registerForm);
-                const firstName = formData.get('first-name');
-                const interest = formData.get('interest');
-
-                const registrationDetails = {
-                    firstName,
-                    lastName: formData.get('last-name'),
-                    email: formData.get('email'),
-                    interest,
-                    goal: formData.get('goal'),
-                    extras: formData.getAll('extras'),
-                    message: formData.get('message'),
-                    timestamp: new Date().toISOString()
-                };
-
-                // Store registration locally
-                AppState.submissions = [registrationDetails, ...AppState.submissions];
-                localStorage.setItem('techstore_registrations', JSON.stringify(AppState.submissions));
-
-                const dict = translations[AppState.language];
-                const msg = AppState.language === 'KA'
-                    ? `გმადლობთ, ${firstName}! თქვენი მოთხოვნა კატეგორიაზე "${interest}" შენახულია.`
-                    : `Thank you, ${firstName}! We've stored your interest in ${interest}.`;
-                
-                showToast(msg, 'success');
-                elements.registerForm.reset();
-                
-                // Refresh service request rendering
-                renderSubmissions();
-            });
-        }
+        // GPS Auto Detect button handler
+        document.getElementById('gps-detect-btn')?.addEventListener('click', () => {
+            const addressInput = document.getElementById('checkout-address');
+            if (addressInput) {
+                addressInput.value = state.language === 'KA' ? 'იტვირთება მისამართი...' : 'Detecting GPS Address...';
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        try {
+                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                            if (res.ok) {
+                                const data = await res.json();
+                                addressInput.value = data.display_name || `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                            } else {
+                                addressInput.value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                            }
+                        } catch (e) {
+                            addressInput.value = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+                        }
+                    },
+                    (err) => {
+                        addressInput.value = state.language === 'KA' ? 'GPS მიუწვდომელია' : 'GPS location unavailable';
+                        showToast(state.language === 'KA' ? 'GPS ლოკაცია ვერ განისაზღვრა' : 'Could not detect GPS location', 'error');
+                    }
+                );
+            }
+        });
     };
 
     // -------------------------------------------------------------------------
-    // 9.5 SCROLL ENTROPY & ENTRANCE ANIMATIONS
+    // 9. ANIMATIONS & APPEARANCE (INTERSECTION OBSERVER)
     // -------------------------------------------------------------------------
-    const setupScrollAnimations = () => {
+    const initScrollAnimations = () => {
         const sections = document.querySelectorAll('.hero, .products-section, .deals-section, .media-section, .reviews-section, .contact-section');
-        
         sections.forEach(sec => sec.classList.add('scroll-animate'));
-
-        const observerOptions = {
-            root: null,
-            rootMargin: '0px',
-            threshold: 0.08
-        };
 
         const observer = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
@@ -3023,37 +2037,31 @@ document.addEventListener('DOMContentLoaded', () => {
                     entry.target.classList.remove('animated');
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.08 });
 
         sections.forEach(sec => observer.observe(sec));
     };
 
     // -------------------------------------------------------------------------
-    // 10. APPLICATION INITIALIZATION PIPELINE
+    // 10. INITIALIZATION
     // -------------------------------------------------------------------------
-    const initApp = async () => {
-        logAppEvent('Init', 'Initializing TechStore database...');
-        
-        loadCartFromStorage();
-        loadPaymentsFromStorage();
-        loadSubmissionsFromStorage();
-        loadLanguageFromStorage();
-        loadCurrencyFromStorage();
-        AppState.activeDeal = localStorage.getItem('techstore_active_deal') || 'none';
-        
-        await Promise.all([
-            fetchProducts(),
-            fetchExchangeRates()
-        ]);
-        
-        translateInterface();
+    const init = async () => {
+        await fetchProducts();
+        await fetchExchangeRates();
         setupEventListeners();
-        fetchReviews();
-        renderSubmissions();
-        setupScrollAnimations();
+        setupCardFormatting();
+        translateInterface();
+        initScrollAnimations();
         
-        logAppEvent('Init', 'App ready.');
+        // Sync preferences state to selectors
+        const langSelect = document.getElementById('profile-language-select');
+        const currSelect = document.getElementById('profile-currency-select');
+        if (langSelect) langSelect.value = state.language;
+        if (currSelect) currSelect.value = state.currency;
+
+        renderRecentlyViewed();
+        updateCompareFab();
     };
 
-    initApp();
+    init();
 });
