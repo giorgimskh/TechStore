@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260502-2">
+    <link rel="stylesheet" href="css/style.css?v=20260625-v3">
 </head>
 
 <body>
@@ -96,6 +96,8 @@
             </div>
         </section>
 
+        <div class="section-divider"></div>
+
         <section id="products" class="products-section">
             <div class="container">
                 <div class="section-header">
@@ -160,6 +162,8 @@
             </div>
         </section>
 
+        <div class="section-divider"></div>
+
         <section id="deals" class="deals-section">
             <div class="container">
                 <div class="section-header">
@@ -192,6 +196,7 @@
             </div>
         </section>
 
+        <div class="section-divider"></div>
 
         <section class="media-section">
             <div class="container">
@@ -214,6 +219,8 @@
             </div>
         </section>
 
+        <div class="section-divider"></div>
+
         <section id="reviews" class="reviews-section">
             <div class="container">
                 <div class="section-header">
@@ -231,6 +238,8 @@
                 </div>
             </div>
         </section>
+
+        <div class="section-divider"></div>
 
         <section class="contact-section">
             <div class="container contact-layout">
@@ -335,16 +344,16 @@
         </div>
     </footer>
 
-    <!-- Shopping Cart Drawer -->
-    <div id="cart-drawer" class="cart-drawer" aria-hidden="true">
-        <div class="cart-drawer-overlay" id="cart-overlay"></div>
-        <div class="cart-drawer-content">
-            <div class="cart-drawer-header">
-                <h2>Your Cart</h2>
-                <button id="cart-close-btn" class="cart-close-btn" aria-label="Close cart">&times;</button>
+    <!-- Shopping Cart Modal -->
+    <div id="cart-drawer" class="modal-wrapper" aria-hidden="true">
+        <div class="modal-overlay" id="cart-overlay"></div>
+        <div class="modal-content-container" style="width: min(94%, 600px); max-height: 85vh; display: flex; flex-direction: column; padding: 24px; box-sizing: border-box;">
+            <button id="cart-close-btn" class="modal-close-btn" aria-label="Close cart" style="top: 10px; right: 14px;">&times;</button>
+            <div class="cart-drawer-header" style="border-bottom: 1px solid rgba(138, 255, 193, 0.15); padding-bottom: 14px; margin-bottom: 14px;">
+                <h2 style="margin: 0; font-size: 1.45rem; color: #ffffff; font-weight: 800;">Your Cart</h2>
             </div>
             
-            <div class="cart-drawer-body">
+            <div class="cart-drawer-body" style="flex-grow: 1; overflow-y: auto; padding-right: 4px; margin-bottom: 14px;">
                 <div id="cart-empty-message" class="cart-empty-message">
                     <div class="cart-empty-icon">🛒</div>
                     <h3>Your cart is empty</h3>
@@ -402,7 +411,7 @@
                 </div>
             </div>
             
-            <div class="cart-drawer-footer" id="cart-summary-section">
+            <div class="cart-drawer-footer" id="cart-summary-section" style="border-top: 1px solid rgba(138, 255, 193, 0.15); padding-top: 14px; background: transparent; position: static; width: 100%;">
                 <div class="cart-totals" style="margin-bottom: 14px;">
                     <div class="cart-total-row">
                         <span class="trans-subtotal">Subtotal</span>

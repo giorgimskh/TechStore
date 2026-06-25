@@ -1788,10 +1788,10 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!elements.cartDrawer) return;
         elements.cartDrawer.setAttribute('aria-hidden', !isOpen);
         if (isOpen) {
-            elements.cartDrawer.classList.add('drawer-open');
+            elements.cartDrawer.classList.add('modal-open');
             document.body.style.overflow = 'hidden';
         } else {
-            elements.cartDrawer.classList.remove('drawer-open');
+            elements.cartDrawer.classList.remove('modal-open');
             document.body.style.overflow = '';
         }
     };

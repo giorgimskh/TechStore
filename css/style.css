@@ -1477,13 +1477,20 @@ textarea:focus-visible {
     min-height: 38px;
     padding: 0 16px;
     font-size: 0.82rem;
-    background: linear-gradient(135deg, var(--royal-purple), var(--violet));
     border: 1px solid rgba(57, 255, 20, 0.22);
 }
 
-.product-purchase-row .add-to-cart-btn:hover {
-    box-shadow: 0 8px 18px rgba(124, 58, 237, 0.35);
-    border-color: var(--electric-green);
+.add-to-cart-btn {
+    background: #DAA520 !important;
+    color: #000000 !important;
+    font-weight: 800 !important;
+    text-shadow: none !important;
+}
+
+.add-to-cart-btn:hover {
+    background: #FFD700 !important;
+    box-shadow: 0 0 15px rgba(218, 165, 32, 0.5) !important;
+    border-color: #FFD700 !important;
 }
 
 /* Glassmorphic Cart Drawer */
@@ -3159,6 +3166,30 @@ textarea:focus-visible {
 /* Product Detail Modal Sizing */
 #product-modal .modal-content-container {
     width: min(94%, 900px);
+}
+
+/* Section dividers */
+.section-divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin: 40px 0;
+    padding: 0;
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg, transparent 15%, rgba(57, 255, 20, 0.25) 45%, var(--electric-green) 50%, rgba(57, 255, 20, 0.25) 55%, transparent 85%);
+}
+
+.section-divider::before {
+    content: "";
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #080914;
+    border: 2px solid var(--electric-green);
+    transform: rotate(45deg);
+    box-shadow: 0 0 10px var(--electric-green);
 }
 
 
