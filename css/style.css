@@ -571,6 +571,8 @@ textarea:focus-visible {
 .product-actions {
     display: flex;
     justify-content: center;
+    align-items: center;
+    gap: 16px;
     margin-top: 30px;
 }
 
@@ -1449,9 +1451,8 @@ textarea:focus-visible {
 
 .catalog-count-message {
     color: #c4b5fd;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     font-weight: 700;
-    text-align: center;
     margin: 0;
 }
 
@@ -3061,11 +3062,13 @@ textarea:focus-visible {
 }
 
 .header-sharingan {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
+    position: relative;
+    left: auto;
+    top: auto;
+    transform: none;
     z-index: 1;
+    margin-left: 20px;
+    margin-right: auto;
     pointer-events: none;
 }
 
@@ -3073,7 +3076,7 @@ textarea:focus-visible {
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-left: auto;
+    margin-left: 0;
     margin-right: 24px;
     z-index: 2;
 }

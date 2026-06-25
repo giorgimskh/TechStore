@@ -27,7 +27,8 @@ document.addEventListener('DOMContentLoaded', () => {
         compareList: [],
         recentlyViewed: [],
         showAll: false,
-        activeModalProductId: null
+        activeModalProductId: null,
+        user: localStorage.getItem('techstore_user') || null
     };
 
     // Logger utilizing rest parameters (ES6+ Spread/Rest)
@@ -75,6 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
         profileLanguageSelect: document.getElementById('profile-language-select'),
         profileCurrencySelect: document.getElementById('profile-currency-select'),
         profileTabButtons: document.querySelectorAll('.profile-tab-btn'),
+        profileWelcomeTitle: document.getElementById('profile-welcome-title'),
+        profileWelcomeDesc: document.getElementById('profile-welcome-desc'),
+        profileAuthBtnGroup: document.getElementById('profile-auth-btn-group'),
+        profileSigninForm: document.getElementById('profile-signin-form'),
+        profileRegisterForm: document.getElementById('profile-register-form'),
+        profileSignoutBtn: document.getElementById('profile-signout-btn'),
+        cartDealSelect: document.getElementById('cart-deal-select'),
         
         paymentEmptyMessage: document.getElementById('payment-empty-message'),
         paymentItemsList: document.getElementById('payment-items-list'),
@@ -886,6 +894,8 @@ document.addEventListener('DOMContentLoaded', () => {
         // Dynamic price history chart calculations (deterministic per product ID)
         const sumChars = (str) => [...str].reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const seed = sumChars(productId || "");
+        
+        // Days trend (90, 60, 30, 15, Today)
         const f90 = 1.10 + ((seed % 10) / 100);
         const f60 = 1.05 + (((seed + 3) % 10) / 100);
         const f30 = 1.15 + (((seed + 7) % 10) / 100);
@@ -909,44 +919,136 @@ document.addEventListener('DOMContentLoaded', () => {
         const y15 = mapY(p15);
         const yToday = mapY(pToday);
 
+        // Months trend (5 months ago, 4 months ago, 3 months ago, 2 months ago, 1 month ago, Current)
+        // Let's dynamic month names based on current locale
+        const monthNames = AppState.language === 'KA'
+            ? ["იან", "თებ", "მარ", "აპრ", "მაი", "ივნ", "ივლ", "აგვ", "სექ", "ოქტ", "ნოე", "დეკ"]
+            : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        
+        const d = new Date();
+        const mLabel5 = monthNames[d.getMonth()];
+        d.setMonth(d.getMonth() - 1);
+        const mLabel4 = monthNames[d.getMonth()];
+        d.setMonth(d.getMonth() - 1);
+        const mLabel3 = monthNames[d.getMonth()];
+        d.setMonth(d.getMonth() - 1);
+        const mLabel2 = monthNames[d.getMonth()];
+        d.setMonth(d.getMonth() - 1);
+        const mLabel1 = monthNames[d.getMonth()];
+        d.setMonth(d.getMonth() - 1);
+        const mLabel0 = monthNames[d.getMonth()];
+
+        // 6 months of prices
+        const pm0 = Math.round(price * (1.12 + ((seed % 9) / 100)));
+        const pm1 = Math.round(price * (1.08 + (((seed + 2) % 9) / 100)));
+        const pm2 = Math.round(price * (1.15 + (((seed + 4) % 9) / 100)));
+        const pm3 = Math.round(price * (1.03 + (((seed + 6) % 9) / 100)));
+        const pm4 = Math.round(price * (1.06 + (((seed + 1) % 9) / 100)));
+        const pm5 = price;
+
+        const mPricesArr = [pm0, pm1, pm2, pm3, pm4, pm5];
+        const maxMP = Math.max(...mPricesArr);
+        const minMP = Math.min(...mPricesArr);
+        const rangeMP = maxMP - minMP || 1;
+        const mapMY = (val) => 70 - ((val - minMP) / rangeMP) * 60;
+
+        const ym0 = mapMY(pm0);
+        const ym1 = mapMY(pm1);
+        const ym2 = mapMY(pm2);
+        const ym3 = mapMY(pm3);
+        const ym4 = mapMY(pm4);
+        const ym5 = mapMY(pm5);
+
         const chartHtml = `
-            <div class="price-history-chart-card" style="margin: 16px 0; background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 12px 16px; box-sizing: border-box;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <div class="price-history-chart-card" style="margin: 16px 0; background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 12px 16px; box-sizing: border-box; position: relative;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                     <h4 style="margin: 0; color: #ffffff; font-size: 0.85rem; font-weight: 800; display: flex; align-items: center; gap: 4px;">
-                        <span style="color: var(--electric-green);">📊</span> 90-Day Price Trend
+                        <span style="color: var(--electric-green);">📊</span> ${AppState.language === 'KA' ? 'ფასების ტრენდი' : 'Price Trend'}
                     </h4>
-                    <span style="font-size: 0.72rem; color: var(--electric-green); font-weight: 700; background: rgba(57, 255, 20, 0.1); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(57, 255, 20, 0.2);">
-                        Genuinely Good Deal
-                    </span>
+                    <!-- Days / Months Toggle buttons -->
+                    <div style="display: flex; gap: 4px;">
+                        <button id="btn-chart-days" class="btn" style="padding: 4px 8px; font-size: 0.65rem; border-radius: 4px; background: var(--electric-green); color: #000; font-weight: 800; border: none; cursor: pointer; min-height: unset; transition: all 0.2s;">
+                            ${AppState.language === 'KA' ? 'დღეები' : 'Days'}
+                        </button>
+                        <button id="btn-chart-months" class="btn" style="padding: 4px 8px; font-size: 0.65rem; border-radius: 4px; background: rgba(255, 255, 255, 0.05); color: #cbd5e1; font-weight: 800; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; min-height: unset; transition: all 0.2s;">
+                            ${AppState.language === 'KA' ? 'თვეები' : 'Months'}
+                        </button>
+                    </div>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 0.75rem; color: #94a3b8; margin-bottom: 6px;">
-                    <span>90 Days Ago: <strong style="color: #cbd5e1;">${formatPrice(p90)}</strong></span>
-                    <span>Today: <strong style="color: var(--mint);">${formatPrice(pToday)}</strong></span>
+
+                <!-- 90-Days Price Chart -->
+                <div id="chart-container-days" style="display: block; position: relative;">
+                    <div class="chart-tooltip" style="position: absolute; display: none; background: rgba(9, 3, 13, 0.95); border: 1px solid var(--electric-green); padding: 4px 8px; border-radius: 6px; color: #fff; font-size: 0.72rem; pointer-events: none; z-index: 100; font-weight: 700; white-space: nowrap; transform: translate(-50%, -100%); margin-top: -8px; box-shadow: 0 0 10px var(--electric-green);"></div>
+                    <svg viewBox="0 0 300 80" style="width: 100%; height: 60px; overflow: visible; display: block;">
+                        <defs>
+                            <linearGradient id="chart-glow-${productId}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--electric-green)" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="var(--electric-green)" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday} L 290 80 L 10 80 Z" fill="url(#chart-glow-${productId})"></path>
+                        <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday}" fill="none" stroke="var(--electric-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px var(--electric-green));"></path>
+                        
+                        <!-- Visual points -->
+                        <circle cx="10" cy="${y90}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
+                        <circle cx="80" cy="${y60}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
+                        <circle cx="150" cy="${y30}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
+                        <circle cx="220" cy="${y15}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
+                        <circle cx="290" cy="${yToday}" r="4" fill="var(--electric-green)" stroke="var(--mint)" stroke-width="1.5"></circle>
+
+                        <!-- Invisible hover targets -->
+                        <circle cx="10" cy="${y90}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p90)}" data-label="-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="80" cy="${y60}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p60)}" data-label="-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="150" cy="${y30}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p30)}" data-label="-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="220" cy="${y15}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p15)}" data-label="-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="290" cy="${yToday}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pToday)}" data-label="${AppState.language === 'KA' ? 'დღეს' : 'Today'}" data-orig-r="4" data-orig-fill="var(--electric-green)" style="cursor: pointer;"></circle>
+                    </svg>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 600;">
+                        <span>-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
+                        <span>-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
+                        <span>-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
+                        <span>-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
+                        <span>${AppState.language === 'KA' ? 'დღეს' : 'Today'}</span>
+                    </div>
                 </div>
-                <svg viewBox="0 0 300 80" style="width: 100%; height: 60px; overflow: visible; display: block;">
-                    <defs>
-                        <linearGradient id="chart-glow-${productId}" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="var(--electric-green)" stop-opacity="0.35"/>
-                            <stop offset="100%" stop-color="var(--electric-green)" stop-opacity="0"/>
-                        </linearGradient>
-                    </defs>
-                    <!-- Fill gradient -->
-                    <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday} L 290 80 L 10 80 Z" fill="url(#chart-glow-${productId})"></path>
-                    <!-- Stroke path -->
-                    <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday}" fill="none" stroke="var(--electric-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px var(--electric-green));"></path>
-                    <!-- Data points -->
-                    <circle cx="10" cy="${y90}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1"></circle>
-                    <circle cx="80" cy="${y60}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1"></circle>
-                    <circle cx="150" cy="${y30}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1"></circle>
-                    <circle cx="220" cy="${y15}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1"></circle>
-                    <circle cx="290" cy="${yToday}" r="4" fill="var(--electric-green)" stroke="var(--mint)" stroke-width="1"></circle>
-                </svg>
-                <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 600;">
-                    <span>-90 days</span>
-                    <span>-60 days</span>
-                    <span>-30 days</span>
-                    <span>-15 days</span>
-                    <span>Today</span>
+
+                <!-- Monthly Price Chart -->
+                <div id="chart-container-months" style="display: none; position: relative;">
+                    <div class="chart-tooltip" style="position: absolute; display: none; background: rgba(9, 3, 13, 0.95); border: 1px solid var(--electric-green); padding: 4px 8px; border-radius: 6px; color: #fff; font-size: 0.72rem; pointer-events: none; z-index: 100; font-weight: 700; white-space: nowrap; transform: translate(-50%, -100%); margin-top: -8px; box-shadow: 0 0 10px var(--electric-green);"></div>
+                    <svg viewBox="0 0 300 80" style="width: 100%; height: 60px; overflow: visible; display: block;">
+                        <defs>
+                            <linearGradient id="chart-glow-m-${productId}" x1="0" y1="0" x2="0" y2="1">
+                                <stop offset="0%" stop-color="var(--violet)" stop-opacity="0.35"/>
+                                <stop offset="100%" stop-color="var(--violet)" stop-opacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        <path d="M 10 ${ym0} L 66 ${ym1} L 122 ${ym2} L 178 ${ym3} L 234 ${ym4} L 290 ${ym5} L 290 80 L 10 80 Z" fill="url(#chart-glow-m-${productId})"></path>
+                        <path d="M 10 ${ym0} L 66 ${ym1} L 122 ${ym2} L 178 ${ym3} L 234 ${ym4} L 290 ${ym5}" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px var(--violet));"></path>
+                        
+                        <!-- Visual points -->
+                        <circle cx="10" cy="${ym0}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="66" cy="${ym1}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="122" cy="${ym2}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="178" cy="${ym3}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="234" cy="${ym4}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="290" cy="${ym5}" r="4" fill="var(--violet)" stroke="var(--pink)" stroke-width="1.5"></circle>
+
+                        <!-- Invisible hover targets -->
+                        <circle cx="10" cy="${ym0}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm0)}" data-label="${mLabel0}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="66" cy="${ym1}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm1)}" data-label="${mLabel1}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="122" cy="${ym2}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm2)}" data-label="${mLabel2}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="178" cy="${ym3}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm3)}" data-label="${mLabel3}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="234" cy="${ym4}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm4)}" data-label="${mLabel4}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+                        <circle cx="290" cy="${ym5}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm5)}" data-label="${mLabel5}" data-orig-r="4" data-orig-fill="var(--violet)" style="cursor: pointer;"></circle>
+                    </svg>
+                    <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 600;">
+                        <span>${mLabel0}</span>
+                        <span>${mLabel1}</span>
+                        <span>${mLabel2}</span>
+                        <span>${mLabel3}</span>
+                        <span>${mLabel4}</span>
+                        <span>${mLabel5}</span>
+                    </div>
                 </div>
             </div>
         `;
@@ -1029,6 +1131,77 @@ document.addEventListener('DOMContentLoaded', () => {
                 mainImg.style.transformOrigin = 'center center';
             });
         }
+
+        // Chart Toggle and Hover Point Interactivity
+        const chartCard = elements.modalBodyContent.querySelector('.price-history-chart-card');
+        if (chartCard) {
+            const btnDays = chartCard.querySelector('#btn-chart-days');
+            const btnMonths = chartCard.querySelector('#btn-chart-months');
+            const containerDays = chartCard.querySelector('#chart-container-days');
+            const containerMonths = chartCard.querySelector('#chart-container-months');
+
+            if (btnDays && btnMonths && containerDays && containerMonths) {
+                btnDays.addEventListener('click', () => {
+                    containerDays.style.display = 'block';
+                    containerMonths.style.display = 'none';
+                    btnDays.style.background = 'var(--electric-green)';
+                    btnDays.style.color = '#000';
+                    btnMonths.style.background = 'rgba(255, 255, 255, 0.05)';
+                    btnMonths.style.color = '#cbd5e1';
+                });
+                btnMonths.addEventListener('click', () => {
+                    containerDays.style.display = 'none';
+                    containerMonths.style.display = 'block';
+                    btnMonths.style.background = 'var(--electric-green)';
+                    btnMonths.style.color = '#000';
+                    btnDays.style.background = 'rgba(255, 255, 255, 0.05)';
+                    btnDays.style.color = '#cbd5e1';
+                });
+            }
+
+            // Bind tooltips for points in both containers
+            const setupTooltips = (container) => {
+                const tooltip = container.querySelector('.chart-tooltip');
+                const hoverPoints = container.querySelectorAll('.chart-point-hover');
+                if (!tooltip || !hoverPoints) return;
+
+                hoverPoints.forEach(pt => {
+                    pt.addEventListener('mouseenter', () => {
+                        const price = pt.getAttribute('data-price');
+                        const label = pt.getAttribute('data-label');
+                        tooltip.innerHTML = `<div style="font-weight:800; color:var(--electric-green);">${price}</div><div style="font-size:0.6rem; color:#94a3b8;">${label}</div>`;
+                        tooltip.style.display = 'block';
+
+                        // Position tooltip relative to container
+                        const ptRect = pt.getBoundingClientRect();
+                        const containerRect = container.getBoundingClientRect();
+                        const x = ptRect.left - containerRect.left + (ptRect.width / 2);
+                        const y = ptRect.top - containerRect.top - 8;
+                        tooltip.style.left = `${x}px`;
+                        tooltip.style.top = `${y}px`;
+
+                        // Highlight the visual point circle (the previous element in DOM)
+                        const visualCircle = pt.previousElementSibling;
+                        if (visualCircle) {
+                            visualCircle.setAttribute('r', '7');
+                            visualCircle.setAttribute('fill', 'var(--electric-green)');
+                        }
+                    });
+
+                    pt.addEventListener('mouseleave', () => {
+                        tooltip.style.display = 'none';
+                        const visualCircle = pt.previousElementSibling;
+                        if (visualCircle) {
+                            visualCircle.setAttribute('r', pt.getAttribute('data-orig-r') || '3');
+                            visualCircle.setAttribute('fill', pt.getAttribute('data-orig-fill') || '#ffffff');
+                        }
+                    });
+                });
+            };
+
+            if (containerDays) setupTooltips(containerDays);
+            if (containerMonths) setupTooltips(containerMonths);
+        }
     };
 
     const closeProductModal = () => {
@@ -1051,15 +1224,18 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.cartBadgeCount.classList.add('badge-pop');
         }
 
+        const cartFormSection = document.getElementById('cart-form-section');
         if (AppState.cart.length === 0) {
             if (elements.cartEmptyMessage) elements.cartEmptyMessage.style.display = 'flex';
             if (elements.cartSummarySection) elements.cartSummarySection.style.display = 'none';
+            if (cartFormSection) cartFormSection.style.display = 'none';
             if (elements.cartItemsList) elements.cartItemsList.innerHTML = '';
             return;
         }
 
         if (elements.cartEmptyMessage) elements.cartEmptyMessage.style.display = 'none';
         if (elements.cartSummarySection) elements.cartSummarySection.style.display = 'block';
+        if (cartFormSection) cartFormSection.style.display = 'block';
 
         if (elements.cartItemsList) {
             elements.cartItemsList.innerHTML = AppState.cart.map(item => {
@@ -1124,9 +1300,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if (elements.cartTax) elements.cartTax.textContent = formatPrice(tax);
         if (elements.cartTotal) elements.cartTotal.textContent = formatPrice(total);
 
-        // Sync radio checked state
-        const activeRadio = document.querySelector(`input[name="cart-deal"][value="${AppState.activeDeal}"]`);
-        if (activeRadio) activeRadio.checked = true;
+        // Sync dropdown value state
+        if (elements.cartDealSelect) {
+            elements.cartDealSelect.value = AppState.activeDeal;
+        }
+    };
+
+    // Update User Profile auth UI dynamically based on AppState.user
+    const updateProfileAuthUI = () => {
+        if (!elements.profileWelcomeTitle) return;
+
+        if (AppState.user) {
+            elements.profileWelcomeTitle.textContent = AppState.language === 'KA' 
+                ? `მოგესალმებით, ${AppState.user}!` 
+                : `Welcome, ${AppState.user}!`;
+            elements.profileWelcomeDesc.textContent = AppState.language === 'KA'
+                ? "თქვენ წარმატებით ხართ შესული სისტემაში."
+                : "You are successfully logged in.";
+            if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'none';
+            if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
+            if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
+            if (elements.profileSignoutBtn) elements.profileSignoutBtn.style.display = 'block';
+        } else {
+            elements.profileWelcomeTitle.textContent = AppState.language === 'KA' 
+                ? "მოგესალმებით, სტუმარო!" 
+                : "Welcome, Guest!";
+            elements.profileWelcomeDesc.textContent = AppState.language === 'KA'
+                ? "შედით სისტემაში ისტორიის შესანახად და ბონუსებისთვის."
+                : "Sign in to save your history and access exclusive rewards.";
+            if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'flex';
+            if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
+            if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
+            if (elements.profileSignoutBtn) elements.profileSignoutBtn.style.display = 'none';
+        }
     };
 
     // Render Past Payments/Transactions inside user Profile Pane
@@ -1814,15 +2020,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Deal Selector (Radio click handler - click only one)
-        const dealRadios = document.querySelectorAll('input[name="cart-deal"]');
-        dealRadios.forEach(radio => {
-            radio.addEventListener('change', (e) => {
+        // Deal Selector (Select dropdown change handler)
+        if (elements.cartDealSelect) {
+            elements.cartDealSelect.addEventListener('change', (e) => {
                 AppState.activeDeal = e.target.value;
                 localStorage.setItem('techstore_active_deal', AppState.activeDeal);
                 renderCart();
             });
-        });
+        }
 
         // Home Page Deal Cards Click Handler
         const dealCards = document.querySelectorAll('.deal-card');
@@ -1835,9 +2040,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('techstore_active_deal', AppState.activeDeal);
                     renderCart();
                     
-                    // Highlight selected radio button in cart
-                    const radio = document.querySelector(`input[name="cart-deal"][value="${dealType}"]`);
-                    if (radio) radio.checked = true;
+                    if (elements.cartDealSelect) {
+                        elements.cartDealSelect.value = dealType;
+                    }
                     
                     showToast(
                         AppState.language === 'KA' 
@@ -2043,25 +2248,104 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Profile sign-in and register buttons listeners
+        // Profile auth form toggles and handlers
         const profileSignInBtn = document.getElementById('profile-signin-btn');
         const profileRegisterBtn = document.getElementById('profile-register-btn');
+        
         if (profileSignInBtn) {
             profileSignInBtn.addEventListener('click', () => {
-                showToast(
-                    AppState.language === 'KA' ? 'შესვლა მალე დაემატება!' : 'Sign In feature is coming soon!',
-                    'info'
-                );
+                if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'block';
+                if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
+                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'none';
             });
         }
+
         if (profileRegisterBtn) {
             profileRegisterBtn.addEventListener('click', () => {
+                if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'block';
+                if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
+                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'none';
+            });
+        }
+
+        const signinCancelBtn = document.getElementById('signin-cancel-btn');
+        if (signinCancelBtn) {
+            signinCancelBtn.addEventListener('click', () => {
+                if (elements.profileSigninForm) elements.profileSigninForm.style.display = 'none';
+                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'flex';
+            });
+        }
+
+        const registerCancelBtn = document.getElementById('register-cancel-btn');
+        if (registerCancelBtn) {
+            registerCancelBtn.addEventListener('click', () => {
+                if (elements.profileRegisterForm) elements.profileRegisterForm.style.display = 'none';
+                if (elements.profileAuthBtnGroup) elements.profileAuthBtnGroup.style.display = 'flex';
+            });
+        }
+
+        if (elements.profileSigninForm) {
+            elements.profileSigninForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const usernameInput = document.getElementById('signin-username');
+                const passwordInput = document.getElementById('signin-password');
+                const username = usernameInput ? usernameInput.value.trim() : 'User';
+                if (username) {
+                    AppState.user = username;
+                    localStorage.setItem('techstore_user', username);
+                    updateProfileAuthUI();
+                    if (usernameInput) usernameInput.value = '';
+                    if (passwordInput) passwordInput.value = '';
+                    showToast(
+                        AppState.language === 'KA' 
+                            ? `მოგესალმებით, ${username}!` 
+                            : `Welcome back, ${username}!`, 
+                        'success'
+                    );
+                }
+            });
+        }
+
+        if (elements.profileRegisterForm) {
+            elements.profileRegisterForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const usernameInput = document.getElementById('register-username');
+                const emailInput = document.getElementById('register-email');
+                const passwordInput = document.getElementById('register-password');
+                const username = usernameInput ? usernameInput.value.trim() : 'User';
+                if (username) {
+                    AppState.user = username;
+                    localStorage.setItem('techstore_user', username);
+                    updateProfileAuthUI();
+                    if (usernameInput) usernameInput.value = '';
+                    if (emailInput) emailInput.value = '';
+                    if (passwordInput) passwordInput.value = '';
+                    showToast(
+                        AppState.language === 'KA' 
+                            ? `რეგისტრაცია წარმატებულია! მოგესალმებით, ${username}!` 
+                            : `Registration successful! Welcome, ${username}!`, 
+                        'success'
+                    );
+                }
+            });
+        }
+
+        if (elements.profileSignoutBtn) {
+            elements.profileSignoutBtn.addEventListener('click', () => {
+                AppState.user = null;
+                localStorage.removeItem('techstore_user');
+                updateProfileAuthUI();
                 showToast(
-                    AppState.language === 'KA' ? 'რეგისტრაცია მალე დაემატება!' : 'Registration feature is coming soon!',
-                    'info'
+                    AppState.language === 'KA' 
+                        ? 'გახვედით სისტემიდან.' 
+                        : 'Logged out successfully.', 
+                    'success'
                 );
             });
         }
+
+        // Initialize user authentication state
+        updateProfileAuthUI();
 
 
         // Category Tabs Click Filter Handlers
@@ -2142,8 +2426,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     AppState.cart = [];
                     AppState.activeDeal = 'none';
                     localStorage.setItem('techstore_active_deal', 'none');
-                    const defaultRadio = document.querySelector('input[name="cart-deal"][value="none"]');
-                    if (defaultRadio) defaultRadio.checked = true;
+                    if (elements.cartDealSelect) elements.cartDealSelect.value = 'none';
                     
                     saveCartToStorage();
                     

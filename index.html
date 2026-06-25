@@ -420,37 +420,56 @@
                 <div id="cart-items-list" class="cart-items-list">
                     <!-- Cart items injected here dynamically -->
                 </div>
+
+                <!-- Scrollable Deals Selection and Checkout Form -->
+                <div class="cart-form-section" id="cart-form-section" style="display: none; margin-top: 20px;">
+                    <!-- Promo Deals Selection (dropdown dropdown to save vertical space) -->
+                    <div class="cart-deals-container" style="margin-bottom: 16px;">
+                        <h3 class="trans-select-deal" style="font-size: 0.85rem; color: #ffffff; margin: 0 0 8px 0; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">Select Active Deal</h3>
+                        <select id="cart-deal-select" style="width: 100%; padding: 8px 12px; background: rgba(33, 1, 36, 0.85); color: #e9d5ff; border: 1px solid rgba(57, 255, 20, 0.38); border-radius: 6px; font-size: 0.85rem; font-weight: 700; cursor: pointer; outline: none; transition: border-color 0.2s;">
+                            <option value="none" class="trans-deal-none">No Deal Applied</option>
+                            <option value="student" class="trans-deal-student">Student Bundle (10% Off)</option>
+                            <option value="wfh" class="trans-deal-wfh">Work From Home (15% Off)</option>
+                            <option value="gaming" class="trans-deal-gaming">Gaming Essentials (12% Off)</option>
+                        </select>
+                    </div>
+
+                    <!-- Card details payment form -->
+                    <div class="checkout-payment-form" style="margin-top: 0; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, 0.08);">
+                        <h3>Payment Details</h3>
+                        <div class="cart-form-group">
+                            <label for="checkout-address" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                                <span>Delivery Address</span>
+                                <button type="button" id="gps-detect-btn" style="background: none; border: none; color: var(--electric-green); font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; font-weight: 700;">
+                                    📍 Auto GPS
+                                </button>
+                            </label>
+                            <input type="text" id="checkout-address" placeholder="Enter delivery address" required>
+                        </div>
+                        <div class="cart-form-group">
+                            <label for="checkout-cardholder">Cardholder Name</label>
+                            <input type="text" id="checkout-cardholder" placeholder="Giorgi Beridze" required autocomplete="cc-name">
+                        </div>
+                        <div class="cart-form-group">
+                            <label for="checkout-cardnumber">Card Number</label>
+                            <input type="text" id="checkout-cardnumber" placeholder="4242 4242 4242 4242" maxlength="19" required autocomplete="cc-number">
+                        </div>
+                        <div class="cart-form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                            <div class="cart-form-group">
+                                <label for="checkout-expiry">Expiry Date</label>
+                                <input type="text" id="checkout-expiry" placeholder="MM/YY" maxlength="5" required autocomplete="cc-exp">
+                            </div>
+                            <div class="cart-form-group">
+                                <label for="checkout-cvv">CVV</label>
+                                <input type="password" id="checkout-cvv" placeholder="•••" maxlength="3" required autocomplete="cc-csc">
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
             
             <div class="cart-drawer-footer" id="cart-summary-section">
-                <!-- Promo Deals Selection (Radio buttons, click only one) -->
-                <div class="cart-deals-container">
-                    <h3 class="trans-select-deal">Select Active Deal</h3>
-                    <div class="deals-options-list">
-                        <label class="deal-option-label">
-                            <input type="radio" name="cart-deal" value="none" checked>
-                            <span class="deal-custom-radio"></span>
-                            <span class="deal-option-text trans-deal-none">No Deal Applied</span>
-                        </label>
-                        <label class="deal-option-label">
-                            <input type="radio" name="cart-deal" value="student">
-                            <span class="deal-custom-radio"></span>
-                            <span class="deal-option-text trans-deal-student">Student Bundle (10% Off)</span>
-                        </label>
-                        <label class="deal-option-label">
-                            <input type="radio" name="cart-deal" value="wfh">
-                            <span class="deal-custom-radio"></span>
-                            <span class="deal-option-text trans-deal-wfh">Work From Home (15% Off)</span>
-                        </label>
-                        <label class="deal-option-label">
-                            <input type="radio" name="cart-deal" value="gaming">
-                            <span class="deal-custom-radio"></span>
-                            <span class="deal-option-text trans-deal-gaming">Gaming Essentials (12% Off)</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="cart-totals">
+                <div class="cart-totals" style="margin-bottom: 14px;">
                     <div class="cart-total-row">
                         <span class="trans-subtotal">Subtotal</span>
                         <span id="cart-subtotal">$0.00</span>
@@ -466,38 +485,6 @@
                     <div class="cart-total-row total-row-main">
                         <span class="trans-total">Total</span>
                         <span id="cart-total">$0.00</span>
-                    </div>
-                </div>
-                
-                <!-- Card details payment form -->
-                <div class="checkout-payment-form">
-                    <h3>Payment Details</h3>
-                    <div class="cart-form-group">
-                        <label for="checkout-address" style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                            <span>Delivery Address</span>
-                            <button type="button" id="gps-detect-btn" style="background: none; border: none; color: var(--electric-green); font-size: 0.8rem; cursor: pointer; display: flex; align-items: center; gap: 4px; padding: 0; font-weight: 700;">
-                                📍 Auto GPS
-                            </button>
-                        </label>
-                        <input type="text" id="checkout-address" placeholder="Enter delivery address" required>
-                    </div>
-                    <div class="cart-form-group">
-                        <label for="checkout-cardholder">Cardholder Name</label>
-                        <input type="text" id="checkout-cardholder" placeholder="Giorgi Beridze" required autocomplete="cc-name">
-                    </div>
-                    <div class="cart-form-group">
-                        <label for="checkout-cardnumber">Card Number</label>
-                        <input type="text" id="checkout-cardnumber" placeholder="4242 4242 4242 4242" maxlength="19" required autocomplete="cc-number">
-                    </div>
-                    <div class="cart-form-row">
-                        <div class="cart-form-group">
-                            <label for="checkout-expiry">Expiry Date</label>
-                            <input type="text" id="checkout-expiry" placeholder="MM/YY" maxlength="5" required autocomplete="cc-exp">
-                        </div>
-                        <div class="cart-form-group">
-                            <label for="checkout-cvv">CVV</label>
-                            <input type="password" id="checkout-cvv" placeholder="•••" maxlength="3" required autocomplete="cc-csc">
-                        </div>
                     </div>
                 </div>
 
@@ -522,12 +509,51 @@
                 <!-- Register or Sign In card -->
                 <div class="profile-auth-section" style="background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 16px; margin-bottom: 20px; box-sizing: border-box; text-align: center;">
                     <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
-                    <h3 style="color: #ffffff; margin-bottom: 6px; font-weight: 800;">Welcome, Guest!</h3>
-                    <p style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;">Sign in to save your history and access exclusive rewards.</p>
-                    <div style="display: flex; gap: 8px; justify-content: center;">
+                    <h3 id="profile-welcome-title" style="color: #ffffff; margin-bottom: 6px; font-weight: 800;">Welcome, Guest!</h3>
+                    <p id="profile-welcome-desc" style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;">Sign in to save your history and access exclusive rewards.</p>
+                    <div id="profile-auth-btn-group" style="display: flex; gap: 8px; justify-content: center;">
                         <button id="profile-signin-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: linear-gradient(135deg, var(--violet) 0%, var(--pink) 100%); border: none; color: white; cursor: pointer; font-weight: 700;">Sign In</button>
                         <button id="profile-register-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: transparent; border: 1px solid var(--electric-green); color: var(--electric-green); cursor: pointer; font-weight: 700;">Register</button>
                     </div>
+                    <button id="profile-signout-btn" class="btn" style="display: none; width: 100%; padding: 8px; font-size: 0.85rem; font-weight: 700; border: 1px solid #f87171; color: #f87171; background: transparent; border-radius: 6px; cursor: pointer; margin-top: 12px;">
+                        Sign Out
+                    </button>
+                    
+                    <!-- Sign In Form -->
+                    <form id="profile-signin-form" style="display: none; margin-top: 16px; text-align: left; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px; border: 1px solid rgba(124, 58, 237, 0.4);">
+                        <div class="cart-form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 0.65rem; color: #c4b5fd; text-transform: uppercase;">Username</label>
+                            <input type="text" id="signin-username" placeholder="Enter username" required style="width: 100%; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; color: #fff; font-size: 0.8rem; outline: none;">
+                        </div>
+                        <div class="cart-form-group" style="margin-bottom: 12px;">
+                            <label style="font-size: 0.65rem; color: #c4b5fd; text-transform: uppercase;">Password</label>
+                            <input type="password" id="signin-password" placeholder="Enter password" required style="width: 100%; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; color: #fff; font-size: 0.8rem; outline: none;">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="submit" class="btn" style="flex: 1; padding: 6px; font-size: 0.75rem; background: var(--electric-green); color: #000; font-weight: 700; border: none; border-radius: 4px; cursor: pointer; min-height: unset;">Submit</button>
+                            <button type="button" id="signin-cancel-btn" class="btn" style="padding: 6px 12px; font-size: 0.75rem; background: rgba(255,255,255,0.1); color: #fff; border: none; border-radius: 4px; cursor: pointer; min-height: unset;">Cancel</button>
+                        </div>
+                    </form>
+
+                    <!-- Register Form -->
+                    <form id="profile-register-form" style="display: none; margin-top: 16px; text-align: left; background: rgba(0,0,0,0.25); padding: 12px; border-radius: 8px; border: 1px solid rgba(57, 255, 20, 0.4);">
+                        <div class="cart-form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 0.65rem; color: #c4b5fd; text-transform: uppercase;">Username</label>
+                            <input type="text" id="register-username" placeholder="Choose username" required style="width: 100%; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; color: #fff; font-size: 0.8rem; outline: none;">
+                        </div>
+                        <div class="cart-form-group" style="margin-bottom: 8px;">
+                            <label style="font-size: 0.65rem; color: #c4b5fd; text-transform: uppercase;">Email</label>
+                            <input type="email" id="register-email" placeholder="Enter email" required style="width: 100%; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; color: #fff; font-size: 0.8rem; outline: none;">
+                        </div>
+                        <div class="cart-form-group" style="margin-bottom: 12px;">
+                            <label style="font-size: 0.65rem; color: #c4b5fd; text-transform: uppercase;">Password</label>
+                            <input type="password" id="register-password" placeholder="Create password" required style="width: 100%; padding: 6px 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.15); border-radius: 4px; color: #fff; font-size: 0.8rem; outline: none;">
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button type="submit" class="btn" style="flex: 1; padding: 6px; font-size: 0.75rem; background: var(--violet); color: #fff; font-weight: 700; border: none; border-radius: 4px; cursor: pointer; min-height: unset;">Submit</button>
+                            <button type="button" id="register-cancel-btn" class="btn" style="padding: 6px 12px; font-size: 0.75rem; background: rgba(255,255,255,0.1); color: #fff; border: none; border-radius: 4px; cursor: pointer; min-height: unset;">Cancel</button>
+                        </div>
+                    </form>
                 </div>
 
                 <!-- Configure Language & Currency -->
