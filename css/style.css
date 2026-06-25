@@ -5,7 +5,7 @@
     --soft: #18092b;
     --line: rgba(57, 255, 20, 0.15);
     --navy: #12071d;
-    --night: #0c0a1c;
+    --night: #080914;
     --deep-purple: #12071d;
     --royal-purple: #1d0727;
     --electric-green: #39ff14;
@@ -30,13 +30,13 @@ body {
     margin: 0;
     color: #ecfdf5;
     background:
-        radial-gradient(circle at 8% 8%, rgba(57, 255, 20, 0.12), transparent 24%),
-        radial-gradient(circle at 92% 0%, rgba(124, 58, 237, 0.18), transparent 28%),
-        radial-gradient(circle at 48% 42%, rgba(124, 58, 237, 0.06), transparent 34%),
-        linear-gradient(rgba(57, 255, 20, 0.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(57, 255, 20, 0.035) 1px, transparent 1px),
-        #0c0a1c;
-    background-size: 34px 34px;
+        linear-gradient(rgba(57, 255, 20, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(57, 255, 20, 0.02) 1px, transparent 1px),
+        radial-gradient(circle at 10% 10%, rgba(124, 58, 237, 0.14), transparent 45%),
+        radial-gradient(circle at 90% 80%, rgba(57, 255, 20, 0.07), transparent 45%),
+        linear-gradient(135deg, #090a15 0%, #05060f 100%);
+    background-size: 38px 38px, 38px 38px, 100% 100%, 100% 100%, 100% 100%;
+    background-attachment: scroll, scroll, fixed, fixed, fixed;
     font-family: "Inter", Arial, Helvetica, sans-serif;
     line-height: 1.6;
 }
@@ -3154,6 +3154,11 @@ textarea:focus-visible {
 .scroll-animate.animated {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Product Detail Modal Sizing */
+#product-modal .modal-content-container {
+    width: min(94%, 900px);
 }
 
 

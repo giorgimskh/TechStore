@@ -1037,6 +1037,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const ym4 = mapMY(pm4);
         const ym5 = mapMY(pm5);
 
+        // Deterministic ratings generation
+        const seedStr = productId || "";
+        const seedVal = seedStr.split('').reduce((acc, c) => acc + c.charCodeAt(0), 0);
+        
+        // Generate mock review counts for 5, 4, 3, 2, 1 stars
+        const r5 = 15 + (seedVal % 45);
+        const r4 = 5 + (seedVal % 15);
+        const r3 = 2 + (seedVal % 8);
+        const r2 = 1 + (seedVal % 4);
+        const r1 = seedVal % 3;
+        
+        const totalReviews = r5 + r4 + r3 + r2 + r1;
+        const avgRating = ((r5 * 5 + r4 * 4 + r3 * 3 + r2 * 2 + r1 * 1) / totalReviews).toFixed(1);
+
         const chartHtml = `
             <div class="price-history-chart-card" style="margin: 16px 0; background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 12px 16px; box-sizing: border-box; position: relative;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -1067,19 +1081,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday} L 290 80 L 10 80 Z" fill="url(#chart-glow-${productId})"></path>
                         <path d="M 10 ${y90} L 80 ${y60} L 150 ${y30} L 220 ${y15} L 290 ${yToday}" fill="none" stroke="var(--electric-green)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px var(--electric-green));"></path>
                         
-                        <!-- Visual points -->
+                        <!-- Visual points and alternating invisible hover targets for correct sibling matching -->
                         <circle cx="10" cy="${y90}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="80" cy="${y60}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="150" cy="${y30}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="220" cy="${y15}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
-                        <circle cx="290" cy="${yToday}" r="4" fill="var(--electric-green)" stroke="var(--mint)" stroke-width="1.5"></circle>
+                        <circle cx="10" cy="${y90}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p90)}" data-label="-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
 
-                        <!-- Invisible hover targets -->
-                        <circle cx="10" cy="${y90}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p90)}" data-label="-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="80" cy="${y60}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p60)}" data-label="-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="150" cy="${y30}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p30)}" data-label="-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="220" cy="${y15}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(p15)}" data-label="-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="290" cy="${yToday}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pToday)}" data-label="${AppState.language === 'KA' ? 'დღეს' : 'Today'}" data-orig-r="4" data-orig-fill="var(--electric-green)" style="cursor: pointer;"></circle>
+                        <circle cx="80" cy="${y60}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
+                        <circle cx="80" cy="${y60}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p60)}" data-label="-60 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+
+                        <circle cx="150" cy="${y30}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
+                        <circle cx="150" cy="${y30}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p30)}" data-label="-30 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+
+                        <circle cx="220" cy="${y15}" r="3" fill="#ffffff" stroke="var(--violet)" stroke-width="1.5"></circle>
+                        <circle cx="220" cy="${y15}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(p15)}" data-label="-15 ${AppState.language === 'KA' ? 'დღე' : 'days'}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+
+                        <circle cx="290" cy="${yToday}" r="4" fill="var(--electric-green)" stroke="var(--mint)" stroke-width="1.5"></circle>
+                        <circle cx="290" cy="${yToday}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pToday)}" data-label="${AppState.language === 'KA' ? 'დღეს' : 'Today'}" data-orig-r="4" data-orig-fill="var(--electric-green)" style="cursor: pointer;"></circle>
                     </svg>
                     <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 600;">
                         <span>-90 ${AppState.language === 'KA' ? 'დღე' : 'days'}</span>
@@ -1103,21 +1119,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         <path d="M 10 ${ym0} L 66 ${ym1} L 122 ${ym2} L 178 ${ym3} L 234 ${ym4} L 290 ${ym5} L 290 80 L 10 80 Z" fill="url(#chart-glow-m-${productId})"></path>
                         <path d="M 10 ${ym0} L 66 ${ym1} L 122 ${ym2} L 178 ${ym3} L 234 ${ym4} L 290 ${ym5}" fill="none" stroke="var(--violet)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="filter: drop-shadow(0px 0px 4px var(--violet));"></path>
                         
-                        <!-- Visual points -->
+                        <!-- Visual points and alternating invisible hover targets for correct sibling matching -->
                         <circle cx="10" cy="${ym0}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="66" cy="${ym1}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="122" cy="${ym2}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="178" cy="${ym3}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="234" cy="${ym4}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
-                        <circle cx="290" cy="${ym5}" r="4" fill="var(--violet)" stroke="var(--pink)" stroke-width="1.5"></circle>
+                        <circle cx="10" cy="${ym0}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm0)}" data-label="${mLabel0}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
 
-                        <!-- Invisible hover targets -->
-                        <circle cx="10" cy="${ym0}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm0)}" data-label="${mLabel0}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="66" cy="${ym1}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm1)}" data-label="${mLabel1}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="122" cy="${ym2}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm2)}" data-label="${mLabel2}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="178" cy="${ym3}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm3)}" data-label="${mLabel3}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="234" cy="${ym4}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm4)}" data-label="${mLabel4}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
-                        <circle cx="290" cy="${ym5}" r="10" fill="transparent" class="chart-point-hover" data-price="${formatPrice(pm5)}" data-label="${mLabel5}" data-orig-r="4" data-orig-fill="var(--violet)" style="cursor: pointer;"></circle>
+                        <circle cx="66" cy="${ym1}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="66" cy="${ym1}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm1)}" data-label="${mLabel1}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+
+                        <circle cx="122" cy="${ym2}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="122" cy="${ym2}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm2)}" data-label="${mLabel2}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+
+                        <circle cx="178" cy="${ym3}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="178" cy="${ym3}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm3)}" data-label="${mLabel3}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+
+                        <circle cx="234" cy="${ym4}" r="3" fill="#ffffff" stroke="var(--electric-green)" stroke-width="1.5"></circle>
+                        <circle cx="234" cy="${ym4}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm4)}" data-label="${mLabel4}" data-orig-r="3" data-orig-fill="#ffffff" style="cursor: pointer;"></circle>
+
+                        <circle cx="290" cy="${ym5}" r="4" fill="var(--violet)" stroke="var(--pink)" stroke-width="1.5"></circle>
+                        <circle cx="290" cy="${ym5}" r="28" fill="rgba(0,0,0,0)" pointer-events="all" class="chart-point-hover" data-price="${formatPrice(pm5)}" data-label="${mLabel5}" data-orig-r="4" data-orig-fill="var(--violet)" style="cursor: pointer;"></circle>
                     </svg>
                     <div style="display: flex; justify-content: space-between; font-size: 0.65rem; color: #64748b; margin-top: 6px; font-weight: 600;">
                         <span>${mLabel0}</span>
@@ -1149,6 +1168,42 @@ document.addEventListener('DOMContentLoaded', () => {
                     <p class="modal-brand">${dict.brand}: ${brand}</p>
                     <p class="modal-desc">${description}</p>
                     
+                    <div class="modal-reviews-summary" style="margin: 16px 0; padding: 14px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(57, 255, 20, 0.15); border-radius: 10px;">
+                        <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 2.2rem; font-weight: 800; color: var(--electric-green); line-height: 1;">${avgRating}</div>
+                                <div style="font-size: 0.7rem; color: #8b9bb4; margin-top: 4px;">${AppState.language === 'KA' ? '5-დან' : 'out of 5'}</div>
+                            </div>
+                            <div style="flex-grow: 1;">
+                                <div style="display: flex; align-items: center; gap: 4px; color: #fbbf24; font-size: 0.95rem;">
+                                    ${'★'.repeat(Math.round(avgRating))}${'☆'.repeat(5 - Math.round(avgRating))}
+                                    <span style="font-size: 0.78rem; color: #cbd5e1; font-weight: 700; margin-left: 6px;">${totalReviews} ${AppState.language === 'KA' ? 'შეფასება' : 'reviews'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; flex-direction: column; gap: 6px;">
+                            ${[
+                                { stars: 5, count: r5 },
+                                { stars: 4, count: r4 },
+                                { stars: 3, count: r3 },
+                                { stars: 2, count: r2 },
+                                { stars: 1, count: r1 }
+                            ].map(item => {
+                                const pct = ((item.count / totalReviews) * 100).toFixed(0);
+                                return `
+                                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.72rem; color: #cbd5e1;">
+                                        <span style="width: 75px; text-align: right; font-weight: 600;">${item.stars} ${AppState.language === 'KA' ? 'ვარსკვლავი' : 'stars'}</span>
+                                        <div style="flex-grow: 1; height: 6px; background: rgba(255, 255, 255, 0.1); border-radius: 3px; overflow: hidden;">
+                                            <div style="width: ${pct}%; height: 100%; background: var(--electric-green); border-radius: 3px;"></div>
+                                        </div>
+                                        <span style="width: 35px; text-align: left; font-weight: 700; color: #8b9bb4;">${item.count}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
                     <div class="modal-stats">
                         <div class="modal-stat-box">
                             <span class="modal-stat-label">${dict.availableStock}</span>
