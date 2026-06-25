@@ -3086,7 +3086,7 @@ textarea:focus-visible {
     margin-left: 0;
 }
 
-/* Responsive mobile header layout (Logo + actions side-by-side at top, nav menu below) */
+/* Responsive mobile layout adjustments */
 @media (max-width: 768px) {
     .navbar {
         display: grid !important;
@@ -3123,14 +3123,37 @@ textarea:focus-visible {
     .nav-menu {
         grid-column: 1 / span 2 !important;
         grid-row: 3 !important;
-        width: 100% !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
         justify-content: center !important;
-        overflow-x: auto !important;
+        gap: 8px !important;
+        width: 100% !important;
+        margin: 8px 0 0 0 !important;
+        padding: 0 !important;
+    }
+    .nav-menu a {
+        font-size: 0.85rem !important;
+        padding: 6px 12px !important;
+        background: rgba(255, 255, 255, 0.05) !important;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+        border-radius: 999px !important;
+        color: #e9d5ff !important;
+        transition: all 0.2s ease !important;
         white-space: nowrap !important;
-        margin: 0 !important;
-        padding: 4px 2px 8px !important;
+    }
+    .nav-menu a:hover {
+        background: var(--electric-green) !important;
+        color: var(--night) !important;
+    }
+
+    /* Stack product cards and deal cards to 1 column on screens below 768px to prevent overflow */
+    .product-card,
+    .deal-card {
+        flex: 1 1 100% !important;
+        max-width: 100% !important;
     }
 }
+
 
 
 

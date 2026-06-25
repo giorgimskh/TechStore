@@ -128,7 +128,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navProducts: "Products",
             navDeals: "Deals",
             navContact: "Contact",
-            navRegister: "Register",
+            navSupport: "Support",
+            addressLabel: "Delivery Address",
             eyebrow: "Featured products",
             catalogHeader: "Popular Tech Picks",
             catalogSub: "Explore our most popular tech products selected for students, professionals, and gamers.",
@@ -204,7 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
             navProducts: "პროდუქტები",
             navDeals: "აქციები",
             navContact: "კონტაქტი",
-            navRegister: "რეგისტრაცია",
+            navSupport: "მხარდაჭერა",
+            addressLabel: "მიწოდების მისამართი",
             eyebrow: "რჩეული მოდელები",
             catalogHeader: "პოპულარული ტექნიკა",
             catalogSub: "აღმოაჩინეთ საუკეთესო მოწყობილობები სტუდენტებისთვის, დეველოპერებისთვის და გეიმერებისთვის.",
@@ -289,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
             navLinks[1].textContent = dict.navProducts;
             navLinks[2].textContent = dict.navDeals;
             navLinks[3].textContent = dict.navContact;
-            navLinks[4].textContent = dict.navRegister;
+            navLinks[4].textContent = dict.navSupport;
         }
 
         // Section header info
@@ -357,13 +359,20 @@ document.addEventListener('DOMContentLoaded', () => {
             const payHeader = cartDrawer.querySelector('.checkout-payment-form h3');
             if (payHeader) payHeader.textContent = dict.paymentDetailsHeader;
 
-            const labels = cartDrawer.querySelectorAll('.cart-form-group label');
-            if (labels.length >= 4) {
-                labels[0].textContent = dict.cardholderLabel;
-                labels[1].textContent = dict.cardnumberLabel;
-                labels[2].textContent = dict.expiryLabel;
-                labels[3].textContent = dict.cvvLabel;
-            }
+            const lblAddressText = cartDrawer.querySelector('label[for="checkout-address"] span');
+            if (lblAddressText) lblAddressText.textContent = dict.addressLabel || "Delivery Address";
+
+            const lblCardholder = cartDrawer.querySelector('label[for="checkout-cardholder"]');
+            if (lblCardholder) lblCardholder.textContent = dict.cardholderLabel;
+
+            const lblCardnumber = cartDrawer.querySelector('label[for="checkout-cardnumber"]');
+            if (lblCardnumber) lblCardnumber.textContent = dict.cardnumberLabel;
+
+            const lblExpiry = cartDrawer.querySelector('label[for="checkout-expiry"]');
+            if (lblExpiry) lblExpiry.textContent = dict.expiryLabel;
+
+            const lblCvv = cartDrawer.querySelector('label[for="checkout-cvv"]');
+            if (lblCvv) lblCvv.textContent = dict.cvvLabel;
 
             const checkoutText = elements.checkoutBtn.querySelector('.btn-text');
             if (checkoutText && !elements.checkoutBtn.disabled) {
