@@ -220,7 +220,75 @@ document.addEventListener('DOMContentLoaded', () => {
             inventoryCategory: "Category",
             inventoryPrice: "Price",
             inventoryAvailability: "Availability",
-            inventorySold: "Units Sold"
+            inventorySold: "Units Sold",
+
+            // Hero
+            heroEyebrow: "Modern devices. Smart prices.",
+            heroTitle: "Upgrade Your Tech Life",
+            heroDesc: "Discover laptops, smartphones, accessories, and smart devices in one modern online store.",
+            heroBtn: "Explore Products",
+            statPickup: "Fast pickup",
+            statRating: "Customer rating",
+            statDevices: "Devices",
+            
+            // Deals
+            dealsEyebrow: "Student deals",
+            dealsTitle: "Bundles Built for Everyday Work",
+            dealsDesc: "Save on reliable tech combinations for learning, remote work, content creation, and gaming.",
+            dealCardTitle1: "Study Starter",
+            dealCardDesc1: "Laptop, wireless mouse, and protective backpack for classes and projects.",
+            dealCardSave1: "Save 12%",
+            dealCardTitle2: "Creator Kit",
+            dealCardDesc2: "Fast laptop, headphones, and accessories for editing, streaming, and design work.",
+            dealCardSave2: "Save 15%",
+            dealCardTitle3: "Mobile Pro",
+            dealCardDesc3: "Smartphone, smartwatch, case, and charger for a complete connected setup.",
+            dealCardSave3: "Save 10%",
+
+            // Media
+            mediaEyebrow: "Amazon Web Services",
+            mediaTitle: "See Amazon Cloud Technology in Action",
+            mediaDesc: "Watch an official Amazon Web Services video about the cloud platform behind modern digital products.",
+
+            // Reviews
+            reviewsEyebrow: "Customer reviews",
+            reviewsTitle: "What Tech Lovers Say",
+            reviewsDesc: "Real-time reviews fetched from our global database of creators, students, and professionals.",
+            reviewName1: "Alex Johnson",
+            reviewRole1: "Software Engineer",
+            reviewText1: "The Lenovo Legion Pro laptop is incredibly fast. Very impressed with the quick checkout process and customer support!",
+            reviewName2: "Sarah Miller",
+            reviewRole2: "Creative Lead",
+            reviewText2: "My new iPhone 15 Pro arrived within 2 days. The support team is very responsive. Will definitely purchase again.",
+            reviewName3: "David Kim",
+            reviewRole3: "IT Student",
+            reviewText3: "Excellent noise cancellation on the Sony WH-1000XM5 headphones. The profile currency switcher makes ordering seamless.",
+
+            // Support Form
+            supportTitle: "Support & Inquiries",
+            supportFirstName: "First Name",
+            supportLastName: "Last Name",
+            supportEmail: "Email Address",
+            supportInterest: "Product Interest",
+            supportChoose: "Choose a category",
+            supportGoal: "Shopping Goal",
+            supportStudy: "Study",
+            supportWork: "Work",
+            supportGaming: "Gaming",
+            supportExtras: "Extras",
+            supportDelivery: "Delivery support",
+            supportSetup: "Setup assistance",
+            supportWarranty: "Extended warranty",
+            supportMsg: "Message / Details",
+            supportSubmit: "Submit Request",
+
+            // Footer
+            footerAboutTitle: "About TechStore",
+            footerAboutDesc: "Your ultimate destination for high-performance premium hardware, smart devices, and accessories with global checkout options.",
+            footerSupportTitle: "Support",
+            footerHours: "Mon - Sat, 10:00 - 19:00",
+            footerCopy: "TechStore 2026: All rights reserved",
+            footerTop: "Back to top"
         },
         KA: {
             navHome: "მთავარი",
@@ -311,7 +379,75 @@ document.addEventListener('DOMContentLoaded', () => {
             inventoryCategory: "კატეგორია",
             inventoryPrice: "ფასი",
             inventoryAvailability: "ხელმისაწვდომობა",
-            inventorySold: "გაყიდული რაოდენობა"
+            inventorySold: "გაყიდული რაოდენობა",
+
+            // Hero
+            heroEyebrow: "თანამედროვე მოწყობილობები. გონივრული ფასები.",
+            heroTitle: "განაახლე შენი ციფრული ცხოვრება",
+            heroDesc: "აღმოაჩინე ლეპტოპები, სმარტფონები, აქსესუარები და ჭკვიანი მოწყობილობები ერთ სივრცეში.",
+            heroBtn: "კატალოგის ნახვა",
+            statPickup: "სწრაფი გატანა",
+            statRating: "მომხმარებელთა შეფასება",
+            statDevices: "მოწყობილობა",
+            
+            // Deals
+            dealsEyebrow: "სტუდენტური ფასდაკლებები",
+            dealsTitle: "აქციები ყოველდღიური მუშაობისთვის",
+            dealsDesc: "დაზოგე თანხა საიმედო ნაკრებებზე სწავლისთვის, დისტანციური მუშაობისთვის, შემოქმედებისა და გეიმინგისთვის.",
+            dealCardTitle1: "Study Starter",
+            dealCardDesc1: "ლეპტოპი, უსადენო მაუსი და დამცავი ზურგჩანთა გაკვეთილებისა და პროექტებისთვის.",
+            dealCardSave1: "დაზოგე 12%",
+            dealCardTitle2: "Creator Kit",
+            dealCardDesc2: "სწრაფი ლეპტოპი, ყურსასმენები და აქსესუარები მონტაჟისთვის, სტრიმინგისთვის და დიზაინისთვის.",
+            dealCardSave2: "დაზოგე 15%",
+            dealCardTitle3: "Mobile Pro",
+            dealCardDesc3: "სმარტფონი, ჭკვიანი საათი, ქეისი და დამტენი სრული დაკავშირებულობისთვის.",
+            dealCardSave3: "დაზოგე 10%",
+
+            // Media
+            mediaEyebrow: "Amazon Web Services",
+            mediaTitle: "იხილეთ Amazon Cloud ტექნოლოგია მოქმედებაში",
+            mediaDesc: "უყურეთ Amazon Web Services-ის ოფიციალურ ვიდეოს ღრუბლოვანი პლატფორმის შესახებ, რომელიც მართავს თანამედროვე ციფრულ სამყაროს.",
+
+            // Reviews
+            reviewsEyebrow: "მომხმარებელთა შეფასებები",
+            reviewsTitle: "რას ამბობენ ტექნოლოგიების მოყვარულები",
+            reviewsDesc: "რეალური შეფასებები ჩვენი გლობალური ბაზიდან: დეველოპერები, სტუდენტები და პროფესიონალები.",
+            reviewName1: "ალექს ჯონსონი",
+            reviewRole1: "პროგრამული ინჟინერი",
+            reviewText1: "Lenovo Legion Pro ლეპტოპი საოცრად სწრაფია. ძალიან კმაყოფილი ვარ სწრაფი გადახდის პროცესით და მომხმარებელთა მხარდაჭერით!",
+            reviewName2: "სარა მილერი",
+            reviewRole2: "კრეატიული ლიდერი",
+            reviewText2: "ჩემი ახალი iPhone 15 Pro 2 დღეში ჩამოვიდა. მხარდაჭერის გუნდი ძალიან სწრაფად რეაგირებს. აუცილებლად შევიძენ კიდევ.",
+            reviewName3: "დავით კიმი",
+            reviewRole3: "IT სტუდენტი",
+            reviewText3: "Sony WH-1000XM5 ყურსასმენებს აქვს ხმაურის საუკეთესო იზოლაცია. ვალუტის გადამრთველი ყიდვის პროცესს ბევრად ამარტივებს.",
+
+            // Support Form
+            supportTitle: "მხარდაჭერა და კითხვები",
+            supportFirstName: "სახელი",
+            supportLastName: "გვარი",
+            supportEmail: "ელ. ფოსტის მისამართი",
+            supportInterest: "პროდუქტის კატეგორია",
+            supportChoose: "აირჩიეთ კატეგორია",
+            supportGoal: "ყიდვის მიზანი",
+            supportStudy: "სწავლა",
+            supportWork: "მუშაობა",
+            supportGaming: "გეიმინგი",
+            supportExtras: "დამატებითი სერვისები",
+            supportDelivery: "მიწოდების მხარდაჭერა",
+            supportSetup: "ინსტალაციაში დახმარება",
+            supportWarranty: "გაფართოებული გარანტია",
+            supportMsg: "შეტყობინება / დეტალები",
+            supportSubmit: "მოთხოვნის გაგზავნა",
+
+            // Footer
+            footerAboutTitle: "TechStore-ის შესახებ",
+            footerAboutDesc: "თქვენი საბოლოო დანიშნულების ადგილი მაღალი წარმადობის პრემიუმ აპარატურის, ჭკვიანი მოწყობილობებისა და აქსესუარებისთვის.",
+            footerSupportTitle: "მხარდაჭერა",
+            footerHours: "ორშ - შაბ, 10:00 - 19:00",
+            footerCopy: "TechStore 2026: ყველა უფლება დაცულია",
+            footerTop: "მთავარ გვერდზე დაბრუნება"
         }
     };
 
@@ -355,6 +491,122 @@ document.addEventListener('DOMContentLoaded', () => {
             categoryTabs[3].textContent = dict.filterAccessories;
             categoryTabs[4].textContent = dict.filterWearables;
         }
+
+        // Hero Section
+        const heroEyebrow = document.querySelector('#home .eyebrow');
+        const heroTitle = document.querySelector('#home .hero-title');
+        const heroDesc = document.querySelector('#home .hero-description');
+        const heroBtn = document.querySelector('#home .btn');
+        if (heroEyebrow) heroEyebrow.textContent = dict.heroEyebrow;
+        if (heroTitle) heroTitle.textContent = dict.heroTitle;
+        if (heroDesc) heroDesc.textContent = dict.heroDesc;
+        if (heroBtn) heroBtn.textContent = dict.heroBtn;
+
+        const statPickup = document.querySelector('#home .hero-stats div:nth-child(1) span');
+        const statRating = document.querySelector('#home .hero-stats div:nth-child(2) span');
+        const statDevices = document.querySelector('#home .hero-stats div:nth-child(3) span');
+        if (statPickup) statPickup.textContent = dict.statPickup;
+        if (statRating) statRating.textContent = dict.statRating;
+        if (statDevices) statDevices.textContent = dict.statDevices;
+
+        // Deals Section
+        const dealsEyebrow = document.querySelector('#deals .section-header .eyebrow');
+        const dealsTitle = document.querySelector('#deals .section-header .section-title');
+        const dealsDesc = document.querySelector('#deals .section-header .section-description');
+        if (dealsEyebrow) dealsEyebrow.textContent = dict.dealsEyebrow;
+        if (dealsTitle) dealsTitle.textContent = dict.dealsTitle;
+        if (dealsDesc) dealsDesc.textContent = dict.dealsDesc;
+
+        const dealTitle1 = document.querySelector('#deals .deal-list article:nth-child(1) h3');
+        const dealDesc1 = document.querySelector('#deals .deal-list article:nth-child(1) p');
+        const dealSave1 = document.querySelector('#deals .deal-list article:nth-child(1) span');
+        if (dealTitle1) dealTitle1.textContent = dict.dealCardTitle1;
+        if (dealDesc1) dealDesc1.textContent = dict.dealCardDesc1;
+        if (dealSave1) dealSave1.textContent = dict.dealCardSave1;
+
+        const dealTitle2 = document.querySelector('#deals .deal-list article:nth-child(2) h3');
+        const dealDesc2 = document.querySelector('#deals .deal-list article:nth-child(2) p');
+        const dealSave2 = document.querySelector('#deals .deal-list article:nth-child(2) span');
+        if (dealTitle2) dealTitle2.textContent = dict.dealCardTitle2;
+        if (dealDesc2) dealDesc2.textContent = dict.dealCardDesc2;
+        if (dealSave2) dealSave2.textContent = dict.dealCardSave2;
+
+        const dealTitle3 = document.querySelector('#deals .deal-list article:nth-child(3) h3');
+        const dealDesc3 = document.querySelector('#deals .deal-list article:nth-child(3) p');
+        const dealSave3 = document.querySelector('#deals .deal-list article:nth-child(3) span');
+        if (dealTitle3) dealTitle3.textContent = dict.dealCardTitle3;
+        if (dealDesc3) dealDesc3.textContent = dict.dealCardDesc3;
+        if (dealSave3) dealSave3.textContent = dict.dealCardSave3;
+
+        // Media Section
+        const mediaEyebrow = document.querySelector('.media-section .section-header .eyebrow');
+        const mediaTitle = document.querySelector('.media-section .section-header .section-title');
+        const mediaDesc = document.querySelector('.media-section .section-header .section-description');
+        if (mediaEyebrow) mediaEyebrow.textContent = dict.mediaEyebrow;
+        if (mediaTitle) mediaTitle.textContent = dict.mediaTitle;
+        if (mediaDesc) mediaDesc.textContent = dict.mediaDesc;
+
+        // Reviews Section
+        const reviewsEyebrow = document.querySelector('#reviews .section-header .eyebrow');
+        const reviewsTitle = document.querySelector('#reviews .section-header .section-title');
+        const reviewsDesc = document.querySelector('#reviews .section-header .section-description');
+        if (reviewsEyebrow) reviewsEyebrow.textContent = dict.reviewsEyebrow;
+        if (reviewsTitle) reviewsTitle.textContent = dict.reviewsTitle;
+        if (reviewsDesc) reviewsDesc.textContent = dict.reviewsDesc;
+
+        // Support Form
+        const supTitle = document.querySelector('#support .trans-support-title');
+        const supFirst = document.querySelector('#support .trans-first-name');
+        const supLast = document.querySelector('#support .trans-last-name');
+        const supEmail = document.querySelector('#support .trans-support-email');
+        const supInterest = document.querySelector('#support .trans-support-interest');
+        const supChoose = document.querySelector('#support .trans-choose-cat');
+        const supCatLaptops = document.querySelector('#support .trans-cat-laptops');
+        const supCatSmart = document.querySelector('#support .trans-cat-smartphones');
+        const supCatAcc = document.querySelector('#support .trans-cat-accessories');
+        const supCatWear = document.querySelector('#support .trans-cat-wearables');
+        const supGoal = document.querySelector('#support .trans-support-goal');
+        const supStudy = document.querySelector('#support .trans-goal-study');
+        const supWork = document.querySelector('#support .trans-goal-work');
+        const supGaming = document.querySelector('#support .trans-goal-gaming');
+        const supExtras = document.querySelector('#support .trans-support-extras');
+        const supDelivery = document.querySelector('#support .trans-extra-delivery');
+        const supSetup = document.querySelector('#support .trans-extra-setup');
+        const supMsg = document.querySelector('#support .trans-support-msg');
+        const supSubmit = document.querySelector('#support .trans-support-submit');
+
+        if (supTitle) supTitle.textContent = dict.supportTitle;
+        if (supFirst) supFirst.textContent = dict.supportFirstName;
+        if (supLast) supLast.textContent = dict.supportLastName;
+        if (supEmail) supEmail.textContent = dict.supportEmail;
+        if (supInterest) supInterest.textContent = dict.supportInterest;
+        if (supChoose) supChoose.textContent = dict.supportChoose;
+        if (supCatLaptops) supCatLaptops.textContent = dict.filterLaptops;
+        if (supCatSmart) supCatSmart.textContent = dict.filterSmartphones;
+        if (supCatAcc) supCatAcc.textContent = dict.filterAccessories;
+        if (supCatWear) supCatWear.textContent = dict.filterWearables;
+        if (supGoal) supGoal.textContent = dict.supportGoal;
+        if (supStudy) supStudy.textContent = dict.supportStudy;
+        if (supWork) supWork.textContent = dict.supportWork;
+        if (supGaming) supGaming.textContent = dict.supportGaming;
+        if (supExtras) supExtras.textContent = dict.supportExtras;
+        if (supDelivery) supDelivery.textContent = dict.supportDelivery;
+        if (supSetup) supSetup.textContent = dict.supportSetup;
+        if (supMsg) supMsg.textContent = dict.supportMsg;
+        if (supSubmit) supSubmit.textContent = dict.supportSubmit;
+
+        // Footer Section
+        const fAbout = document.querySelector('footer .trans-footer-about');
+        const fSupportTitle = document.querySelector('footer .trans-footer-support-title');
+        const fHours = document.querySelector('footer .trans-footer-hours');
+        const fCopy = document.querySelector('footer .trans-footer-copy');
+        const fTop = document.querySelector('footer .trans-footer-top');
+
+        if (fAbout) fAbout.textContent = dict.footerAboutDesc;
+        if (fSupportTitle) fSupportTitle.textContent = dict.footerSupportTitle;
+        if (fHours) fHours.textContent = dict.footerHours;
+        if (fCopy) fCopy.textContent = dict.footerCopy;
+        if (fTop) fTop.textContent = dict.footerTop;
 
         // Cart Drawer
         const cartDrawer = document.getElementById('cart-drawer');
@@ -508,6 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
         renderCatalog();
         renderCart();
         renderInventoryTable();
+        fetchReviews();
     };
 
     // -------------------------------------------------------------------------
@@ -710,27 +963,28 @@ document.addEventListener('DOMContentLoaded', () => {
     const fetchReviews = async () => {
         if (!elements.reviewsGrid) return;
         
+        const dict = translations[AppState.language] || translations.EN;
         const defaultReviews = [
             {
-                name: "Alex Johnson",
-                role: "Software Engineer",
+                name: dict.reviewName1 || "Alex Johnson",
+                role: dict.reviewRole1 || "Software Engineer",
                 rating: 5,
                 avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80",
-                text: "The Lenovo Legion Pro laptop is incredibly fast. Very impressed with the quick checkout process and customer support!"
+                text: dict.reviewText1 || "The Lenovo Legion Pro laptop is incredibly fast. Very impressed with the quick checkout process and customer support!"
             },
             {
-                name: "Sarah Miller",
-                role: "Creative Lead",
+                name: dict.reviewName2 || "Sarah Miller",
+                role: dict.reviewRole2 || "Creative Lead",
                 rating: 5,
                 avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
-                text: "My new iPhone 15 Pro arrived within 2 days. The support team is very responsive. Will definitely purchase again."
+                text: dict.reviewText2 || "My new iPhone 15 Pro arrived within 2 days. The support team is very responsive. Will definitely purchase again."
             },
             {
-                name: "David Kim",
-                role: "IT Student",
+                name: dict.reviewName3 || "David Kim",
+                role: dict.reviewRole3 || "IT Student",
                 rating: 4,
                 avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
-                text: "Excellent noise cancellation on the Sony WH-1000XM5 headphones. The profile currency switcher makes ordering seamless."
+                text: dict.reviewText3 || "Excellent noise cancellation on the Sony WH-1000XM5 headphones. The profile currency switcher makes ordering seamless."
             }
         ];
 

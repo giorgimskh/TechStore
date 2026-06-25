@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260625-v3">
+    <link rel="stylesheet" href="css/style.css?v=20260625-v4">
 </head>
 
 <body>
@@ -244,70 +244,70 @@
         <section class="contact-section">
             <div class="container contact-layout">
                 <form id="support" class="register-form" action="#" method="post">
-                    <h2>Support & Inquiries</h2>
+                    <h2 class="trans-support-title">Support & Inquiries</h2>
 
                     <div class="form-row">
                         <label for="first-name">
-                            First Name
+                            <span class="trans-first-name">First Name</span>
                             <input type="text" id="first-name" name="first-name" placeholder="Giorgi" required>
                         </label>
 
                         <label for="last-name">
-                            Last Name
+                            <span class="trans-last-name">Last Name</span>
                             <input type="text" id="last-name" name="last-name" placeholder="Beridze" required>
                         </label>
                     </div>
 
                     <label for="email">
-                        Email Address
+                        <span class="trans-support-email">Email Address</span>
                         <input type="email" id="email" name="email" placeholder="you@example.com" required>
                     </label>
 
                     <label for="interest">
-                        Product Interest
+                        <span class="trans-support-interest">Product Interest</span>
                         <select id="interest" name="interest" required>
-                            <option value="">Choose a category</option>
-                            <option value="laptops">Laptops</option>
-                            <option value="smartphones">Smartphones</option>
-                            <option value="accessories">Accessories</option>
-                            <option value="wearables">Wearables</option>
+                            <option value="" class="trans-choose-cat">Choose a category</option>
+                            <option value="laptops" class="trans-cat-laptops">Laptops</option>
+                            <option value="smartphones" class="trans-cat-smartphones">Smartphones</option>
+                            <option value="accessories" class="trans-cat-accessories">Accessories</option>
+                            <option value="wearables" class="trans-cat-wearables">Wearables</option>
                         </select>
                     </label>
 
                     <fieldset>
-                        <legend>Shopping Goal</legend>
+                        <legend class="trans-support-goal">Shopping Goal</legend>
                         <label>
                             <input type="radio" name="goal" value="study" required>
-                            Study
+                            <span class="trans-goal-study">Study</span>
                         </label>
                         <label>
                             <input type="radio" name="goal" value="work">
-                            Work
+                            <span class="trans-goal-work">Work</span>
                         </label>
                         <label>
                             <input type="radio" name="goal" value="gaming">
-                            Gaming
+                            <span class="trans-goal-gaming">Gaming</span>
                         </label>
                     </fieldset>
 
                     <fieldset>
-                        <legend>Extras</legend>
+                        <legend class="trans-support-extras">Extras</legend>
                         <label>
                             <input type="checkbox" name="extras" value="delivery">
-                            Delivery support
+                            <span class="trans-extra-delivery">Delivery support</span>
                         </label>
                         <label>
                             <input type="checkbox" name="extras" value="setup">
-                            Device setup help
+                            <span class="trans-extra-setup">Device setup help</span>
                         </label>
                     </fieldset>
 
                     <label for="message">
-                        Motivation Letter or Special Requests
+                        <span class="trans-support-msg">Motivation Letter or Special Requests</span>
                         <textarea id="message" name="message" rows="5" placeholder="Tell us what you need from your next device."></textarea>
                     </label>
 
-                    <button type="submit" class="btn form-btn">Submit Request</button>
+                    <button type="submit" class="btn form-btn trans-support-submit">Submit Request</button>
                 </form>
             </div>
         </section>
@@ -317,29 +317,29 @@
         <div class="container footer-content">
             <div class="footer-brand">
                 <h2>TechStore</h2>
-                <p>Smart gear, sharp deals, and fast support for students, creators, and everyday tech lovers.</p>
+                <p class="trans-footer-about">Smart gear, sharp deals, and fast support for students, creators, and everyday tech lovers.</p>
             </div>
 
             <div class="footer-sponsors">
                 <h3>Sponsor Companies</h3>
                 <div class="sponsor-grid" aria-label="Sponsor companies">
                     <a class="sponsor-logo amazon-logo" href="https://www.amazon.com/" target="_blank" rel="noopener">amazon</a>
-                    <a class="sponsor-logo samsung-logo" href="https://www.samsung.com/" target="_blank" rel="noopener">SAMSUNG</a>
-                    <a class="sponsor-logo apple-logo" href="https://www.apple.com/" target="_blank" rel="noopener">Apple</a>
-                    <a class="sponsor-logo sony-logo" href="https://www.sony.com/" target="_blank" rel="noopener">SONY</a>
+                    <a class="sponsor-logo zoom-logo" href="https://zoom.us/" target="_blank" rel="noopener">zoom</a>
+                    <a class="sponsor-logo slack-logo" href="https://slack.com/" target="_blank" rel="noopener">slack</a>
+                    <a class="sponsor-logo spotify-logo" href="https://www.spotify.com/" target="_blank" rel="noopener">spotify</a>
                 </div>
             </div>
 
             <div class="footer-links">
-                <h3>Support</h3>
-                <p>support@techstore.example</p>
+                <h3 class="trans-footer-support-title">Support</h3>
+                <p><a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@techstore.example" target="_blank" rel="noopener noreferrer" class="footer-email-link">support@techstore.example</a></p>
                 <p>+995 555 010 202</p>
-                <p>Mon - Sat, 10:00 - 19:00</p>
+                <p class="trans-footer-hours">Mon - Sat, 10:00 - 19:00</p>
             </div>
 
             <div class="footer-bottom">
-                <p>TechStore 2026: All rights reserved</p>
-                <a href="#home">Back to top</a>
+                <p class="trans-footer-copy">TechStore 2026: All rights reserved</p>
+                <a href="#home" class="trans-footer-top">Back to top</a>
             </div>
         </div>
     </footer>
@@ -347,7 +347,7 @@
     <!-- Shopping Cart Modal -->
     <div id="cart-drawer" class="modal-wrapper" aria-hidden="true">
         <div class="modal-overlay" id="cart-overlay"></div>
-        <div class="modal-content-container" style="width: min(94%, 600px); max-height: 85vh; display: flex; flex-direction: column; padding: 24px; box-sizing: border-box;">
+        <div class="modal-content-container" style="display: flex; flex-direction: column; box-sizing: border-box;">
             <button id="cart-close-btn" class="modal-close-btn" aria-label="Close cart" style="top: 10px; right: 14px;">&times;</button>
             <div class="cart-drawer-header" style="border-bottom: 1px solid rgba(138, 255, 193, 0.15); padding-bottom: 14px; margin-bottom: 14px;">
                 <h2 style="margin: 0; font-size: 1.45rem; color: #ffffff; font-weight: 800;">Your Cart</h2>
@@ -628,6 +628,6 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Core Interactive Logic -->
-    <script src="js/main.js" defer></script>
+    <script src="js/main.js?v=20260625-v4" defer></script>
 </body>
 </html>
