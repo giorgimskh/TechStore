@@ -322,13 +322,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Nav Menu
         const navLinks = document.querySelectorAll('.nav-menu a');
-        if (navLinks.length >= 5) {
-            navLinks[0].textContent = dict.navHome;
-            navLinks[1].textContent = dict.navProducts;
-            navLinks[2].textContent = dict.navDeals;
-            navLinks[3].textContent = dict.navContact;
-            navLinks[4].textContent = dict.navSupport;
-        }
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === '#home') link.textContent = dict.navHome;
+            else if (href === '#products') link.textContent = dict.navProducts;
+            else if (href === '#deals') link.textContent = dict.navDeals;
+            else if (href === '#support') link.textContent = dict.navSupport;
+        });
 
         // Section header info
         const productsSection = document.getElementById('products');
