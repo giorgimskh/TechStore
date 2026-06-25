@@ -2620,6 +2620,33 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // -------------------------------------------------------------------------
+    // 9.5 SCROLL ENTROPY & ENTRANCE ANIMATIONS
+    // -------------------------------------------------------------------------
+    const setupScrollAnimations = () => {
+        const sections = document.querySelectorAll('.hero, .products-section, .deals-section, .media-section, .reviews-section, .contact-section');
+        
+        sections.forEach(sec => sec.classList.add('scroll-animate'));
+
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.08
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animated');
+                } else {
+                    entry.target.classList.remove('animated');
+                }
+            });
+        }, observerOptions);
+
+        sections.forEach(sec => observer.observe(sec));
+    };
+
+    // -------------------------------------------------------------------------
     // 10. APPLICATION INITIALIZATION PIPELINE
     // -------------------------------------------------------------------------
     const initApp = async () => {
@@ -2641,6 +2668,7 @@ document.addEventListener('DOMContentLoaded', () => {
         setupEventListeners();
         fetchReviews();
         renderSubmissions();
+        setupScrollAnimations();
         
         logAppEvent('Init', 'App ready.');
     };
