@@ -462,7 +462,12 @@ textarea:focus-visible {
     font-weight: 500;
 }
 
-.product-grid,
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
 .deal-list {
     display: flex;
     flex-wrap: wrap;
@@ -3143,6 +3148,9 @@ textarea:focus-visible {
     }
 
     /* Stack product cards and deal cards to 1 column on screens below 768px to prevent overflow */
+    .product-grid {
+        grid-template-columns: 1fr !important;
+    }
     .product-card,
     .deal-card {
         flex: 1 1 100% !important;
