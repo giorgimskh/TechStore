@@ -1,22 +1,17 @@
 /**
  * TechStore - Core Interactive Frontend Controller
- * Built with vanilla JavaScript, using Fetch API for dynamic data,
+ * Built with  JavaScript, using Fetch API for dynamic data,
  * localStorage for state persistence, and responsive interactive components.
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // -------------------------------------------------------------------------
-    // 1. APPLICATION STATE
-    // -------------------------------------------------------------------------
     const state = {
         products: [],
         cart: JSON.parse(localStorage.getItem('techstore_cart')) || [],
         payments: JSON.parse(localStorage.getItem('techstore_payments')) || [],
         submissions: JSON.parse(localStorage.getItem('techstore_registrations')) || [],
-        currency: localStorage.getItem('techstore_currency') || 'USD',
         language: localStorage.getItem('techstore_language') || 'EN',
         activeDeal: localStorage.getItem('techstore_active_deal') || 'none',
-        exchangeRates: { USD: 1, EUR: 0.92, GEL: 2.75 },
         activeCategory: 'all',
         searchQuery: '',
         minBudget: 0,
@@ -27,9 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
         currentUser: localStorage.getItem('techstore_user') || null
     };
 
-    // -------------------------------------------------------------------------
-    // 2. DICTIONARIES & TRANSLATIONS (EN & KA)
-    // -------------------------------------------------------------------------
+    //Translations
     const translations = {
         EN: {
             navHome: "Home",
@@ -69,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paymentDetailsHeader: "Payment Details",
             placeOrder: "Place Order Now",
             authorizing: "Authorizing card...",
-            
+
             profileTitle: "User Profile & Settings",
             authLogInBtn: "Log In",
             authRegisterBtn: "Register",
@@ -93,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
             noTransactionsDesc: "When you complete a purchase, your receipt details will be displayed here.",
             noSubmissionsTitle: "No service requests",
             noSubmissionsDesc: "Any interest forms or contact requests you submit will appear here.",
-            
+
             brand: "Brand",
             availableStock: "Available Stock",
             unitsSold: "Items Sold",
@@ -101,7 +94,7 @@ document.addEventListener('DOMContentLoaded', () => {
             outOfStock: "Out of Stock",
             addToCart: "Add to Cart",
             modalClose: "Close details",
-            
+
             toastAdded: "added to your cart!",
             toastRemoved: "removed from cart.",
             toastCurrency: "Switched currency to",
@@ -129,7 +122,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statPickup: "Fast pickup",
             statRating: "Customer rating",
             statDevices: "Devices",
-            
+
             dealsEyebrow: "Student deals",
             dealsTitle: "Bundles Built for Everyday Work",
             dealsDesc: "Save on reliable tech combinations for learning, remote work, content creation, and gaming.",
@@ -220,7 +213,7 @@ document.addEventListener('DOMContentLoaded', () => {
             paymentDetailsHeader: "გადახდის დეტალები",
             placeOrder: "ყიდვა",
             authorizing: "ტრანზაქცია მუშავდება...",
-            
+
             profileTitle: "მომხმარებლის პროფილი",
             authLogInBtn: "შესვლა",
             authRegisterBtn: "რეგისტრაცია",
@@ -244,7 +237,7 @@ document.addEventListener('DOMContentLoaded', () => {
             noTransactionsDesc: "ყიდვის დასრულების შემდეგ, თქვენი ქვითრები აქ გამოჩნდება.",
             noSubmissionsTitle: "მოთხოვნები არ არის",
             noSubmissionsDesc: "თქვენ მიერ შევსებული სარეგისტრაციო ფორმები აქ გამოჩნდება.",
-            
+
             brand: "ბრენდი",
             availableStock: "ხელმისაწვდომია",
             unitsSold: "გაყიდულია",
@@ -252,7 +245,7 @@ document.addEventListener('DOMContentLoaded', () => {
             outOfStock: "ამოიყიდა",
             addToCart: "კალათაში დამატება",
             modalClose: "დახურვა",
-            
+
             toastAdded: "დაემატა კალათაში!",
             toastRemoved: "ამოიშალა კალათიდან.",
             toastCurrency: "ვალუტა შეიცვალა:",
@@ -280,7 +273,7 @@ document.addEventListener('DOMContentLoaded', () => {
             statPickup: "სწრაფი გატანა",
             statRating: "მომხმარებელთა შეფასება",
             statDevices: "მოწყობილობა",
-            
+
             dealsEyebrow: "სტუდენტური ფასდაკლებები",
             dealsTitle: "აქციები ყოველდღიური მუშაობისთვის",
             dealsDesc: "დაზოგე თანხა საიმედო ნაკრებებზე სწავლისთვის, დისტანციური მუშაობისთვის, შემოქმედებისა და გეიმინგისთვის.",
@@ -335,13 +328,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // -------------------------------------------------------------------------
-    // 3. HELPER FUNCTIONS & TOASTS
-    // -------------------------------------------------------------------------
     const showToast = (message, type = 'success') => {
         const container = document.getElementById('toast-container');
         if (!container) return;
-        
+
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.innerHTML = `
@@ -353,21 +343,18 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         container.appendChild(toast);
         setTimeout(() => toast.classList.add('active'), 50);
-        
+
         const close = () => {
             toast.classList.remove('active');
             toast.addEventListener('transitionend', () => toast.remove(), { once: true });
         };
-        
+
         toast.querySelector('.toast-close').addEventListener('click', close);
         setTimeout(close, 4000);
     };
 
     const formatPrice = (priceUSD) => {
-        const rate = state.exchangeRates[state.currency] || 1;
-        const converted = (priceUSD * rate).toFixed(2);
-        const symbols = { USD: '$', EUR: '€', GEL: '₾' };
-        return `${symbols[state.currency] || '$'}${converted}`;
+        return `$${Number(priceUSD).toFixed(2)}`;
     };
 
     const getAvailableStock = (product) => {
@@ -385,13 +372,13 @@ document.addEventListener('DOMContentLoaded', () => {
             const res = await fetch('https://fakestoreapi.com/products/category/electronics');
             if (!res.ok) throw new Error('Fake Store API network response was not ok');
             const data = await res.json();
-            
+
             // Map the API data to match our application's expected tech product schema
             const mappedProducts = data.map(p => {
                 const titleLower = p.title.toLowerCase();
                 let category = 'accessories';
                 let brand = 'Generic';
-                
+
                 // Categorize items based on keywords in title
                 if (titleLower.includes('laptop') || titleLower.includes('book') || titleLower.includes('acer') || titleLower.includes('asus')) {
                     category = 'laptops';
@@ -406,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     category = 'accessories';
                     brand = titleLower.includes('sandisk') ? 'SanDisk' : 'WD';
                 }
-                
+
                 return {
                     id: String(p.id),
                     title: p.title,
@@ -428,36 +415,25 @@ document.addEventListener('DOMContentLoaded', () => {
             // Merge dynamic stock counts and sold counts from local storage overrides
             const savedStocks = JSON.parse(localStorage.getItem('techstore_product_stocks')) || {};
             const savedSoldCount = JSON.parse(localStorage.getItem('techstore_product_sold')) || {};
-            
+
             state.products = mappedProducts.map(p => ({
                 ...p,
                 stock: savedStocks[p.id] !== undefined ? savedStocks[p.id] : p.stock,
                 soldCount: savedSoldCount[p.id] !== undefined ? savedSoldCount[p.id] : p.soldCount
             }));
-            
+
         } catch (err) {
             console.error('Error fetching from Fake Store API:', err);
             showToast('Unable to fetch product catalog from API.', 'error');
         }
     };
 
-    const fetchExchangeRates = async () => {
-        try {
-            const res = await fetch('https://open.er-api.com/v6/latest/USD');
-            if (res.ok) {
-                const data = await res.json();
-                state.exchangeRates.EUR = data.rates.EUR || 0.92;
-                state.exchangeRates.GEL = data.rates.GEL || 2.75;
-            }
-        } catch (err) {
-            console.warn('Currency API failed, using local backups.', err);
-        }
-    };
+
 
     const fetchReviews = async () => {
         const reviewsGrid = document.getElementById('reviews-grid');
         if (!reviewsGrid) return;
-        
+
         const dict = translations[state.language];
         const fallbackReviews = [
             { name: dict.reviewName1, role: dict.reviewRole1, text: dict.reviewText1, rating: 5, avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80' },
@@ -477,7 +453,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const rating = fallback.rating || 5;
                     const avatar = fallback.avatar || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80';
                     const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
-                    
+
                     return `
                         <div class="review-card">
                             <div class="review-header">
@@ -497,7 +473,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             console.warn('Reviews API failed, using fallback ratings:', err);
         }
-        
+
         reviewsGrid.innerHTML = fallbackReviews.map(r => {
             const stars = '★'.repeat(r.rating) + '☆'.repeat(5 - r.rating);
             return `
@@ -523,7 +499,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const drawer = document.getElementById(drawerId);
         if (!drawer) return;
         const openClass = drawerId === 'recent-drawer' ? 'drawer-open' : 'modal-open';
-        
+
         if (open) {
             drawer.classList.add(openClass);
             drawer.setAttribute('aria-hidden', 'false');
@@ -546,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
         state.activeModalProductId = id;
         addToRecentlyViewed(id);
         renderModalContent(id);
-        
+
         const modal = document.getElementById('product-modal');
         if (modal) {
             modal.classList.add('modal-open');
@@ -558,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const renderModalContent = (productId) => {
         const content = document.getElementById('modal-body-content');
         if (!content) return;
-        
+
         const product = state.products.find(p => p.id === productId);
         if (!product) return;
 
@@ -571,7 +547,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Dynamic price history chart calculations (deterministic per product ID)
         const sumChars = (str) => [...str].reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const seed = sumChars(productId || "");
-        
+
         // Days trend (90, 60, 30, 15, Today)
         const f90 = 1.10 + ((seed % 10) / 100);
         const f60 = 1.05 + (((seed + 3) % 10) / 100);
@@ -599,7 +575,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const monthNames = state.language === 'KA'
             ? ["იან", "თებ", "მარ", "აპრ", "მაი", "ივნ", "ივლ", "აგვ", "სექ", "ოქტ", "ნოე", "დეკ"]
             : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-        
+
         const d = new Date();
         const mLabel5 = monthNames[d.getMonth()];
         d.setMonth(d.getMonth() - 1);
@@ -928,17 +904,17 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const filtered = state.products.filter(p => {
             const catMatch = state.activeCategory === 'all' || p.category === state.activeCategory;
-            const searchMatch = p.title.toLowerCase().includes(state.searchQuery.toLowerCase()) || 
-                                p.description.toLowerCase().includes(state.searchQuery.toLowerCase());
+            const searchMatch = p.title.toLowerCase().includes(state.searchQuery.toLowerCase()) ||
+                p.description.toLowerCase().includes(state.searchQuery.toLowerCase());
             const priceMatch = p.price >= state.minBudget && p.price <= state.maxBudget;
             return catMatch && searchMatch && priceMatch;
         });
 
         const visible = state.showAll ? filtered : filtered.slice(0, 8);
-        
+
         const countMsg = document.getElementById('catalog-count-message');
         if (countMsg) {
-            countMsg.textContent = state.language === 'KA' 
+            countMsg.textContent = state.language === 'KA'
                 ? `ნაჩვენებია ${visible.length} / ${filtered.length} პროდუქტიდან`
                 : `Showing ${visible.length} of ${filtered.length} products`;
         }
@@ -976,7 +952,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 </article>
             `;
         }).join('');
-        
+
         // Dynamic event attachments
         grid.querySelectorAll('.product-card').forEach(card => {
             const id = card.getAttribute('data-id');
@@ -1399,7 +1375,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     const translateInterface = () => {
         const dict = translations[state.language];
-        
+
         const classMap = {
             'trans-support-title': 'supportTitle',
             'trans-first-name': 'supportFirstName',
@@ -1682,7 +1658,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         document.getElementById('show-more-btn')?.addEventListener('click', (e) => {
             state.showAll = !state.showAll;
-            e.target.textContent = state.showAll 
+            e.target.textContent = state.showAll
                 ? (state.language === 'KA' ? 'რჩეული პროდუქტები' : 'Show Featured Products')
                 : (state.language === 'KA' ? 'ყველა პროდუქტი' : 'Show All Products');
             renderCatalog();
@@ -1742,12 +1718,7 @@ document.addEventListener('DOMContentLoaded', () => {
             translateInterface();
         });
 
-        document.getElementById('profile-currency-select')?.addEventListener('change', (e) => {
-            state.currency = e.target.value;
-            localStorage.setItem('techstore_currency', state.currency);
-            showToast(`${translations[state.language].toastCurrency} ${state.currency}`, 'success');
-            translateInterface();
-        });
+
 
         // Deal selectors dropdown inside cart drawer
         document.getElementById('cart-deal-select')?.addEventListener('change', (e) => {
@@ -1761,7 +1732,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.profile-tab-btn').forEach(t => t.classList.remove('active'));
                 e.target.classList.add('active');
-                
+
                 const tab = e.target.getAttribute('data-tab');
                 const pPane = document.getElementById('profile-pane-payments');
                 const sPane = document.getElementById('profile-pane-submissions');
@@ -1858,7 +1829,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (supportForm) {
             supportForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                
+
                 const firstName = document.getElementById('first-name')?.value.trim();
                 const lastName = document.getElementById('last-name')?.value.trim();
                 const email = document.getElementById('email')?.value.trim();
@@ -1885,7 +1856,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 state.submissions.unshift(newSub);
                 localStorage.setItem('techstore_registrations', JSON.stringify(state.submissions));
-                
+
                 showToast(state.language === 'KA' ? 'მოთხოვნა წარმატებით გაიგზავნა!' : 'Support request submitted successfully!', 'success');
                 supportForm.reset();
                 renderSubmissions();
@@ -1903,7 +1874,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const cardnumber = document.getElementById('checkout-cardnumber')?.value.replace(/\s/g, '');
                 const expiry = document.getElementById('checkout-expiry')?.value.trim();
                 const cvv = document.getElementById('checkout-cvv')?.value.trim();
-                
+
                 const dict = translations[state.language];
 
                 if (!address) {
@@ -1935,7 +1906,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 const btnText = checkoutBtn.querySelector('.btn-text');
                 const btnSpinner = checkoutBtn.querySelector('.btn-spinner');
-                
+
                 checkoutBtn.disabled = true;
                 if (btnText) btnText.textContent = dict.authorizing;
                 if (btnSpinner) btnSpinner.classList.remove('hidden');
@@ -2042,22 +2013,17 @@ document.addEventListener('DOMContentLoaded', () => {
         sections.forEach(sec => observer.observe(sec));
     };
 
-    // -------------------------------------------------------------------------
-    // 10. INITIALIZATION
-    // -------------------------------------------------------------------------
+
     const init = async () => {
         await fetchProducts();
-        await fetchExchangeRates();
         setupEventListeners();
         setupCardFormatting();
         translateInterface();
         initScrollAnimations();
-        
+
         // Sync preferences state to selectors
         const langSelect = document.getElementById('profile-language-select');
-        const currSelect = document.getElementById('profile-currency-select');
         if (langSelect) langSelect.value = state.language;
-        if (currSelect) currSelect.value = state.currency;
 
         renderRecentlyViewed();
         updateCompareFab();
