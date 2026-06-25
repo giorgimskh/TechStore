@@ -1941,6 +1941,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 toggleRecentDrawer(false);
             });
         }
+        if (elements.recentClearBtn) {
+            elements.recentClearBtn.addEventListener('click', () => {
+                AppState.recentlyViewed = [];
+                updateRecentlyViewed();
+                showToast(
+                    AppState.language === 'KA' ? 'ისტორია გაიწმინდა' : 'History cleared',
+                    'success'
+                );
+            });
+        }
 
         // Compare FAB click listener
         if (elements.compareFab) {
@@ -1960,6 +1970,90 @@ document.addEventListener('DOMContentLoaded', () => {
                 closeCompareModal();
             });
         }
+        if (elements.compareClearBtn) {
+            elements.compareClearBtn.addEventListener('click', () => {
+                AppState.compareList = [];
+                document.querySelectorAll('.compare-checkbox').forEach(cb => cb.checked = false);
+                updateCompareFAB();
+                closeCompareModal();
+                showToast(
+                    AppState.language === 'KA' ? 'შედარება გაუქმდა' : 'Comparison cleared',
+                    'success'
+                );
+            });
+        }
+
+        // GPS detection button listener
+        const gpsBtn = document.getElementById('gps-detect-btn');
+        const addressInput = document.getElementById('checkout-address');
+        if (gpsBtn && addressInput) {
+            gpsBtn.addEventListener('click', () => {
+                gpsBtn.disabled = true;
+                gpsBtn.innerHTML = '⌛ Detecting...';
+                if (!navigator.geolocation) {
+                    addressInput.value = "GPS not supported by browser (Tbilisi, Georgia)";
+                    gpsBtn.disabled = false;
+                    gpsBtn.innerHTML = '📍 Auto GPS';
+                    showToast('GPS geolocation is not supported by your browser', 'error');
+                    return;
+                }
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        try {
+                            const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                            if (res.ok) {
+                                const data = await res.json();
+                                if (data && data.display_name) {
+                                    addressInput.value = data.display_name;
+                                    showToast('Address detected successfully!', 'success');
+                                } else {
+                                    addressInput.value = `GPS Coords: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} (Tbilisi, Georgia)`;
+                                    showToast('GPS coordinates fetched', 'success');
+                                }
+                            } else {
+                                addressInput.value = `GPS Coords: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} (Tbilisi, Georgia)`;
+                                showToast('GPS coordinates fetched', 'success');
+                            }
+                        } catch (err) {
+                            addressInput.value = `GPS Coords: ${latitude.toFixed(5)}, ${longitude.toFixed(5)} (Tbilisi, Georgia)`;
+                            showToast('GPS coordinates fetched', 'success');
+                        }
+                        gpsBtn.disabled = false;
+                        gpsBtn.innerHTML = '📍 Auto GPS';
+                    },
+                    (error) => {
+                        console.error(error);
+                        addressInput.value = "Tbilisi, Georgia (GPS Denied/Timeout)";
+                        showToast('Location permission denied or timed out. Used default.', 'warning');
+                        gpsBtn.disabled = false;
+                        gpsBtn.innerHTML = '📍 Auto GPS';
+                    },
+                    { timeout: 10000 }
+                );
+            });
+        }
+
+        // Profile sign-in and register buttons listeners
+        const profileSignInBtn = document.getElementById('profile-signin-btn');
+        const profileRegisterBtn = document.getElementById('profile-register-btn');
+        if (profileSignInBtn) {
+            profileSignInBtn.addEventListener('click', () => {
+                showToast(
+                    AppState.language === 'KA' ? 'შესვლა მალე დაემატება!' : 'Sign In feature is coming soon!',
+                    'info'
+                );
+            });
+        }
+        if (profileRegisterBtn) {
+            profileRegisterBtn.addEventListener('click', () => {
+                showToast(
+                    AppState.language === 'KA' ? 'რეგისტრაცია მალე დაემატება!' : 'Registration feature is coming soon!',
+                    'info'
+                );
+            });
+        }
+
 
         // Category Tabs Click Filter Handlers
         elements.filterTabs.forEach(tab => {
