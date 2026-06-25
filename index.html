@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css?v=20260625-v4">
+    <link rel="stylesheet" href="css/style.css?v=20260625-v5">
 </head>
 
 <body>
@@ -147,6 +147,15 @@
                                     </div>
                                 </div>
                             </div>
+
+                            <div class="filter-panel-section">
+                                <h4 id="profile-curr-label" style="margin: 0 0 10px 0; color: var(--electric-green); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Display Currency</h4>
+                                <select id="profile-currency-select" class="currency-select" style="background: rgba(33, 1, 36, 0.8); border: 1px solid rgba(57, 255, 20, 0.3); color: #ffffff; padding: 8px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; width: 100%; max-width: 200px; outline: none; transition: border-color 0.25s;" onfocus="this.style.borderColor='var(--electric-green)'" onblur="this.style.borderColor='rgba(57, 255, 20, 0.3)'">
+                                    <option value="USD">USD ($)</option>
+                                    <option value="EUR">EUR (€)</option>
+                                    <option value="GEL">GEL (₾)</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -201,17 +210,17 @@
         <section class="media-section">
             <div class="container">
                 <div class="section-header">
-                    <p class="eyebrow">Amazon Web Services</p>
-                    <h2 class="section-title">See Amazon Cloud Technology in Action</h2>
+                    <p class="eyebrow">How to Order</p>
+                    <h2 class="section-title">How to Order Your Tech in 3 Simple Steps</h2>
                     <p class="section-description">
-                        Watch an official Amazon Web Services video about the cloud platform behind modern digital products.
+                        Watch our guide to see how easy it is to find devices, add them to your cart, apply active bundles, and complete your purchase securely.
                     </p>
                 </div>
 
                 <div class="iframe-wrapper">
                     <iframe
                         src="https://www.youtube.com/embed/1Cq6yMISwsU?si=cHixteYLDKSa1Mp9"
-                        title="AWS Video Tour"
+                        title="How to Order Guide"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
@@ -440,78 +449,72 @@
     </div>
 
     <!-- User Profile & Settings Drawer -->
-    <div id="profile-drawer" class="cart-drawer" aria-hidden="true">
-        <div class="cart-drawer-overlay" id="profile-overlay"></div>
-        <div class="cart-drawer-content">
-            <div class="cart-drawer-header">
-                <h2 id="profile-drawer-title">User Profile & Settings</h2>
-                <button id="profile-close-btn" class="cart-close-btn" aria-label="Close profile">&times;</button>
+    <div id="profile-drawer" class="modal-wrapper" aria-hidden="true">
+        <div class="modal-overlay" id="profile-overlay"></div>
+        <div class="modal-content-container" style="display: flex; flex-direction: column; box-sizing: border-box;">
+            <button id="profile-close-btn" class="modal-close-btn" aria-label="Close profile" style="top: 10px; right: 14px;">&times;</button>
+            <div class="cart-drawer-header" style="border-bottom: 1px solid rgba(138, 255, 193, 0.15); padding-bottom: 14px; margin-bottom: 14px;">
+                <h2 id="profile-drawer-title" style="margin: 0; font-size: 1.45rem; color: #ffffff; font-weight: 800;">User Profile & Settings</h2>
             </div>
             
-            <div class="cart-drawer-body">
-                <!-- Register or Sign In card -->
-                <div class="profile-auth-section" style="background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 16px; margin-bottom: 20px; box-sizing: border-box; text-align: center;">
-                    <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
-                    <h3 id="profile-welcome-title" style="color: #ffffff; margin-bottom: 6px; font-weight: 800;">Welcome, Guest!</h3>
-                    <p id="profile-welcome-desc" style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;">Sign in to save your history and access exclusive rewards.</p>
-                    <div id="profile-auth-btn-group" style="display: flex; gap: 8px; justify-content: center;">
-                        <button id="profile-signin-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: linear-gradient(135deg, var(--violet) 0%, var(--pink) 100%); border: none; color: white; cursor: pointer; font-weight: 700;">Sign In</button>
-                        <button id="profile-register-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: transparent; border: 1px solid var(--electric-green); color: var(--electric-green); cursor: pointer; font-weight: 700;">Register</button>
+            <div class="profile-drawer-body">
+                <div class="profile-sidebar">
+                    <!-- Register or Sign In card -->
+                    <div class="profile-auth-section" style="background: rgba(33, 1, 36, 0.4); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 10px; padding: 16px; margin-bottom: 20px; box-sizing: border-box; text-align: center;">
+                        <div style="font-size: 2.2rem; margin-bottom: 8px;">🔐</div>
+                        <h3 id="profile-welcome-title" style="color: #ffffff; margin-bottom: 6px; font-weight: 800;">Welcome, Guest!</h3>
+                        <p id="profile-welcome-desc" style="color: var(--muted); font-size: 0.85rem; margin-bottom: 12px;">Sign in to save your history and access exclusive rewards.</p>
+                        <div id="profile-auth-btn-group" style="display: flex; gap: 8px; justify-content: center;">
+                            <button id="profile-signin-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: linear-gradient(135deg, var(--violet) 0%, var(--pink) 100%); border: none; color: white; cursor: pointer; font-weight: 700;">Sign In</button>
+                            <button id="profile-register-btn" class="btn" style="padding: 6px 16px; font-size: 0.8rem; min-height: unset; border-radius: 6px; background: transparent; border: 1px solid var(--electric-green); color: var(--electric-green); cursor: pointer; font-weight: 700;">Register</button>
+                        </div>
+                        <button id="profile-signout-btn" class="btn" style="display: none; width: 100%; padding: 8px; font-size: 0.85rem; font-weight: 700; border: 1px solid #f87171; color: #f87171; background: transparent; border-radius: 6px; cursor: pointer; margin-top: 12px;">
+                            Sign Out
+                        </button>
                     </div>
-                    <button id="profile-signout-btn" class="btn" style="display: none; width: 100%; padding: 8px; font-size: 0.85rem; font-weight: 700; border: 1px solid #f87171; color: #f87171; background: transparent; border-radius: 6px; cursor: pointer; margin-top: 12px;">
-                        Sign Out
-                    </button>
-                </div>
 
-                <!-- Configure Language & Currency -->
-                <div class="profile-config-section">
-                    <div class="profile-field-group">
-                        <label id="profile-lang-label" for="profile-language-select">Interface Language</label>
-                        <select id="profile-language-select" class="currency-select">
-                            <option value="EN">English</option>
-                            <option value="KA">Georgian (ქართული)</option>
-                        </select>
-                    </div>
-                    <div class="profile-field-group">
-                        <label id="profile-curr-label" for="profile-currency-select">Display Currency</label>
-                        <select id="profile-currency-select" class="currency-select">
-                            <option value="USD">USD ($)</option>
-                            <option value="EUR">EUR (€)</option>
-                            <option value="GEL">GEL (₾)</option>
-                        </select>
+                    <!-- Configure Language -->
+                    <div class="profile-config-section">
+                        <div class="profile-field-group">
+                            <label id="profile-lang-label" for="profile-language-select">Interface Language</label>
+                            <select id="profile-language-select" class="currency-select">
+                                <option value="EN">English</option>
+                                <option value="KA">Georgian (ქართული)</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 
-                <hr class="profile-divider">
-                
-                <!-- History & Submissions Tabs -->
-                <div class="profile-tabs-header">
-                    <button class="profile-tab-btn active" data-tab="payments" id="profile-tab-payments-btn">Payment History</button>
-                    <button class="profile-tab-btn" data-tab="submissions" id="profile-tab-submissions-btn">Service Requests</button>
-                </div>
-                
-                <div class="profile-tabs-content">
-                    <!-- Payments Pane -->
-                    <div id="profile-pane-payments" class="profile-pane active">
-                        <div id="payment-empty-message" class="cart-empty-message">
-                            <div class="cart-empty-icon">📜</div>
-                            <h3 class="trans-payment-empty-title">No past transactions</h3>
-                            <p class="trans-payment-empty-desc">When you complete a purchase, your receipt details will be displayed here.</p>
-                        </div>
-                        <div id="payment-items-list" class="payment-items-list">
-                            <!-- Past orders injected here dynamically -->
-                        </div>
+                <div class="profile-main">
+                    <!-- History & Submissions Tabs -->
+                    <div class="profile-tabs-header" style="margin-top: 0;">
+                        <button class="profile-tab-btn active" data-tab="payments" id="profile-tab-payments-btn">Payment History</button>
+                        <button class="profile-tab-btn" data-tab="submissions" id="profile-tab-submissions-btn">Service Requests</button>
                     </div>
                     
-                    <!-- Submissions Pane -->
-                    <div id="profile-pane-submissions" class="profile-pane">
-                        <div id="submissions-empty-message" class="cart-empty-message">
-                            <div class="cart-empty-icon">🛠</div>
-                            <h3 class="trans-service-empty-title">No service requests</h3>
-                            <p class="trans-service-empty-desc">Any interest forms or contact requests you submit will appear here.</p>
+                    <div class="profile-tabs-content">
+                        <!-- Payments Pane -->
+                        <div id="profile-pane-payments" class="profile-pane active">
+                            <div id="payment-empty-message" class="cart-empty-message">
+                                <div class="cart-empty-icon">📜</div>
+                                <h3 class="trans-payment-empty-title">No past transactions</h3>
+                                <p class="trans-payment-empty-desc">When you complete a purchase, your receipt details will be displayed here.</p>
+                            </div>
+                            <div id="payment-items-list" class="payment-items-list">
+                                <!-- Past orders injected here dynamically -->
+                            </div>
                         </div>
-                        <div id="submissions-items-list" class="submissions-items-list">
-                            <!-- Submitted forms injected here dynamically -->
+                        
+                        <!-- Submissions Pane -->
+                        <div id="profile-pane-submissions" class="profile-pane">
+                            <div id="submissions-empty-message" class="cart-empty-message">
+                                <div class="cart-empty-icon">🛠</div>
+                                <h3 class="trans-service-empty-title">No service requests</h3>
+                                <p class="trans-service-empty-desc">Any interest forms or contact requests you submit will appear here.</p>
+                            </div>
+                            <div id="submissions-items-list" class="submissions-items-list">
+                                <!-- Submitted forms injected here dynamically -->
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -628,6 +631,6 @@
     <div id="toast-container" class="toast-container"></div>
 
     <!-- Core Interactive Logic -->
-    <script src="js/main.js?v=20260625-v4" defer></script>
+    <script src="js/main.js?v=20260625-v5" defer></script>
 </body>
 </html>

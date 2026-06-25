@@ -246,9 +246,9 @@ document.addEventListener('DOMContentLoaded', () => {
             dealCardSave3: "Save 10%",
 
             // Media
-            mediaEyebrow: "Amazon Web Services",
-            mediaTitle: "See Amazon Cloud Technology in Action",
-            mediaDesc: "Watch an official Amazon Web Services video about the cloud platform behind modern digital products.",
+            mediaEyebrow: "How to Order",
+            mediaTitle: "How to Order Your Tech in 3 Simple Steps",
+            mediaDesc: "Watch our guide to see how easy it is to find devices, add them to your cart, apply active bundles, and complete your purchase securely.",
 
             // Reviews
             reviewsEyebrow: "Customer reviews",
@@ -405,9 +405,9 @@ document.addEventListener('DOMContentLoaded', () => {
             dealCardSave3: "დაზოგე 10%",
 
             // Media
-            mediaEyebrow: "Amazon Web Services",
-            mediaTitle: "იხილეთ Amazon Cloud ტექნოლოგია მოქმედებაში",
-            mediaDesc: "უყურეთ Amazon Web Services-ის ოფიციალურ ვიდეოს ღრუბლოვანი პლატფორმის შესახებ, რომელიც მართავს თანამედროვე ციფრულ სამყაროს.",
+            mediaEyebrow: "როგორ შეუკვეთოთ",
+            mediaTitle: "როგორ შეუკვეთოთ ტექნიკა 3 მარტივ ნაბიჯში",
+            mediaDesc: "უყურეთ ჩვენს გზამკვლევს, რათა ნახოთ რამდენად მარტივია სასურველი მოწყობილობის პოვნა, კალათაში დამატება, ფასდაკლების აქტივაცია და უსაფრთხო ყიდვა.",
 
             // Reviews
             reviewsEyebrow: "მომხმარებელთა შეფასებები",
@@ -2054,12 +2054,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!elements.profileDrawer) return;
         elements.profileDrawer.setAttribute('aria-hidden', !isOpen);
         if (isOpen) {
-            elements.profileDrawer.classList.add('drawer-open');
+            elements.profileDrawer.classList.add('modal-open');
             document.body.style.overflow = 'hidden';
             // Open default tab
             handleProfileTabSwitch('payments');
         } else {
-            elements.profileDrawer.classList.remove('drawer-open');
+            elements.profileDrawer.classList.remove('modal-open');
             document.body.style.overflow = '';
         }
     };
@@ -2562,7 +2562,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     elements.filterDropdownPanel.style.opacity = '0';
                     elements.filterDropdownPanel.style.marginTop = '0px';
                 } else {
-                    elements.filterDropdownPanel.style.maxHeight = '300px';
+                    elements.filterDropdownPanel.style.maxHeight = '500px';
                     elements.filterDropdownPanel.style.opacity = '1';
                     elements.filterDropdownPanel.style.marginTop = '16px';
                 }

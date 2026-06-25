@@ -3230,15 +3230,53 @@ textarea:focus-visible {
     transform: translateY(0);
 }
 
-/* Footer Email Link Hover Effect */
+/* Footer Email Link Styled as Button */
 .footer-email-link {
-    transition: color 0.3s ease, text-shadow 0.3s ease;
+    display: inline-block;
+    padding: 6px 14px;
+    margin-top: 8px;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #d8ff88 !important;
+    text-decoration: none !important;
+    font-weight: 700;
+    transition: all 0.3s ease;
 }
 
 .footer-email-link:hover {
-    color: #39ff14 !important;
-    text-shadow: 0 0 10px rgba(57, 255, 20, 0.5);
-    text-decoration: underline !important;
+    background: #B0B0B0 !important;
+    color: #000000 !important;
+    border-color: #B0B0B0 !important;
+    box-shadow: 0 0 12px rgba(176, 176, 176, 0.5);
+    text-decoration: none !important;
+}
+
+/* Profile Drawer Modal Layout */
+#profile-drawer .modal-content-container {
+    width: min(96%, 1200px);
+    max-height: 94vh;
+    height: auto;
+    padding: 32px;
+}
+
+#profile-drawer .profile-drawer-body {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    flex-grow: 1;
+    overflow-y: auto;
+    padding-right: 4px;
+    margin-bottom: 14px;
+}
+
+@media (min-width: 768px) {
+    #profile-drawer .profile-drawer-body {
+        display: grid !important;
+        grid-template-columns: 1fr 1.6fr;
+        gap: 36px;
+        align-items: start;
+    }
 }
 
 
