@@ -7,9 +7,13 @@
     "category": "laptops",
     "badge": "Top Choice",
     "image": "images/laptop.jpg",
+    "images": ["images/laptop.jpg", "images/hero-tech.jpg", "images/keyboard.png"],
     "brand": "Lenovo",
     "stock": 6,
-    "soldCount": 15
+    "soldCount": 15,
+    "screenSize": "16.0 inches",
+    "processor": "AMD Ryzen 7 7745HX",
+    "ram": "16GB DDR5"
   },
   {
     "id": "prod-2",
@@ -19,9 +23,13 @@
     "category": "smartphones",
     "badge": "New Arrival",
     "image": "images/smartphone.jpg",
+    "images": ["images/smartphone.jpg", "images/hero-tech.jpg", "images/galaxy_s24.png"],
     "brand": "Apple",
     "stock": 12,
-    "soldCount": 48
+    "soldCount": 48,
+    "screenSize": "6.1 inches",
+    "processor": "Apple A17 Pro",
+    "ram": "8GB LPDDR5"
   },
   {
     "id": "prod-3",
@@ -31,9 +39,13 @@
     "category": "accessories",
     "badge": "Top Rated",
     "image": "images/headphones.jpg",
+    "images": ["images/headphones.jpg", "images/hero-tech.jpg", "images/gaming-mouse.jpg"],
     "brand": "Sony",
     "stock": 20,
-    "soldCount": 95
+    "soldCount": 95,
+    "screenSize": "N/A",
+    "processor": "Sony V1 Processor",
+    "ram": "N/A"
   },
   {
     "id": "prod-4",
@@ -43,9 +55,13 @@
     "category": "accessories",
     "badge": "Pro Gear",
     "image": "images/gaming-mouse.jpg",
+    "images": ["images/gaming-mouse.jpg", "images/hero-tech.jpg", "images/headphones.jpg"],
     "brand": "Logitech",
     "stock": 25,
-    "soldCount": 142
+    "soldCount": 142,
+    "screenSize": "N/A",
+    "processor": "HERO 25K Sensor",
+    "ram": "N/A"
   },
   {
     "id": "prod-5",
@@ -55,9 +71,13 @@
     "category": "accessories",
     "badge": "Performance",
     "image": "images/ram.jpg",
+    "images": ["images/ram.jpg", "images/hero-tech.jpg", "images/keyboard.png"],
     "brand": "Corsair",
     "stock": 18,
-    "soldCount": 64
+    "soldCount": 64,
+    "screenSize": "N/A",
+    "processor": "N/A",
+    "ram": "32GB (2x16GB) DDR5"
   },
   {
     "id": "prod-6",
@@ -67,9 +87,13 @@
     "category": "wearables",
     "badge": "Best Tracker",
     "image": "images/smartwatch.jpg",
+    "images": ["images/smartwatch.jpg", "images/hero-tech.jpg", "images/apple_watch_ultra.png"],
     "brand": "Samsung",
     "stock": 15,
-    "soldCount": 50
+    "soldCount": 50,
+    "screenSize": "1.3 inches",
+    "processor": "Exynos W930 Dual-Core",
+    "ram": "2GB RAM"
   },
   {
     "id": "prod-7",
@@ -78,10 +102,14 @@
     "price": 1599,
     "category": "laptops",
     "badge": "Premium",
-    "image": "images/laptop.jpg",
+    "image": "images/macbook.png",
+    "images": ["images/macbook.png", "images/hero-tech.jpg", "images/keyboard.png"],
     "brand": "Apple",
     "stock": 8,
-    "soldCount": 22
+    "soldCount": 22,
+    "screenSize": "14.2 inches",
+    "processor": "Apple M3 Chip",
+    "ram": "8GB Unified Memory"
   },
   {
     "id": "prod-8",
@@ -90,10 +118,14 @@
     "price": 1199,
     "category": "smartphones",
     "badge": "AI Powered",
-    "image": "images/smartphone.jpg",
+    "image": "images/galaxy_s24.png",
+    "images": ["images/galaxy_s24.png", "images/hero-tech.jpg", "images/smartphone.jpg"],
     "brand": "Samsung",
     "stock": 9,
-    "soldCount": 30
+    "soldCount": 30,
+    "screenSize": "6.8 inches",
+    "processor": "Snapdragon 8 Gen 3",
+    "ram": "12GB LPDDR5X"
   },
   {
     "id": "prod-9",
@@ -102,10 +134,14 @@
     "price": 799,
     "category": "wearables",
     "badge": "Extreme Tech",
-    "image": "images/smartwatch.jpg",
+    "image": "images/apple_watch_ultra.png",
+    "images": ["images/apple_watch_ultra.png", "images/hero-tech.jpg", "images/smartwatch.jpg"],
     "brand": "Apple",
     "stock": 7,
-    "soldCount": 14
+    "soldCount": 14,
+    "screenSize": "1.92 inches",
+    "processor": "Apple S9 SiP",
+    "ram": "64GB Storage"
   },
   {
     "id": "prod-10",
@@ -114,10 +150,14 @@
     "price": 1499,
     "category": "laptops",
     "badge": "OLED Edition",
-    "image": "images/laptop.jpg",
+    "image": "images/asus_zephyrus.png",
+    "images": ["images/asus_zephyrus.png", "images/hero-tech.jpg", "images/keyboard.png"],
     "brand": "Asus",
     "stock": 5,
-    "soldCount": 11
+    "soldCount": 11,
+    "screenSize": "14.0 inches",
+    "processor": "AMD Ryzen 9 8945HS",
+    "ram": "16GB DDR5"
   },
   {
     "id": "prod-11",
@@ -126,9 +166,13 @@
     "price": 189,
     "category": "accessories",
     "badge": "Custom Deck",
-    "image": "images/ram.jpg",
+    "image": "images/keyboard.png",
+    "images": ["images/keyboard.png", "images/hero-tech.jpg", "images/ram.jpg"],
     "brand": "Keychron",
     "stock": 10,
-    "soldCount": 38
+    "soldCount": 38,
+    "screenSize": "N/A",
+    "processor": "ARM Cortex-M4 MCU",
+    "ram": "N/A"
   }
 ]

@@ -5,12 +5,8 @@
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Check if the cached products list contains the old generic names (Gaming Laptop etc.)
-    // If it does, clear the cache to load our specific brand products (Lenovo, Apple, Samsung etc.)
-    const cachedProducts = localStorage.getItem('techstore_products_state');
-    if (cachedProducts && (cachedProducts.includes("Gaming Laptop") || cachedProducts.includes("Smartphone Pro"))) {
-        localStorage.removeItem('techstore_products_state');
-    }
+    // Clear localStorage completely to reset storage on every project run/load
+    localStorage.clear();
 
     // -------------------------------------------------------------------------
     // 1. APPLICATION STATE
@@ -26,6 +22,8 @@ document.addEventListener('DOMContentLoaded', () => {
         exchangeRates: { USD: 1, EUR: 0.92, GEL: 2.75 },
         activeCategory: 'all',
         searchQuery: '',
+        maxBudget: 2000,
+        compareList: [],
         showAll: false,
         activeModalProductId: null
     };
@@ -60,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         reviewsGrid: document.getElementById('reviews-grid'),
         toastContainer: document.getElementById('toast-container'),
         countMessage: document.getElementById('catalog-count-message'),
+        inventoryTableBody: document.getElementById('inventory-table-body'),
         
         // Sizing
         showMoreBtn: document.getElementById('show-more-btn'),
@@ -88,7 +87,17 @@ document.addEventListener('DOMContentLoaded', () => {
         cardholderInput: document.getElementById('checkout-cardholder'),
         cardnumberInput: document.getElementById('checkout-cardnumber'),
         expiryInput: document.getElementById('checkout-expiry'),
-        cvvInput: document.getElementById('checkout-cvv')
+        cvvInput: document.getElementById('checkout-cvv'),
+        
+        // Price Filter and Compare Selectors
+        budgetRange: document.getElementById('budget-range'),
+        budgetValue: document.getElementById('budget-val'),
+        compareFab: document.getElementById('compare-fab'),
+        compareCount: document.getElementById('compare-count'),
+        compareModal: document.getElementById('compare-modal'),
+        compareModalOverlay: document.getElementById('compare-modal-overlay'),
+        compareCloseBtn: document.getElementById('compare-close-btn'),
+        compareModalBody: document.getElementById('compare-modal-body')
     };
 
     // -------------------------------------------------------------------------
@@ -164,7 +173,12 @@ document.addEventListener('DOMContentLoaded', () => {
             toastCard16: "Please enter a valid 16-digit card number.",
             toastExpiryFormat: "Please enter expiry date in MM/YY format.",
             toastExpiryMonth: "Invalid expiry month. Use 01 - 12.",
-            toastCVV3: "Please enter a valid 3-digit CVV number."
+            toastCVV3: "Please enter a valid 3-digit CVV number.",
+            inventoryProduct: "Product",
+            inventoryCategory: "Category",
+            inventoryPrice: "Price",
+            inventoryAvailability: "Availability",
+            inventorySold: "Units Sold"
         },
         KA: {
             navHome: "მთავარი",
@@ -235,7 +249,12 @@ document.addEventListener('DOMContentLoaded', () => {
             toastCard16: "ბარათის ნომერი უნდა შედგებოდეს 16 ციფრისგან.",
             toastExpiryFormat: "შეიყვანეთ ვადა MM/YY ფორმატში.",
             toastExpiryMonth: "არასწორი თვე. გამოიყენეთ 01 - 12.",
-            toastCVV3: "CVV კოდი უნდა შედგებოდეს 3 ციფრისგან."
+            toastCVV3: "CVV კოდი უნდა შედგებოდეს 3 ციფრისგან.",
+            inventoryProduct: "პროდუქტი",
+            inventoryCategory: "კატეგორია",
+            inventoryPrice: "ფასი",
+            inventoryAvailability: "ხელმისაწვდომობა",
+            inventorySold: "გაყიდული რაოდენობა"
         }
     };
 
@@ -358,9 +377,23 @@ document.addEventListener('DOMContentLoaded', () => {
             if (emptySrvDesc) emptySrvDesc.textContent = dict.noSubmissionsDesc;
         }
 
+        // Translate Inventory Table Headers
+        const thProduct = document.getElementById('inventory-th-product');
+        const thCategory = document.getElementById('inventory-th-category');
+        const thPrice = document.getElementById('inventory-th-price');
+        const thAvailability = document.getElementById('inventory-th-availability');
+        const thSold = document.getElementById('inventory-th-sold');
+
+        if (thProduct) thProduct.textContent = dict.inventoryProduct;
+        if (thCategory) thCategory.textContent = dict.inventoryCategory;
+        if (thPrice) thPrice.textContent = dict.inventoryPrice;
+        if (thAvailability) thAvailability.textContent = dict.inventoryAvailability;
+        if (thSold) thSold.textContent = dict.inventorySold;
+
         // Refresh dynamic UI elements
         renderCatalog();
         renderCart();
+        renderInventoryTable();
     };
 
     // -------------------------------------------------------------------------
@@ -526,17 +559,17 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (error) {
             logAppEvent('API', 'Error fetching products, utilizing local fallback state', error);
             AppState.products = [
-                { id: "prod-1", title: "Lenovo Legion Pro 5", description: "High performance gaming laptop featuring RTX 4070 graphics and AMD Ryzen 7 processor.", price: 1399, category: "laptops", badge: "Top Choice", brand: "Lenovo", stock: 6, soldCount: 15, image: "images/laptop.jpg" },
-                { id: "prod-2", title: "Apple iPhone 15 Pro", description: "Titanium design, A17 Pro chip, customizable Action button, and a powerful camera system.", price: 999, category: "smartphones", badge: "New Arrival", brand: "Apple", stock: 12, soldCount: 48, image: "images/smartphone.jpg" },
-                { id: "prod-3", title: "Sony WH-1000XM5", description: "Industry leading noise canceling wireless headphones with crystal clear hands-free calling.", price: 349, category: "accessories", badge: "Top Rated", brand: "Sony", stock: 20, soldCount: 95, image: "images/headphones.jpg" },
-                { id: "prod-4", title: "Logitech G502 X Plus", description: "Iconic gaming mouse upgraded with hybrid optical-mechanical switches and LIGHTSPEED wireless.", price: 149, category: "accessories", badge: "Pro Gear", brand: "Logitech", stock: 25, soldCount: 142, image: "images/gaming-mouse.jpg" },
-                { id: "prod-5", title: "Corsair Vengeance DDR5", description: "High performance RGB desktop memory kit optimized for Intel and AMD motherboards.", price: 129, category: "accessories", badge: "Performance", brand: "Corsair", stock: 18, soldCount: 64, image: "images/ram.jpg" },
-                { id: "prod-6", title: "Samsung Galaxy Watch 6", description: "Advanced health tracking smartwatch with customized heart rate zones and sleek design.", price: 299, category: "wearables", badge: "Best Tracker", brand: "Samsung", stock: 15, soldCount: 50, image: "images/smartwatch.jpg" },
-                { id: "prod-7", title: "Apple MacBook Pro M3", description: "Supercharged by the M3 chip with a beautiful Liquid Retina XDR screen and massive battery life.", price: 1599, category: "laptops", badge: "Premium", brand: "Apple", stock: 8, soldCount: 22, image: "images/laptop.jpg" },
-                { id: "prod-8", title: "Samsung Galaxy S24 Ultra", description: "Ultimate Galaxy smartphone featuring built-in S Pen, titanium body, and Galaxy AI features.", price: 1199, category: "smartphones", badge: "AI Powered", brand: "Samsung", stock: 9, soldCount: 30, image: "images/smartphone.jpg" },
-                { id: "prod-9", title: "Apple Watch Ultra 2", description: "Most rugged and capable Apple Watch designed for outdoor adventures and athletic training.", price: 799, category: "wearables", badge: "Extreme Tech", brand: "Apple", stock: 7, soldCount: 14, image: "images/smartwatch.jpg" },
-                { id: "prod-10", title: "Asus Zephyrus G14", description: "Ultra-portable 14-inch gaming powerhouse featuring gorgeous OLED display and AMD Ryzen 9.", price: 1499, category: "laptops", badge: "OLED Edition", brand: "Asus", stock: 5, soldCount: 11, image: "images/laptop.jpg" },
-                { id: "prod-11", title: "Keychron Q1 Pro Keyboard", description: "Full aluminum QMK/VIA wireless mechanical keyboard with double-gasket custom design.", price: 189, category: "accessories", badge: "Custom Deck", brand: "Keychron", stock: 10, soldCount: 38, image: "images/ram.jpg" }
+                { id: "prod-1", title: "Lenovo Legion Pro 5", description: "High performance gaming laptop featuring RTX 4070 graphics and AMD Ryzen 7 processor.", price: 1399, category: "laptops", badge: "Top Choice", brand: "Lenovo", stock: 6, soldCount: 15, image: "images/laptop.jpg", images: ["images/laptop.jpg", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "16.0 inches", processor: "AMD Ryzen 7 7745HX", ram: "16GB DDR5" },
+                { id: "prod-2", title: "Apple iPhone 15 Pro", description: "Titanium design, A17 Pro chip, customizable Action button, and a powerful camera system.", price: 999, category: "smartphones", badge: "New Arrival", brand: "Apple", stock: 12, soldCount: 48, image: "images/smartphone.jpg", images: ["images/smartphone.jpg", "images/hero-tech.jpg", "images/galaxy_s24.png"], screenSize: "6.1 inches", processor: "Apple A17 Pro", ram: "8GB LPDDR5" },
+                { id: "prod-3", title: "Sony WH-1000XM5", description: "Industry leading noise canceling wireless headphones with crystal clear hands-free calling.", price: 349, category: "accessories", badge: "Top Rated", brand: "Sony", stock: 20, soldCount: 95, image: "images/headphones.jpg", images: ["images/headphones.jpg", "images/hero-tech.jpg", "images/gaming-mouse.jpg"], screenSize: "N/A", processor: "Sony V1 Processor", ram: "N/A" },
+                { id: "prod-4", title: "Logitech G502 X Plus", description: "Iconic gaming mouse upgraded with hybrid optical-mechanical switches and LIGHTSPEED wireless.", price: 149, category: "accessories", badge: "Pro Gear", brand: "Logitech", stock: 25, soldCount: 142, image: "images/gaming-mouse.jpg", images: ["images/gaming-mouse.jpg", "images/hero-tech.jpg", "images/headphones.jpg"], screenSize: "N/A", processor: "HERO 25K Sensor", ram: "N/A" },
+                { id: "prod-5", title: "Corsair Vengeance DDR5", description: "High performance RGB desktop memory kit optimized for Intel and AMD motherboards.", price: 129, category: "accessories", badge: "Performance", brand: "Corsair", stock: 18, soldCount: 64, image: "images/ram.jpg", images: ["images/ram.jpg", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "N/A", processor: "N/A", ram: "32GB (2x16GB) DDR5" },
+                { id: "prod-6", title: "Samsung Galaxy Watch 6", description: "Advanced health tracking smartwatch with customized heart rate zones and sleek design.", price: 299, category: "wearables", badge: "Best Tracker", brand: "Samsung", stock: 15, soldCount: 50, image: "images/smartwatch.jpg", images: ["images/smartwatch.jpg", "images/hero-tech.jpg", "images/apple_watch_ultra.png"], screenSize: "1.3 inches", processor: "Exynos W930 Dual-Core", ram: "2GB RAM" },
+                { id: "prod-7", title: "Apple MacBook Pro M3", description: "Supercharged by the M3 chip with a beautiful Liquid Retina XDR screen and massive battery life.", price: 1599, category: "laptops", badge: "Premium", brand: "Apple", stock: 8, soldCount: 22, image: "images/macbook.png", images: ["images/macbook.png", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "14.2 inches", processor: "Apple M3 Chip", ram: "8GB Unified Memory" },
+                { id: "prod-8", title: "Samsung Galaxy S24 Ultra", description: "Ultimate Galaxy smartphone featuring built-in S Pen, titanium body, and Galaxy AI features.", price: 1199, category: "smartphones", badge: "AI Powered", brand: "Samsung", stock: 9, soldCount: 30, image: "images/galaxy_s24.png", images: ["images/galaxy_s24.png", "images/hero-tech.jpg", "images/smartphone.jpg"], screenSize: "6.8 inches", processor: "Snapdragon 8 Gen 3", ram: "12GB LPDDR5X" },
+                { id: "prod-9", title: "Apple Watch Ultra 2", description: "Most rugged and capable Apple Watch designed for outdoor adventures and athletic training.", price: 799, category: "wearables", badge: "Extreme Tech", brand: "Apple", stock: 7, soldCount: 14, image: "images/apple_watch_ultra.png", images: ["images/apple_watch_ultra.png", "images/hero-tech.jpg", "images/smartwatch.jpg"], screenSize: "1.92 inches", processor: "Apple S9 SiP", ram: "64GB Storage" },
+                { id: "prod-10", title: "Asus Zephyrus G14", description: "Ultra-portable 14-inch gaming powerhouse featuring gorgeous OLED display and AMD Ryzen 9.", price: 1499, category: "laptops", badge: "OLED Edition", brand: "Asus", stock: 5, soldCount: 11, image: "images/asus_zephyrus.png", images: ["images/asus_zephyrus.png", "images/hero-tech.jpg", "images/keyboard.png"], screenSize: "14.0 inches", processor: "AMD Ryzen 9 8945HS", ram: "16GB DDR5" },
+                { id: "prod-11", title: "Keychron Q1 Pro Keyboard", description: "Full aluminum QMK/VIA wireless mechanical keyboard with double-gasket custom design.", price: 189, category: "accessories", badge: "Custom Deck", brand: "Keychron", stock: 10, soldCount: 38, image: "images/keyboard.png", images: ["images/keyboard.png", "images/hero-tech.jpg", "images/ram.jpg"], screenSize: "N/A", processor: "ARM Cortex-M4 MCU", ram: "N/A" }
             ];
             saveProductsToStorage();
         }
@@ -559,56 +592,83 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    // Fetch Reviews from public API (Async/Await) - Guarantees reviews are in ENGLISH
+    // Fetch Reviews from public API - Guarantees reviews are ALWAYS in ENGLISH
     const fetchReviews = async () => {
         if (!elements.reviewsGrid) return;
+        
+        const defaultReviews = [
+            {
+                name: "Alex Johnson",
+                role: "Software Engineer",
+                rating: 5,
+                avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80",
+                text: "The Lenovo Legion Pro laptop is incredibly fast. Very impressed with the quick checkout process and customer support!"
+            },
+            {
+                name: "Sarah Miller",
+                role: "Creative Lead",
+                rating: 5,
+                avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80",
+                text: "My new iPhone 15 Pro arrived within 2 days. The support team is very responsive. Will definitely purchase again."
+            },
+            {
+                name: "David Kim",
+                role: "IT Student",
+                rating: 4,
+                avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80",
+                text: "Excellent noise cancellation on the Sony WH-1000XM5 headphones. The profile currency switcher makes ordering seamless."
+            }
+        ];
+
         try {
-            // Fetch layout comment triggers
             const response = await fetch('https://jsonplaceholder.typicode.com/comments?_limit=3');
-            if (!response.ok) throw new Error('Reviews fetch failed');
-            const comments = await response.json();
-            
-            const reviewerCardsData = [
-                { name: "Sandro K.", role: "Software Developer", rating: 5, avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80" },
-                { name: "Mariam T.", role: "Creative Lead", rating: 5, avatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=150&h=150&q=80" },
-                { name: "Luka M.", role: "IT Student", rating: 4, avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=150&h=150&q=80" }
-            ];
-
-            // Specific English reviews to ensure readability and contextual validity
-            const englishReviews = [
-                "The Lenovo Legion Pro laptop is incredibly fast. Very impressed with the quick checkout process and customer support!",
-                "iPhone 15 Pro arrived within 2 days. The support team is very responsive. Will definitely purchase again.",
-                "Excellent noise cancellation on the Sony WH-1000XM5 headphones. The profile currency switcher makes ordering from Tbilisi seamless."
-            ];
-
-            elements.reviewsGrid.innerHTML = comments.map((comment, index) => {
-                const profile = reviewerCardsData[index] || {
-                    name: comment.email.split('@')[0],
-                    role: "TechStore Client",
-                    rating: 5,
-                    avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80"
-                };
-
-                const stars = '★'.repeat(profile.rating) + '☆'.repeat(5 - profile.rating);
-                const reviewText = englishReviews[index] || comment.body;
-
-                return `
-                    <div class="review-card">
-                        <div class="review-header">
-                            <img src="${profile.avatar}" alt="${profile.name}" class="review-avatar" loading="lazy">
-                            <div class="review-user-info">
-                                <h3 class="review-user-name">${profile.name}</h3>
-                                <p class="review-user-role">${profile.role}</p>
+            if (response.ok) {
+                const comments = await response.json();
+                elements.reviewsGrid.innerHTML = comments.map((comment, index) => {
+                    const name = defaultReviews[index] ? defaultReviews[index].name : comment.name.split(' ')[0];
+                    const role = defaultReviews[index] ? defaultReviews[index].role : "TechStore Client";
+                    const rating = defaultReviews[index] ? defaultReviews[index].rating : 5;
+                    const avatar = defaultReviews[index] ? defaultReviews[index].avatar : `https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=150&h=150&q=80`;
+                    const text = defaultReviews[index] ? defaultReviews[index].text : "Great product, excellent build quality and highly recommended!";
+                    
+                    const stars = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+                    return `
+                        <div class="review-card">
+                            <div class="review-header">
+                                <img src="${avatar}" alt="${name}" class="review-avatar" loading="lazy">
+                                <div class="review-user-info">
+                                    <h3 class="review-user-name">${name}</h3>
+                                    <p class="review-user-role">${role}</p>
+                                </div>
                             </div>
+                            <div class="review-rating" aria-label="${rating} stars">${stars}</div>
+                            <p class="review-text">"${text}"</p>
                         </div>
-                        <div class="review-rating" aria-label="${profile.rating} stars">${stars}</div>
-                        <p class="review-text">"${reviewText}"</p>
-                    </div>
-                `;
-            }).join('');
+                    `;
+                }).join('');
+                return;
+            }
         } catch (error) {
-            logAppEvent('API', 'Error displaying reviews, utilizing testimonials cache');
+            logAppEvent('API', 'Error displaying reviews, using default local reviews', error);
         }
+
+        // Fallback render of default reviews (always in English)
+        elements.reviewsGrid.innerHTML = defaultReviews.map(review => {
+            const stars = '★'.repeat(review.rating) + '☆'.repeat(5 - review.rating);
+            return `
+                <div class="review-card">
+                    <div class="review-header">
+                        <img src="${review.avatar}" alt="${review.name}" class="review-avatar" loading="lazy">
+                        <div class="review-user-info">
+                            <h3 class="review-user-name">${review.name}</h3>
+                            <p class="review-user-role">${review.role}</p>
+                        </div>
+                    </div>
+                    <div class="review-rating" aria-label="${review.rating} stars">${stars}</div>
+                    <p class="review-text">"${review.text}"</p>
+                </div>
+            `;
+        }).join('');
     };
 
     // Simulated Checkout API returning custom Promise
@@ -646,7 +706,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const matchesCategory = AppState.activeCategory === 'all' || product.category === AppState.activeCategory;
             const matchesSearch = product.title.toLowerCase().includes(AppState.searchQuery.toLowerCase()) ||
                                   product.description.toLowerCase().includes(AppState.searchQuery.toLowerCase());
-            return matchesCategory && matchesSearch;
+            const matchesBudget = product.price <= AppState.maxBudget;
+            return matchesCategory && matchesSearch && matchesBudget;
         });
 
         // Slice list according to catalog sizing (3 initially, or all matching)
@@ -664,10 +725,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const { id, title, price, description, image, badge } = product;
             const availableStock = getAvailableStock(product);
             const isOutOfStock = availableStock <= 0;
+            const isChecked = AppState.compareList.includes(id);
 
             return `
                 <article class="product-card" data-id="${id}" style="cursor: pointer;">
                     ${badge ? `<span class="product-badge">${badge}</span>` : ''}
+                    <div class="compare-checkbox-wrapper" style="position: absolute; top: 14px; right: 14px; z-index: 5; background: rgba(9, 3, 13, 0.85); padding: 5px 8px; border-radius: 6px; color: #ffffff; font-size: 0.8rem; display: flex; align-items: center; gap: 6px; border: 1px solid rgba(57, 255, 20, 0.4);">
+                        <input type="checkbox" class="compare-checkbox" data-id="${id}" ${isChecked ? 'checked' : ''} style="cursor: pointer; accent-color: var(--electric-green);">
+                        <span style="font-weight: 700; cursor: pointer;">Compare</span>
+                    </div>
                     <div class="product-image-container">
                         <img src="${image}" alt="${title}" class="product-image" loading="lazy">
                     </div>
@@ -689,6 +755,7 @@ document.addEventListener('DOMContentLoaded', () => {
         elements.productGrid.querySelectorAll('.product-card').forEach(card => {
             card.addEventListener('click', (e) => {
                 if (e.target.closest('.add-to-cart-btn')) return;
+                if (e.target.closest('.compare-checkbox-wrapper') || e.target.closest('.compare-checkbox')) return;
                 const productId = card.getAttribute('data-id');
                 openProductModal(productId);
             });
@@ -701,10 +768,63 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
+        // Compare checkbox listener
+        elements.productGrid.querySelectorAll('.compare-checkbox').forEach(cb => {
+            cb.addEventListener('change', (e) => {
+                const productId = cb.getAttribute('data-id');
+                if (cb.checked) {
+                    if (!AppState.compareList.includes(productId)) {
+                        AppState.compareList.push(productId);
+                    }
+                } else {
+                    AppState.compareList = AppState.compareList.filter(id => id !== productId);
+                }
+                updateCompareFAB();
+            });
+        });
+
         // Sync showMoreBtn label
         if (elements.showMoreBtn) {
             elements.showMoreBtn.textContent = AppState.showAll ? dict.showFeatured : dict.showAll;
         }
+
+        // Keep inventory table in sync
+        renderInventoryTable();
+    };
+
+    // Dynamic Inventory Table Status Renderer
+    const renderInventoryTable = () => {
+        if (!elements.inventoryTableBody) return;
+        const dict = translations[AppState.language];
+        
+        elements.inventoryTableBody.innerHTML = AppState.products.map(product => {
+            const { title, category, price, stock, soldCount } = product;
+            
+            let availabilityText = "";
+            let availabilityClass = "";
+            if (stock <= 0) {
+                availabilityText = dict.outOfStock;
+                availabilityClass = "stock-out";
+            } else if (stock <= 3) {
+                availabilityText = AppState.language === 'KA' ? 'ლიმიტირებული' : 'Limited';
+                availabilityClass = "stock-alert";
+            } else {
+                availabilityText = AppState.language === 'KA' ? 'მარაგშია' : 'In Stock';
+                availabilityClass = "stock-in";
+            }
+            
+            const formattedCategory = category.charAt(0).toUpperCase() + category.slice(1);
+            
+            return `
+                <tr>
+                    <td style="color: #ffffff; font-weight: 700;">${title}</td>
+                    <td>${formattedCategory}</td>
+                    <td>${formatPrice(price)}</td>
+                    <td class="${availabilityClass}">${availabilityText} (${stock})</td>
+                    <td style="font-weight: 700; color: #ffffff;">${soldCount}</td>
+                </tr>
+            `;
+        }).join('');
     };
 
     // Open & Render Product Details Modal
@@ -728,11 +848,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const { title, brand, description, price, badge, image, soldCount } = product;
         const availableStock = getAvailableStock(product);
         const isOutOfStock = availableStock <= 0;
+        const productImages = product.images || [image];
 
         elements.modalBodyContent.innerHTML = `
             <div class="modal-grid">
-                <div class="modal-img-wrapper">
-                    <img src="${image}" alt="${title}">
+                <div class="modal-img-wrapper" style="display: flex; flex-direction: column; align-items: center;">
+                    <div class="main-image-zoom-container" id="zoom-container" style="position: relative; overflow: hidden; border-radius: 10px; cursor: zoom-in; width: 100%; border: 1px solid rgba(57, 255, 20, 0.25); background: rgba(9, 3, 13, 0.4);">
+                        <img src="${image}" alt="${title}" id="main-modal-img" class="zoom-image" style="width: 100%; height: auto; display: block; transition: transform 0.1s ease; transform-origin: center center;">
+                    </div>
+                    <div class="modal-thumbnails" style="display: flex; gap: 8px; margin-top: 12px; justify-content: center; flex-wrap: wrap;">
+                        ${productImages.map(imgSrc => `
+                            <img src="${imgSrc}" class="modal-thumbnail-img" style="width: 60px; height: 60px; object-fit: cover; border-radius: 6px; border: 2px solid rgba(255,255,255,0.2); cursor: pointer; transition: border-color 0.2s;" alt="${title} thumbnail">
+                        `).join('')}
+                    </div>
                 </div>
                 <div class="modal-details">
                     ${badge ? `<span class="modal-badge">${badge}</span>` : ''}
@@ -768,6 +896,36 @@ document.addEventListener('DOMContentLoaded', () => {
             addToCart(productId);
             renderModalContent(productId);
         });
+
+        // Clickable thumbnails logic
+        const mainImg = elements.modalBodyContent.querySelector('#main-modal-img');
+        const thumbs = elements.modalBodyContent.querySelectorAll('.modal-thumbnail-img');
+        if (thumbs.length > 0) {
+            thumbs[0].style.borderColor = 'var(--electric-green)';
+            thumbs.forEach(thumb => {
+                thumb.addEventListener('click', () => {
+                    mainImg.src = thumb.src;
+                    thumbs.forEach(t => t.style.borderColor = 'rgba(255,255,255,0.2)');
+                    thumb.style.borderColor = 'var(--electric-green)';
+                });
+            });
+        }
+
+        // Hover-to-Zoom logic
+        const zoomContainer = elements.modalBodyContent.querySelector('#zoom-container');
+        if (zoomContainer && mainImg) {
+            zoomContainer.addEventListener('mousemove', (e) => {
+                const rect = zoomContainer.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                mainImg.style.transformOrigin = `${x}% ${y}%`;
+                mainImg.style.transform = 'scale(2.2)';
+            });
+            zoomContainer.addEventListener('mouseleave', () => {
+                mainImg.style.transform = 'scale(1)';
+                mainImg.style.transformOrigin = 'center center';
+            });
+        }
     };
 
     const closeProductModal = () => {
@@ -862,6 +1020,10 @@ document.addEventListener('DOMContentLoaded', () => {
         
         if (elements.cartTax) elements.cartTax.textContent = formatPrice(tax);
         if (elements.cartTotal) elements.cartTotal.textContent = formatPrice(total);
+
+        // Sync radio checked state
+        const activeRadio = document.querySelector(`input[name="cart-deal"][value="${AppState.activeDeal}"]`);
+        if (activeRadio) activeRadio.checked = true;
     };
 
     // Render Past Payments/Transactions inside user Profile Pane
@@ -921,8 +1083,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (elements.submissionsEmptyMessage) elements.submissionsEmptyMessage.style.display = 'none';
 
-        elements.submissionsItemsList.innerHTML = AppState.submissions.map(sub => {
-            const { firstName, lastName, email, interest, goal, message, timestamp } = sub;
+        elements.submissionsItemsList.innerHTML = AppState.submissions.map((sub, index) => {
+            const { firstName, lastName, email, interest, goal, message, timestamp, review } = sub;
             const dateStr = new Date(timestamp).toLocaleDateString(undefined, {
                 month: 'short',
                 day: 'numeric',
@@ -931,11 +1093,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 minute: '2-digit'
             });
 
+            const hasReview = !!review;
+            const statusBadgeText = hasReview 
+                ? (AppState.language === 'KA' ? 'განხილული' : 'Reviewed') 
+                : (AppState.language === 'KA' ? 'განხილვის პროცესში' : 'Pending Review');
+            
+            const statusBadgeClass = hasReview ? 'status-reviewed' : 'status-pending';
+
             return `
-                <div class="submission-card">
-                    <div class="submission-card-header">
-                        <span class="submission-card-interest">${interest}</span>
-                        <span class="submission-card-date">${dateStr}</span>
+                <div class="submission-card" data-index="${index}">
+                    <div class="submission-card-status-row">
+                        <span class="status-badge ${statusBadgeClass}">${statusBadgeText}</span>
+                        <button class="delete-sub-btn" data-index="${index}" title="${AppState.language === 'KA' ? 'წაშლა' : 'Delete Request'}">&times;</button>
                     </div>
                     <div class="submission-card-body">
                         <div class="submission-card-field">
@@ -945,6 +1114,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         <div class="submission-card-field">
                             <strong>Email:</strong>
                             <span>${email}</span>
+                        </div>
+                        <div class="submission-card-field">
+                            <strong>${AppState.language === 'KA' ? 'კატეგორია' : 'Category'}:</strong>
+                            <span style="text-transform: capitalize; color: var(--electric-green); font-weight: 700;">${interest}</span>
                         </div>
                         ${goal ? `
                         <div class="submission-card-field">
@@ -958,10 +1131,108 @@ document.addEventListener('DOMContentLoaded', () => {
                             <span style="font-style: italic; color: #cbd5e1; margin-top: 2px;">"${message}"</span>
                         </div>
                         ` : ''}
+                        
+                        <!-- Review Component inside Service request card -->
+                        <div class="submission-review-section">
+                            ${hasReview ? `
+                                <div class="completed-review-box">
+                                    <div class="stars-display">${'★'.repeat(review.rating)}${'☆'.repeat(5 - review.rating)}</div>
+                                    <p class="review-comment">"${review.comment}"</p>
+                                </div>
+                            ` : `
+                                <button class="btn btn-review-toggle" data-index="${index}">
+                                    ${AppState.language === 'KA' ? 'შეფასება' : 'Leave a Review'}
+                                </button>
+                                <div class="review-form-wrapper hidden" id="review-form-${index}">
+                                    <div class="rating-input-stars">
+                                        <span class="star-btn" data-rating="1">★</span>
+                                        <span class="star-btn" data-rating="2">★</span>
+                                        <span class="star-btn" data-rating="3">★</span>
+                                        <span class="star-btn" data-rating="4">★</span>
+                                        <span class="star-btn" data-rating="5">★</span>
+                                    </div>
+                                    <textarea placeholder="${AppState.language === 'KA' ? 'დაწერეთ თქვენი აზრი სერვისზე...' : 'Write your feedback on support...'}" class="review-comment-input"></textarea>
+                                    <button class="btn submit-sub-review-btn" data-index="${index}" style="margin-top: 6px;">
+                                        ${AppState.language === 'KA' ? 'გაგზავნა' : 'Submit Review'}
+                                    </button>
+                                </div>
+                            `}
+                        </div>
                     </div>
                 </div>
             `;
         }).join('');
+
+        // Attach listeners for review forms toggle
+        elements.submissionsItemsList.querySelectorAll('.btn-review-toggle').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = e.target.getAttribute('data-index');
+                const form = document.getElementById(`review-form-${idx}`);
+                if (form) {
+                    form.classList.toggle('hidden');
+                }
+            });
+        });
+
+        // Attach listeners for star rating selections
+        elements.submissionsItemsList.querySelectorAll('.review-form-wrapper').forEach(wrapper => {
+            let selectedRating = 5; // Default rating
+            const stars = wrapper.querySelectorAll('.star-btn');
+            
+            // Set initial all gold
+            stars.forEach((s, idx) => {
+                s.style.color = '#fbbf24';
+            });
+            
+            stars.forEach(star => {
+                star.addEventListener('click', (e) => {
+                    selectedRating = parseInt(e.target.getAttribute('data-rating'));
+                    stars.forEach((s, idx) => {
+                        if (idx < selectedRating) {
+                            s.style.color = '#fbbf24';
+                        } else {
+                            s.style.color = '#64748b';
+                        }
+                    });
+                    wrapper.setAttribute('data-selected-rating', selectedRating);
+                });
+            });
+            
+            wrapper.setAttribute('data-selected-rating', selectedRating);
+        });
+
+        // Attach submit review listeners
+        elements.submissionsItemsList.querySelectorAll('.submit-sub-review-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.getAttribute('data-index'));
+                const wrapper = document.getElementById(`review-form-${idx}`);
+                const rating = parseInt(wrapper.getAttribute('data-selected-rating')) || 5;
+                const comment = wrapper.querySelector('.review-comment-input').value.trim();
+                
+                if (comment.length < 5) {
+                    showToast(AppState.language === 'KA' ? 'გთხოვთ შეიყვანოთ უფრო გრძელი კომენტარი (მინ. 5 სიმბოლო)' : 'Please enter a longer comment (min 5 chars)', 'error');
+                    return;
+                }
+
+                // Update AppState
+                AppState.submissions[idx].review = { rating, comment };
+                localStorage.setItem('techstore_registrations', JSON.stringify(AppState.submissions));
+                
+                showToast(AppState.language === 'KA' ? 'შეფასება დამატებულია!' : 'Review submitted successfully!', 'success');
+                renderSubmissions();
+            });
+        });
+
+        // Attach delete submission listeners
+        elements.submissionsItemsList.querySelectorAll('.delete-sub-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.getAttribute('data-index'));
+                AppState.submissions.splice(idx, 1);
+                localStorage.setItem('techstore_registrations', JSON.stringify(AppState.submissions));
+                showToast(AppState.language === 'KA' ? 'ჩანაწერი წაშლილია' : 'Record removed successfully', 'success');
+                renderSubmissions();
+            });
+        });
     };
 
     // Toggle Profile Drawer Tabs View
@@ -1168,6 +1439,144 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // Compare Feature helper functions
+    const updateCompareFAB = () => {
+        if (!elements.compareFab || !elements.compareCount) return;
+        elements.compareCount.textContent = AppState.compareList.length;
+        if (AppState.compareList.length > 0) {
+            elements.compareFab.classList.remove('hidden');
+        } else {
+            elements.compareFab.classList.add('hidden');
+        }
+    };
+
+    const openCompareModal = () => {
+        if (!elements.compareModal) return;
+        renderCompareTable();
+        elements.compareModal.classList.add('modal-open');
+        elements.compareModal.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+    };
+
+    const closeCompareModal = () => {
+        if (!elements.compareModal) return;
+        elements.compareModal.classList.remove('modal-open');
+        elements.compareModal.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+    };
+
+    const renderCompareTable = () => {
+        if (!elements.compareModalBody) return;
+        const productsToCompare = AppState.compareList.map(id => AppState.products.find(p => p.id === id)).filter(Boolean);
+
+        if (productsToCompare.length === 0) {
+            elements.compareModalBody.innerHTML = `<p style="text-align: center; color: var(--muted); font-size: 1.1rem; padding: 24px;">No products selected for comparison.</p>`;
+            return;
+        }
+
+        const dict = translations[AppState.language];
+
+        let tableHtml = `<div class="table-wrapper compare-table-wrapper" style="overflow-x: auto; background: rgba(20, 1, 30, 0.95); border: 1px solid rgba(57, 255, 20, 0.4); border-radius: 12px; padding: 12px;"><table class="product-table compare-table" style="width: 100%; min-width: 600px; border-collapse: collapse;">`;
+
+        // Row 1: Image & Remove button
+        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Product</th>`;
+        productsToCompare.forEach(p => {
+            tableHtml += `<td style="text-align: center; padding: 14px; vertical-align: top;">
+                <div class="compare-img-cell" style="position: relative; display: inline-block;">
+                    <img src="${p.image}" alt="${p.title}" style="max-height: 80px; width: auto; object-fit: contain; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); padding: 4px;">
+                    <br>
+                    <button class="compare-remove-btn" data-id="${p.id}" style="background: rgba(239, 68, 68, 0.2); border: 1px solid #ef4444; color: #f87171; cursor: pointer; font-size: 0.75rem; font-weight: 700; margin-top: 8px; padding: 4px 8px; border-radius: 4px; transition: all 0.2s;" onmouseover="this.style.background='#ef4444'; this.style.color='#ffffff';" onmouseout="this.style.background='rgba(239, 68, 68, 0.2)'; this.style.color='#f87171';">Remove</button>
+                </div>
+            </td>`;
+        });
+        tableHtml += `</tr>`;
+
+        // Row 2: Name
+        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Name</th>`;
+        productsToCompare.forEach(p => {
+            tableHtml += `<td style="color: #ffffff; font-weight: 700; padding: 14px; font-size: 1rem;">${p.title}</td>`;
+        });
+        tableHtml += `</tr>`;
+
+        // Row 3: Price
+        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Price</th>`;
+        productsToCompare.forEach(p => {
+            tableHtml += `<td style="color: var(--mint); font-weight: 800; font-size: 1.1rem; padding: 14px;">${formatPrice(p.price)}</td>`;
+        });
+        tableHtml += `</tr>`;
+
+        // Row 4: Brand
+        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Brand</th>`;
+        productsToCompare.forEach(p => {
+            tableHtml += `<td style="color: #cbd5e1; padding: 14px;">${p.brand}</td>`;
+        });
+        tableHtml += `</tr>`;
+
+        // Row 5: Screen Size
+        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Screen Size</th>`;
+        productsToCompare.forEach(p => {
+            tableHtml += `<td style="color: #ffffff; font-weight: 600; padding: 14px;">${p.screenSize || 'N/A'}</td>`;
+        });
+        tableHtml += `</tr>`;
+
+        // Row 6: Processor
+        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Processor</th>`;
+        productsToCompare.forEach(p => {
+            tableHtml += `<td style="color: #ffffff; font-weight: 600; padding: 14px;">${p.processor || 'N/A'}</td>`;
+        });
+        tableHtml += `</tr>`;
+
+        // Row 7: RAM
+        tableHtml += `<tr style="border-bottom: 1px solid rgba(255,255,255,0.1);"><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">RAM</th>`;
+        productsToCompare.forEach(p => {
+            tableHtml += `<td style="color: #ffffff; font-weight: 600; padding: 14px;">${p.ram || 'N/A'}</td>`;
+        });
+        tableHtml += `</tr>`;
+
+        // Row 8: Action
+        tableHtml += `<tr><th style="background: transparent; color: var(--electric-green); font-weight: 800; font-size: 0.9rem; text-transform: uppercase;">Action</th>`;
+        productsToCompare.forEach(p => {
+            const availableStock = getAvailableStock(p);
+            const isOutOfStock = availableStock <= 0;
+            tableHtml += `<td style="padding: 14px;">
+                <button class="btn compare-add-to-cart" data-id="${p.id}" ${isOutOfStock ? 'disabled' : ''} style="padding: 6px 12px; font-size: 0.85rem; min-height: unset; border-radius: 6px;">
+                    ${isOutOfStock ? dict.outOfStock : dict.addToCart}
+                </button>
+            </td>`;
+        });
+        tableHtml += `</tr>`;
+
+        tableHtml += `</table></div>`;
+        elements.compareModalBody.innerHTML = tableHtml;
+
+        // Attach listeners inside compared table
+        elements.compareModalBody.querySelectorAll('.compare-remove-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                AppState.compareList = AppState.compareList.filter(pid => pid !== id);
+                updateCompareFAB();
+                
+                // Uncheck main grid check box
+                const cb = document.querySelector(`.compare-checkbox[data-id="${id}"]`);
+                if (cb) cb.checked = false;
+
+                if (AppState.compareList.length === 0) {
+                    closeCompareModal();
+                } else {
+                    renderCompareTable();
+                }
+            });
+        });
+
+        elements.compareModalBody.querySelectorAll('.compare-add-to-cart').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                addToCart(id);
+                renderCompareTable();
+            });
+        });
+    };
+
     // -------------------------------------------------------------------------
     // 9. EVENT LISTENERS SETUP
     // -------------------------------------------------------------------------
@@ -1236,7 +1645,36 @@ document.addEventListener('DOMContentLoaded', () => {
         dealRadios.forEach(radio => {
             radio.addEventListener('change', (e) => {
                 AppState.activeDeal = e.target.value;
+                localStorage.setItem('techstore_active_deal', AppState.activeDeal);
                 renderCart();
+            });
+        });
+
+        // Home Page Deal Cards Click Handler
+        const dealCards = document.querySelectorAll('.deal-card');
+        dealCards.forEach(card => {
+            card.style.cursor = 'pointer';
+            card.addEventListener('click', () => {
+                const dealType = card.getAttribute('data-deal');
+                if (dealType) {
+                    AppState.activeDeal = dealType;
+                    localStorage.setItem('techstore_active_deal', AppState.activeDeal);
+                    renderCart();
+                    
+                    // Highlight selected radio button in cart
+                    const radio = document.querySelector(`input[name="cart-deal"][value="${dealType}"]`);
+                    if (radio) radio.checked = true;
+                    
+                    showToast(
+                        AppState.language === 'KA' 
+                            ? `აქცია წარმატებით გააქტიურდა!` 
+                            : `Deal applied successfully!`,
+                        'success'
+                    );
+                    
+                    // Open cart drawer so they can see the deal applied
+                    toggleCartDrawer(true);
+                }
             });
         });
 
@@ -1261,6 +1699,36 @@ document.addEventListener('DOMContentLoaded', () => {
             elements.productSearch.addEventListener('input', (e) => {
                 AppState.searchQuery = e.target.value;
                 renderCatalog();
+            });
+        }
+
+        // Budget Range Slider listener
+        if (elements.budgetRange) {
+            elements.budgetRange.addEventListener('input', (e) => {
+                AppState.maxBudget = parseInt(e.target.value);
+                if (elements.budgetValue) {
+                    elements.budgetValue.textContent = formatPrice(AppState.maxBudget);
+                }
+                renderCatalog();
+            });
+        }
+
+        // Compare FAB click listener
+        if (elements.compareFab) {
+            elements.compareFab.addEventListener('click', () => {
+                openCompareModal();
+            });
+        }
+
+        // Compare Close listeners
+        if (elements.compareCloseBtn) {
+            elements.compareCloseBtn.addEventListener('click', () => {
+                closeCompareModal();
+            });
+        }
+        if (elements.compareModalOverlay) {
+            elements.compareModalOverlay.addEventListener('click', () => {
+                closeCompareModal();
             });
         }
 
@@ -1341,6 +1809,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     // Reset cart and checkout form fields
                     AppState.cart = [];
                     AppState.activeDeal = 'none';
+                    localStorage.setItem('techstore_active_deal', 'none');
                     const defaultRadio = document.querySelector('input[name="cart-deal"][value="none"]');
                     if (defaultRadio) defaultRadio.checked = true;
                     
@@ -1418,6 +1887,7 @@ document.addEventListener('DOMContentLoaded', () => {
         loadSubmissionsFromStorage();
         loadLanguageFromStorage();
         loadCurrencyFromStorage();
+        AppState.activeDeal = localStorage.getItem('techstore_active_deal') || 'none';
         
         await Promise.all([
             fetchProducts(),
@@ -1427,6 +1897,7 @@ document.addEventListener('DOMContentLoaded', () => {
         translateInterface();
         setupEventListeners();
         fetchReviews();
+        renderSubmissions();
         
         logAppEvent('Init', 'App ready.');
     };

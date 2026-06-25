@@ -55,6 +55,10 @@
                         <span class="cart-icon">🛒</span>
                         <span class="cart-badge" id="cart-badge-count">0</span>
                     </button>
+                    <button id="recent-toggle-btn" class="cart-btn" aria-label="Open recently viewed products" title="Recently Viewed" style="position: relative;">
+                        <span class="recent-icon">⏳</span>
+                        <span class="cart-badge" id="recent-badge-count" style="background: var(--pink);">0</span>
+                    </button>
                 </div>
             </nav>
         </div>
@@ -104,17 +108,45 @@
                 </div>
 
                 <!-- Search and Filter Controls -->
-                <div class="catalog-controls">
-                    <div class="search-box-wrapper">
-                        <input type="text" id="product-search" placeholder="Search products by title or description..." aria-label="Search products">
-                        <span class="search-icon">🔍</span>
+                <div class="catalog-controls-container" style="width: 100%; margin-bottom: 34px; position: relative; z-index: 20;">
+                    <div class="catalog-controls-row" style="display: flex; gap: 12px; width: 100%; justify-content: center; align-items: center; flex-wrap: wrap;">
+                        <button id="filter-toggle-btn" class="filter-toggle-btn" aria-label="Toggle filters" style="background: rgba(33, 1, 36, 0.6); border: 1px solid rgba(57, 255, 20, 0.4); color: #ffffff; padding: 12px 20px; border-radius: 999px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.25s ease; backdrop-filter: blur(8px);" onmouseover="this.style.borderColor='var(--electric-green)'; this.style.boxShadow='0 0 10px rgba(57, 255, 20, 0.3)';" onmouseout="this.style.borderColor='rgba(57, 255, 20, 0.4)'; this.style.boxShadow='none';">
+                            <span class="filter-btn-icon">⚙️</span> Filters
+                        </button>
+                        <div class="search-box-wrapper" style="margin: 0; flex-grow: 1; max-width: 480px;">
+                            <input type="text" id="product-search" placeholder="Search products by title or description..." aria-label="Search products">
+                            <span class="search-icon">🔍</span>
+                        </div>
                     </div>
-                    <div class="filter-tabs">
-                        <button class="filter-tab active" data-category="all">All Tech</button>
-                        <button class="filter-tab" data-category="laptops">Laptops</button>
-                        <button class="filter-tab" data-category="smartphones">Smartphones</button>
-                        <button class="filter-tab" data-category="accessories">Accessories</button>
-                        <button class="filter-tab" data-category="wearables">Wearables</button>
+                    
+                    <!-- Expandable Filter Panel -->
+                    <div id="filter-dropdown-panel" class="filter-dropdown-panel" style="max-height: 0; overflow: hidden; opacity: 0; transition: max-height 0.4s ease, opacity 0.3s ease, margin-top 0.3s ease; width: 100%; max-width: 600px; margin: 0 auto; background: rgba(20, 3, 30, 0.95); border: 1px solid rgba(57, 255, 20, 0.25); border-radius: 16px; padding: 0 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); backdrop-filter: blur(10px);">
+                        <div class="filter-dropdown-content" style="padding: 20px 0; display: flex; flex-direction: column; gap: 20px;">
+                            <div class="filter-panel-section">
+                                <h4 style="margin: 0 0 10px 0; color: var(--electric-green); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Categories</h4>
+                                <div class="filter-tabs" style="display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; margin-bottom: 0;">
+                                    <button class="filter-tab active" data-category="all">All Tech</button>
+                                    <button class="filter-tab" data-category="laptops">Laptops</button>
+                                    <button class="filter-tab" data-category="smartphones">Smartphones</button>
+                                    <button class="filter-tab" data-category="accessories">Accessories</button>
+                                    <button class="filter-tab" data-category="wearables">Wearables</button>
+                                </div>
+                            </div>
+                            
+                            <div class="filter-panel-section">
+                                <h4 style="margin: 0 0 10px 0; color: var(--electric-green); font-size: 0.95rem; text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px;">Price Range Filter</h4>
+                                <div class="price-range-sliders" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px;">
+                                    <div class="budget-slider-wrapper" style="width: 100%; box-sizing: border-box;">
+                                        <label for="min-price-range">Min Price: <span id="min-price-val">$0</span></label>
+                                        <input type="range" id="min-price-range" min="0" max="2000" step="50" value="0" aria-label="Minimum price">
+                                    </div>
+                                    <div class="budget-slider-wrapper" style="width: 100%; box-sizing: border-box;">
+                                        <label for="max-price-range">Max Price: <span id="max-price-val">$2000</span></label>
+                                        <input type="range" id="max-price-range" min="0" max="2000" step="50" value="2000" aria-label="Maximum price">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -225,8 +257,8 @@
 
                 <div class="iframe-wrapper">
                     <iframe
-                        src="https://www.youtube.com/embed/a9__D53WsUs"
-                        title="What is AWS? | Amazon Web Services"
+                        src="https://www.youtube.com/embed/1Cq6yMISwsU?si=cHixteYLDKSa1Mp9"
+                        title="AWS Video Tour"
                         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                         allowfullscreen>
                     </iframe>
@@ -534,6 +566,20 @@
         </div>
     </div>
 
+    <!-- Recently Viewed Drawer -->
+    <div id="recent-drawer" class="cart-drawer" aria-hidden="true">
+        <div class="cart-drawer-overlay" id="recent-overlay"></div>
+        <div class="cart-drawer-content" style="border-left: 1px solid rgba(138, 255, 193, 0.3);">
+            <div class="cart-drawer-header">
+                <h2>Recently Viewed</h2>
+                <button class="drawer-close-btn" id="recent-drawer-close" aria-label="Close Recently Viewed" style="background:transparent; border:none; color:#ffffff; font-size:2rem; cursor:pointer;">&times;</button>
+            </div>
+            <div class="cart-drawer-body" id="recent-drawer-body" style="overflow-y: auto; flex-grow: 1; padding: 24px; display: flex; flex-direction: column; gap: 16px;">
+                <!-- Recently viewed items with context loaded here dynamically -->
+            </div>
+        </div>
+    </div>
+
     <!-- Product Details Modal -->
     <div id="product-modal" class="modal-wrapper" aria-hidden="true">
         <div class="modal-overlay" id="modal-overlay"></div>
@@ -541,6 +587,25 @@
             <button id="modal-close-btn" class="modal-close-btn" aria-label="Close details">&times;</button>
             <div id="modal-body-content">
                 <!-- Dynamic product specifications loaded here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Comparison FAB & Modal -->
+    <button id="compare-fab" class="compare-fab hidden" aria-label="Open comparison details" title="Compare Selected Products">
+        <span class="compare-fab-icon">⚖️</span>
+        <span class="compare-fab-text">Compare (<span id="compare-count">0</span>)</span>
+    </button>
+
+    <div id="compare-modal" class="modal-wrapper" aria-hidden="true">
+        <div class="modal-overlay" id="compare-modal-overlay"></div>
+        <div class="modal-content-container compare-modal-container">
+            <button id="compare-close-btn" class="modal-close-btn" aria-label="Close comparison">&times;</button>
+            <div class="compare-modal-header">
+                <h2>Product Comparison</h2>
+            </div>
+            <div class="compare-modal-body" id="compare-modal-body">
+                <!-- structured table rendered here -->
             </div>
         </div>
     </div>
