@@ -328,6 +328,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // This friendly function displays a neat pop-up notification on the screen to keep you informed of your actions.
     const showToast = (message, type = 'success') => {
         const container = document.getElementById('toast-container');
         if (!container) return;
@@ -344,6 +345,7 @@ document.addEventListener('DOMContentLoaded', () => {
         container.appendChild(toast);
         setTimeout(() => toast.classList.add('active'), 50);
 
+        // This helper removes the notification toast gracefully from the page.
         const close = () => {
             toast.classList.remove('active');
             toast.addEventListener('transitionend', () => toast.remove(), { once: true });
@@ -353,33 +355,30 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(close, 4000);
     };
 
+    // This friendly function formats numbers into a neat, clean US dollar display format.
     const formatPrice = (priceUSD) => {
         return `$${Number(priceUSD).toFixed(2)}`;
     };
 
+    // This helpful function calculates how many items are left in stock by subtracting items currently in the cart.
     const getAvailableStock = (product) => {
         const cartItem = state.cart.find(item => item.product.id === product.id);
         const cartQty = cartItem ? cartItem.quantity : 0;
         return Math.max(0, product.stock - cartQty);
     };
 
-    // -------------------------------------------------------------------------
-    // 4. DATA FETCHING (PRODUCTS, CURRENCY, REVIEWS)
-    // -------------------------------------------------------------------------
+    // This function fetches live electronics product listings from the external API to populate our store catalog.
     const fetchProducts = async () => {
         try {
-            // Fetch directly from Fake Store API (electronics category)
             const res = await fetch('https://fakestoreapi.com/products/category/electronics');
             if (!res.ok) throw new Error('Fake Store API network response was not ok');
             const data = await res.json();
 
-            // Map the API data to match our application's expected tech product schema
             const mappedProducts = data.map(p => {
                 const titleLower = p.title.toLowerCase();
                 let category = 'accessories';
                 let brand = 'Generic';
 
-                // Categorize items based on keywords in title
                 if (titleLower.includes('laptop') || titleLower.includes('book') || titleLower.includes('acer') || titleLower.includes('asus')) {
                     category = 'laptops';
                     brand = titleLower.includes('acer') ? 'Acer' : (titleLower.includes('asus') ? 'Asus' : 'Generic Laptop');
@@ -400,7 +399,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     description: p.description,
                     price: p.price,
                     image: p.image,
-                    images: [p.image, p.image, p.image], // Product detail gallery images
+                    images: [p.image, p.image, p.image],
                     category: category,
                     brand: brand,
                     stock: 12,
@@ -412,7 +411,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 };
             });
 
-            // Merge dynamic stock counts and sold counts from local storage overrides
             const savedStocks = JSON.parse(localStorage.getItem('techstore_product_stocks')) || {};
             const savedSoldCount = JSON.parse(localStorage.getItem('techstore_product_sold')) || {};
 
@@ -428,8 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
-
+    // This function retrieves client testimonials and reviews dynamically to display customer satisfaction.
     const fetchReviews = async () => {
         const reviewsGrid = document.getElementById('reviews-grid');
         if (!reviewsGrid) return;
@@ -492,9 +489,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }).join('');
     };
 
-    // -------------------------------------------------------------------------
-    // 5. INTERACTIVE DRAWERS & MODALS TOOGLE
-    // -------------------------------------------------------------------------
+    // This utility function slides drawers and modal windows open or closed based on user navigation.
     const toggleDrawer = (drawerId, open) => {
         const drawer = document.getElementById(drawerId);
         if (!drawer) return;
@@ -509,6 +504,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // This helper closes the currently open product details modal window.
     const closeModal = () => {
         const modal = document.getElementById('product-modal');
         if (modal) {
@@ -518,6 +514,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // This function loads and opens the detail view modal for a selected product.
     const openProductModal = (id) => {
         state.activeModalProductId = id;
         addToRecentlyViewed(id);
@@ -531,6 +528,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // This function builds the HTML content, plots the stock-style price history trend chart, and binds all detail controls.
     const renderModalContent = (productId) => {
         const content = document.getElementById('modal-body-content');
         if (!content) return;
@@ -544,11 +542,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const isOutOfStock = availableStock <= 0;
         const productImages = product.images || [image];
 
-        // Dynamic price history chart calculations (deterministic per product ID)
+        // This helper computes a numeric hash value based on a string's character codes.
         const sumChars = (str) => [...str].reduce((acc, char) => acc + char.charCodeAt(0), 0);
         const seed = sumChars(productId || "");
 
-        // Days trend (90, 60, 30, 15, Today)
         const f90 = 1.10 + ((seed % 10) / 100);
         const f60 = 1.05 + (((seed + 3) % 10) / 100);
         const f30 = 1.15 + (((seed + 7) % 10) / 100);
@@ -563,6 +560,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const pricesArr = [p90, p60, p30, p15, pToday];
         const maxP = Math.max(...pricesArr);
         const minP = Math.min(...pricesArr);
+        // This helper maps a price value to vertical coordinate pixels on the 90-day chart.
         const mapY = (val) => 90 - ((val - minP) / (maxP - minP || 1)) * 70;
 
         const y90 = mapY(p90);
@@ -571,7 +569,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const y15 = mapY(p15);
         const yToday = mapY(pToday);
 
-        // Months trend (5 months ago, 4 months ago, 3 months ago, 2 months ago, 1 month ago, Current)
         const monthNames = state.language === 'KA'
             ? ["იან", "თებ", "მარ", "აპრ", "მაი", "ივნ", "ივლ", "აგვ", "სექ", "ოქტ", "ნოე", "დეკ"]
             : ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -589,7 +586,6 @@ document.addEventListener('DOMContentLoaded', () => {
         d.setMonth(d.getMonth() - 1);
         const mLabel0 = monthNames[d.getMonth()];
 
-        // 6 months of prices
         const pm0 = Math.round(price * (1.12 + ((seed % 9) / 100)));
         const pm1 = Math.round(price * (1.08 + (((seed + 2) % 9) / 100)));
         const pm2 = Math.round(price * (1.15 + (((seed + 4) % 9) / 100)));
@@ -600,6 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const mPricesArr = [pm0, pm1, pm2, pm3, pm4, pm5];
         const maxMP = Math.max(...mPricesArr);
         const minMP = Math.min(...mPricesArr);
+        // This helper maps a price value to vertical coordinate pixels on the 6-month chart.
         const mapMY = (val) => 90 - ((val - minMP) / (maxMP - minMP || 1)) * 70;
 
         const ym0 = mapMY(pm0);
@@ -611,14 +608,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         content.innerHTML = `
             <div class="product-detail-modal-layout">
-                <!-- Left Column: Gallery & Details -->
                 <div>
                     <div id="zoom-container" style="position: relative; overflow: hidden; border-radius: 12px; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.1); cursor: zoom-in; display: flex; align-items: center; justify-content: center; height: 320px;">
                         <img id="main-product-detail-img" src="${image}" alt="${title}" style="max-height: 100%; max-width: 100%; object-fit: contain; transition: transform 0.1s ease;">
                     </div>
 
-                    
-                    <!-- Product Info directly below Gallery -->
                     <div style="margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px;">
                         <h4 style="color: var(--electric-green); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; margin: 0 0 8px 0;">Description</h4>
                         <p style="color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; margin: 0 0 16px 0;">${description}</p>
@@ -630,13 +624,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
 
-                <!-- Right Column: Specs, Purchase & Analytics -->
                 <div style="display: flex; flex-direction: column; justify-content: space-between;">
                     <div>
                         <h2 style="font-size: 1.5rem; font-weight: 800; color: #fff; margin: 0 0 6px 0;">${title}</h2>
                         <p style="color: var(--electric-green); font-weight: 700; margin: 0 0 16px 0;">${brand}</p>
                         
-                        <!-- Specs -->
                         <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;">
                             ${product.screenSize && product.screenSize !== 'N/A' ? `<div style="display:flex; justify-content:space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 4px;"><span style="color:#64748b;">Screen Size</span><span style="color:#fff; font-weight:600;">${product.screenSize}</span></div>` : ''}
                             ${product.processor && product.processor !== 'N/A' ? `<div style="display:flex; justify-content:space-between; font-size: 0.85rem; border-bottom: 1px solid rgba(255,255,255,0.04); padding-bottom: 4px;"><span style="color:#64748b;">Processor</span><span style="color:#fff; font-weight:600;">${product.processor}</span></div>` : ''}
@@ -644,7 +636,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
 
-                    <!-- Financial Stock Style Price Chart -->
                     <div class="price-history-chart-card" style="background: rgba(0,0,0,0.25); border: 1px solid rgba(255,255,255,0.08); border-radius: 12px; padding: 16px; margin-bottom: 20px;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                             <div>
@@ -660,7 +651,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
 
-                        <!-- 90 Days Chart (Stock style) -->
                         <div id="chart-container-days" style="display: block;">
                             <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible;">
                                 <defs>
@@ -692,7 +682,6 @@ document.addEventListener('DOMContentLoaded', () => {
                             </div>
                         </div>
 
-                        <!-- 6 Months Chart -->
                         <div id="chart-container-months" style="display: none;">
                             <svg viewBox="0 0 320 120" style="width: 100%; height: 110px; overflow: visible;">
                                 <defs>
@@ -726,7 +715,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
 
-                    <!-- Price & Cart Button -->
                     <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">
                         <span style="font-size: 1.6rem; font-weight: 800; color: #fff;">${formatPrice(price)}</span>
                         <button id="modal-add-to-cart-btn" class="btn" style="background: #DAA520; color: #000; font-weight: 800; padding: 12px 24px; border-radius: 8px; cursor: pointer; transition: all 0.2s;" ${isOutOfStock ? 'disabled' : ''}>
@@ -737,16 +725,11 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
 
-        // Event listener for modal Add to Cart button
         document.getElementById('modal-add-to-cart-btn')?.addEventListener('click', () => {
             addToCart(productId);
-            // Refresh modal content to update stock level visual
             renderModalContent(productId);
         });
 
-
-
-        // Hover to Zoom logic
         const zoomContainer = document.getElementById('zoom-container');
         const mainImg = document.getElementById('main-product-detail-img');
         if (zoomContainer && mainImg) {
@@ -766,6 +749,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const legendPrice = document.getElementById('legend-price');
         const legendChange = document.getElementById('legend-change');
 
+        // This function resets the chart legend display to its default state.
         const resetLegend = (isDaysView) => {
             if (legendPrice) legendPrice.textContent = formatPrice(price);
             if (legendChange) {
@@ -776,7 +760,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         };
 
-        // Chart toggle event listeners
         const btnDays = document.getElementById('btn-chart-days');
         const btnMonths = document.getElementById('btn-chart-months');
         const containerDays = document.getElementById('chart-container-days');
@@ -807,7 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Setup hover tracking for both SVGs
+        // This helper configures interactive mouse move and leave tracking handlers on the chart.
         const setupChartHover = (container, isDays) => {
             if (!container) return;
             const svg = container.querySelector('svg');
@@ -837,10 +820,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const rect = svg.getBoundingClientRect();
                 if (!rect.width) return;
 
-                // Normalize coordinate relative to the SVG's 320px width viewbox
                 const mouseX = (e.clientX - rect.left) * (320 / rect.width);
 
-                // Find closest data point
                 let closest = pts[0];
                 let minDiff = Math.abs(mouseX - closest.x);
                 for (let i = 1; i < pts.length; i++) {
@@ -851,7 +832,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }
 
-                // If mouse is within active charting area range (approx 30px to 305px)
                 if (mouseX >= 30 && mouseX <= 305) {
                     if (crosshairX) {
                         crosshairX.setAttribute('x1', closest.x);
@@ -898,6 +878,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     // 6. DOM RENDERERS (CATALOG, CART, PAYMENTS, SUBMISSIONS, COMPARE)
     // -------------------------------------------------------------------------
+    // This friendly function updates the catalog grid UI based on the search query, category, and price range filters.
     const renderCatalog = () => {
         const grid = document.getElementById('product-grid');
         if (!grid) return;
@@ -953,7 +934,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Dynamic event attachments
         grid.querySelectorAll('.product-card').forEach(card => {
             const id = card.getAttribute('data-id');
             card.addEventListener('click', (e) => {
@@ -965,6 +945,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // This helper computes the cart subtotal, discount, VAT, and final price summary.
     const calculateCartTotal = () => {
         const subtotal = state.cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
         let discount = 0;
@@ -977,6 +958,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return { subtotal, discount, vat, total: netTotal };
     };
 
+    // This function updates the cart list in the UI, computes order summaries, and binds action buttons.
     const renderCart = () => {
         const list = document.getElementById('cart-items-list');
         const badge = document.getElementById('cart-badge-count');
@@ -1019,7 +1001,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }).join('');
 
-        // Update Totals
         const totals = calculateCartTotal();
         const subtotalEl = document.getElementById('cart-subtotal');
         const discountEl = document.getElementById('cart-discount');
@@ -1041,7 +1022,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const dealSelect = document.getElementById('cart-deal-select');
         if (dealSelect) dealSelect.value = state.activeDeal;
 
-        // Attach quantity and delete click event listeners
         list.querySelectorAll('.decrease-qty').forEach(btn => {
             btn.addEventListener('click', () => {
                 const id = btn.getAttribute('data-id');
@@ -1077,6 +1057,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // This friendly function adds a selected product to the shopping cart or increases its quantity.
     const addToCart = (id) => {
         const p = state.products.find(prod => prod.id === id);
         if (!p) return;
@@ -1096,6 +1077,7 @@ document.addEventListener('DOMContentLoaded', () => {
         translateInterface();
     };
 
+    // This function populates the order history drawer with all successfully completed receipts.
     const renderPayments = () => {
         const list = document.getElementById('payment-items-list');
         const emptyMsg = document.getElementById('payment-empty-message');
@@ -1124,6 +1106,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `).join('');
     };
 
+    // This friendly function renders the user's support requests and lets them submit reviews on completed tasks.
     const renderSubmissions = () => {
         const list = document.getElementById('submissions-items-list');
         const emptyMsg = document.getElementById('submissions-empty-message');
@@ -1172,7 +1155,6 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `).join('');
 
-        // Event hooks for feedback and submission management
         list.querySelectorAll('.btn-review-toggle').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const idx = btn.getAttribute('data-index');
@@ -1224,6 +1206,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // This helper updates the comparison selection checklist when checking or unchecking products.
     const toggleCompare = (id, checked) => {
         if (checked) {
             if (state.compareList.length >= 3) {
@@ -1238,6 +1221,7 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCompareFab();
     };
 
+    // This utility displays or hides the floating compare button depending on items chosen.
     const updateCompareFab = () => {
         const fab = document.getElementById('compare-fab');
         const count = document.getElementById('compare-count');
@@ -1248,6 +1232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // This function prints the detailed comparative feature matrix table in the comparison modal.
     const renderCompareTable = () => {
         const body = document.getElementById('compare-modal-body');
         if (!body) return;
@@ -1333,12 +1318,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
+    // This friendly function pushes a newly visited product ID into the user's recent list history.
     const addToRecentlyViewed = (id) => {
         state.recentlyViewed = [id, ...state.recentlyViewed.filter(pid => pid !== id)].slice(0, 5);
         localStorage.setItem('techstore_recent', JSON.stringify(state.recentlyViewed));
         renderRecentlyViewed();
     };
 
+    // This function populates the recently viewed sidebar panel with products clicked in the session.
     const renderRecentlyViewed = () => {
         const list = document.getElementById('recent-drawer-body');
         const badge = document.getElementById('recent-badge-count');
@@ -1373,6 +1360,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     // 7. LANGUAGE TRANSLATION PIPELINE
     // -------------------------------------------------------------------------
+    // This function handles UI translations, swapping text labels between English and Georgian depending on the chosen language.
     const translateInterface = () => {
         const dict = translations[state.language];
 
@@ -1422,7 +1410,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Main Navigation
         document.querySelectorAll('.nav-menu a, #nav-support-link').forEach(link => {
             const href = link.getAttribute('href');
             if (href === '#home') link.textContent = dict.navHome;
@@ -1431,7 +1418,6 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (href === '#support') link.textContent = dict.navSupport;
         });
 
-        // Catalog Header Section
         const productsSec = document.getElementById('products');
         if (productsSec) {
             const eyebrow = productsSec.querySelector('.eyebrow');
@@ -1442,7 +1428,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (desc) desc.textContent = dict.catalogSub;
         }
 
-        // Hero Section
         const heroEyebrow = document.querySelector('#home .eyebrow');
         const heroTitle = document.querySelector('#home .hero-title');
         const heroDesc = document.querySelector('#home .hero-description');
@@ -1459,7 +1444,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (statRating) statRating.textContent = dict.statRating;
         if (statDevices) statDevices.textContent = dict.statDevices;
 
-        // Deals Section
         const dealsEyebrow = document.querySelector('#deals .section-header .eyebrow');
         const dealsTitle = document.querySelector('#deals .section-header .section-title');
         const dealsDesc = document.querySelector('#deals .section-header .section-description');
@@ -1467,7 +1451,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dealsTitle) dealsTitle.textContent = dict.dealsTitle;
         if (dealsDesc) dealsDesc.textContent = dict.dealsDesc;
 
-        // Deals Info Cards
         const dealTitle1 = document.querySelector('#deals .deal-list article:nth-child(1) h3');
         const dealDesc1 = document.querySelector('#deals .deal-list article:nth-child(1) p');
         const dealSave1 = document.querySelector('#deals .deal-list article:nth-child(1) span');
@@ -1489,7 +1472,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (dealDesc3) dealDesc3.textContent = dict.dealCardDesc3;
         if (dealSave3) dealSave3.textContent = dict.dealCardSave3;
 
-        // Video instructions Section
         const mediaEyebrow = document.querySelector('.media-section .section-header .eyebrow');
         const mediaTitle = document.querySelector('.media-section .section-header .section-title');
         const mediaDesc = document.querySelector('.media-section .section-header .section-description');
@@ -1497,7 +1479,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (mediaTitle) mediaTitle.textContent = dict.mediaTitle;
         if (mediaDesc) mediaDesc.textContent = dict.mediaDesc;
 
-        // Reviews Static headers
         const reviewsEyebrow = document.querySelector('#reviews .section-header .eyebrow');
         const reviewsTitle = document.querySelector('#reviews .section-header .section-title');
         const reviewsDesc = document.querySelector('#reviews .section-header .section-description');
@@ -1505,7 +1486,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (reviewsTitle) reviewsTitle.textContent = dict.reviewsTitle;
         if (reviewsDesc) reviewsDesc.textContent = dict.reviewsDesc;
 
-        // Search inputs & Drawers labels
         const searchInput = document.getElementById('product-search');
         if (searchInput) searchInput.placeholder = dict.searchPlaceholder;
 
@@ -1540,7 +1520,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const checkoutBtnText = document.querySelector('#checkout-btn .btn-text');
         if (checkoutBtnText) checkoutBtnText.textContent = dict.placeOrder;
 
-        // Profile Panel Language Preferences
         const profileTitle = document.getElementById('profile-drawer-title');
         const profileLangLabel = document.getElementById('profile-lang-label');
         const profileTabPayments = document.getElementById('profile-tab-payments-btn');
@@ -1581,6 +1560,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // -------------------------------------------------------------------------
     // 8. FORMS VALIDATION & USER INTERACTIONS
     // -------------------------------------------------------------------------
+    // This helper restricts inputs on checkout fields to numeric digits and inserts slashes/spaces at standard card formatting positions.
     const setupCardFormatting = () => {
         const cardNum = document.getElementById('checkout-cardnumber');
         const expiry = document.getElementById('checkout-expiry');
@@ -1614,8 +1594,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
+    // This configuration function binds click, submit, and input events to the respective interactive components.
     const setupEventListeners = () => {
-        // Toggle Drawers & Modals handlers
         document.getElementById('cart-toggle-btn')?.addEventListener('click', () => toggleDrawer('cart-drawer', true));
         document.getElementById('cart-close-btn')?.addEventListener('click', () => toggleDrawer('cart-drawer', false));
         document.getElementById('cart-overlay')?.addEventListener('click', () => toggleDrawer('cart-drawer', false));
@@ -1650,7 +1630,6 @@ document.addEventListener('DOMContentLoaded', () => {
             toggleDrawer('compare-modal', true);
         });
 
-        // Search and display show limit toggling
         document.getElementById('product-search')?.addEventListener('input', (e) => {
             state.searchQuery = e.target.value;
             renderCatalog();
@@ -1664,7 +1643,6 @@ document.addEventListener('DOMContentLoaded', () => {
             renderCatalog();
         });
 
-        // Expandable Filters Panel triggers
         document.getElementById('filter-toggle-btn')?.addEventListener('click', () => {
             const panel = document.getElementById('filter-dropdown-panel');
             if (!panel) return;
@@ -1681,7 +1659,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Category selection filters tabs
         document.querySelectorAll('.filter-tab').forEach(tab => {
             tab.addEventListener('click', (e) => {
                 document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
@@ -1691,7 +1668,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Min Max budget ranges sliders
         const minRange = document.getElementById('min-price-range');
         const maxRange = document.getElementById('max-price-range');
         const minValText = document.getElementById('min-price-val');
@@ -1710,7 +1686,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Language and Currency select listeners
         document.getElementById('profile-language-select')?.addEventListener('change', (e) => {
             state.language = e.target.value;
             localStorage.setItem('techstore_language', state.language);
@@ -1718,16 +1693,12 @@ document.addEventListener('DOMContentLoaded', () => {
             translateInterface();
         });
 
-
-
-        // Deal selectors dropdown inside cart drawer
         document.getElementById('cart-deal-select')?.addEventListener('change', (e) => {
             state.activeDeal = e.target.value;
             localStorage.setItem('techstore_active_deal', state.activeDeal);
             translateInterface();
         });
 
-        // Profile navigation tabs switcher
         document.querySelectorAll('.profile-tab-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 document.querySelectorAll('.profile-tab-btn').forEach(t => t.classList.remove('active'));
@@ -1749,13 +1720,13 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
 
-        // Authentication triggers inside drawers & forms
         const signinToggleLink = document.getElementById('signin-toggle-link');
         const registerToggleLink = document.getElementById('register-toggle-link');
         const signinForm = document.getElementById('profile-signin-form');
         const registerForm = document.getElementById('profile-register-form');
         const authTitle = document.getElementById('auth-modal-title');
 
+        // This helper toggles the visibility between sign-in and registration forms in the auth modal.
         const showAuthForm = (isSignIn) => {
             if (isSignIn) {
                 if (signinForm) signinForm.style.display = 'block';
@@ -1824,7 +1795,6 @@ document.addEventListener('DOMContentLoaded', () => {
             translateInterface();
         });
 
-        // Contact Support Form handler submissions
         const supportForm = document.getElementById('support');
         if (supportForm) {
             supportForm.addEventListener('submit', (e) => {
@@ -1863,7 +1833,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // Checkout Purchase Payment Order Form submissions handler
         const checkoutBtn = document.getElementById('checkout-btn');
         if (checkoutBtn) {
             checkoutBtn.addEventListener('click', async () => {
@@ -1911,7 +1880,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (btnText) btnText.textContent = dict.authorizing;
                 if (btnSpinner) btnSpinner.classList.remove('hidden');
 
-                // Simulate payment authorization processing delay
                 setTimeout(() => {
                     const receipt = {
                         orderId: `TS-${Math.floor(100000 + Math.random() * 900000)}`,
@@ -1926,7 +1894,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         total: calculateCartTotal().total
                     };
 
-                    // Decrement stock levels and increment units sold
                     state.cart.forEach(item => {
                         const product = state.products.find(p => p.id === item.product.id);
                         if (product) {
@@ -1935,7 +1902,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     });
 
-                    // Persist updated inventories levels to local storage overrides
                     const updatedStocks = {};
                     const updatedSoldCount = {};
                     state.products.forEach(p => {
@@ -1963,7 +1929,6 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // GPS Auto Detect button handler
         document.getElementById('gps-detect-btn')?.addEventListener('click', () => {
             const addressInput = document.getElementById('checkout-address');
             if (addressInput) {
@@ -1993,9 +1958,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // -------------------------------------------------------------------------
-    // 9. ANIMATIONS & APPEARANCE (INTERSECTION OBSERVER)
-    // -------------------------------------------------------------------------
+    // This function configures the scroll listener to apply enter/leave transition animations as sections enter viewport focus.
     const initScrollAnimations = () => {
         const sections = document.querySelectorAll('.hero, .products-section, .deals-section, .media-section, .reviews-section, .contact-section');
         sections.forEach(sec => sec.classList.add('scroll-animate'));
@@ -2013,7 +1976,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sections.forEach(sec => observer.observe(sec));
     };
 
-
+    // This main initialization method downloads products from the API, binds user controls, formats widgets, and restores preferences.
     const init = async () => {
         await fetchProducts();
         setupEventListeners();
@@ -2021,7 +1984,6 @@ document.addEventListener('DOMContentLoaded', () => {
         translateInterface();
         initScrollAnimations();
 
-        // Sync preferences state to selectors
         const langSelect = document.getElementById('profile-language-select');
         if (langSelect) langSelect.value = state.language;
 
